@@ -1,6 +1,8 @@
 # Ignored folders added by me
-tvb-data/
-tvb-library/
+_tvbdata/
+_tvblibrary/
+metadata/
+output/
 demo_scripts/
 
 # Byte-compiled / optimized / DLL files
