@@ -9,28 +9,27 @@ import numpy as np
 import pandas as pd 
 import scipy.io
 import time
-
 import timeit
 
 # downloaded library for peak detection in z time series
 import peakdetect
 import scipy.signal as sig
 import scipy.spatial.distance as dists
-
-# from matplotlib import colors, cm
-# import matplotlib.pyplot as pyplt
   
-from InitialConditions import get_equilibrium
+from tvbsim.initialConditions import get_equilibrium
 
-def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-2.3, x0ez=None, x0pz=None):
+def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-2.5, x0ez=None, x0pz=None):
 
     # intialized hard coded parameters
-    epileptor_r = 1e-4
-    heun_ts = 0.04
+    epileptor_r = 0.00035      # Temporal scaling in the third state variable
+    epiks = -2                 # Permittivity coupling, fast to slow time scale
+    epitt = 1./20            # time scale of simulation
+    epitau = 10                # Temporal scaling coefficient in fifth st var
+
+    heun_ts = 0.05
     noise_cov = np.array([0.01, 0.01, 0.,\
                              0.00015, 0.00015, 0.])
     period = 1.0 # period of sampling for TVB (1=1000Hz)
-
 
     ####################### 1. Structural Connectivity ########################
     con = connectivity.Connectivity.from_file(confile)
@@ -46,11 +45,10 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
     num_regions = len(regions)
 
     ####################### 2. Neural Mass Model @ Nodes ######################
-    epileptors = models.Epileptor(variables_of_interest=['z', 'x2-x1'])
-    epileptors.r = epileptor_r
+    epileptors = models.Epileptor(Ks=epiks, r=epileptor_r, tau=epitau, tt=epitt, variables_of_interest=['z', 'x2-x1'])
 
-    # permitivity coupling
-    epileptors.Ks = np.ones(num_regions)*(-1.0)*20.0
+    # # permitivity coupling
+    # epileptors.Ks = epiks
 
     # set x0 values (degree of epileptogenicity) for entire model
     epileptors.x0 = np.ones(num_regions) * x0norm
@@ -58,6 +56,13 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
     epileptors.x0[ezindices] = x0ez
     # set pz regions
     epileptors.x0[pzindices] = x0pz
+
+    # epileptors.state_variable_range['x1'] = np.r_[-0.5, 0.1]
+    # epileptors.state_variable_range['z'] = np.r_[3.5,3.7]
+    # epileptors.state_variable_range['y1'] = np.r_[-0.1,1]
+    # epileptors.state_variable_range['x2'] = np.r_[-2.,0.]
+    # epileptors.state_variable_range['y2'] = np.r_[0.,2.]
+    # epileptors.state_variable_range['g'] = np.r_[-1.,1.]
 
     # change time scale of slow variable
     # epileptors.tt = epileptors.tt / 5
@@ -85,14 +90,15 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
     num_contacts = mon_SEEG.sensors.labels.size
 
     ############## 6. Initialize Simulator #############
-    # init_cond = get_equilibrium(epileptors, np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
-
+    epileptor_equil = epileptor_equil = models.Epileptor()
+    epileptor_equil.x0 = -2.3
+    init_cond = get_equilibrium(epileptor_equil, np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
+    init_cond_reshaped = np.repeat(init_cond, num_regions).reshape((1, len(init_cond), num_regions, 1))
     # initialize simulator object
     sim = simulator.Simulator(model=epileptors,
-                              # initial_conditions=init_cond,
+                              initial_conditions=init_cond_reshaped,
                               connectivity=con,
                               coupling=coupl,
-                              conduction_speed=float(con.speed[0]),
                               integrator=heunint,
                               monitors=[mon_tavg, mon_SEEG])
     configs = sim.configure()
@@ -117,7 +123,7 @@ def getindexofregion(regions, ezregion=[], pzregion=[]):
 
 def postprocts(epits, seegts, times, samplerate=1000):
     # reject certain 5 seconds of simulation
-    secstoreject = 5
+    secstoreject = 7
     sampstoreject = secstoreject * samplerate
 
     # get the time series processed and squeezed that we want to save
@@ -125,6 +131,11 @@ def postprocts(epits, seegts, times, samplerate=1000):
     new_epits = epits[sampstoreject:, 1, :, :].squeeze().T
     new_zts = epits[sampstoreject:, 0, :, :].squeeze().T
     new_seegts = seegts[sampstoreject:, :, :, :].squeeze().T
+
+    new_times = times
+    new_epits = epits[:, 1, :, :].squeeze().T
+    new_zts = epits[:, 0, :, :].squeeze().T
+    new_seegts = seegts[:,:, :, :].squeeze().T
 
     return new_times, new_epits, new_seegts, new_zts
 
