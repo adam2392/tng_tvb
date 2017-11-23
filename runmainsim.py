@@ -16,19 +16,22 @@ import peakdetect
 import scipy.signal as sig
 import scipy.spatial.distance as dists
   
-from tvbsim.initialConditions import get_equilibrium
+import tvbsim
 
-def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-2.5, x0ez=None, x0pz=None):
+def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-2.5, x0ez=-1.8, x0pz=-2.1, modseeg=None, modgain=None):
 
     # intialized hard coded parameters
-    epileptor_r = 0.00035      # Temporal scaling in the third state variable
-    epiks = -2                 # Permittivity coupling, fast to slow time scale
-    epitt = 1./20            # time scale of simulation
+    epileptor_r = 0.0002       # Temporal scaling in the third state variable
+    epiks = -0.5                 # Permittivity coupling, fast to slow time scale
+    epitt = 0.05               # time scale of simulation
     epitau = 10                # Temporal scaling coefficient in fifth st var
 
+    # parameters for heun-stochastic integrator
     heun_ts = 0.05
-    noise_cov = np.array([0.01, 0.01, 0.,\
-                             0.00015, 0.00015, 0.])
+    noise_cov = np.array([0.001, 0.001, 0.,\
+                    0.0001, 0.0001, 0.])
+
+    # parameter for simulator monitor to sample data
     period = 1.0 # period of sampling for TVB (1=1000Hz)
 
     ####################### 1. Structural Connectivity ########################
@@ -57,15 +60,12 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
     # set pz regions
     epileptors.x0[pzindices] = x0pz
 
-    # epileptors.state_variable_range['x1'] = np.r_[-0.5, 0.1]
-    # epileptors.state_variable_range['z'] = np.r_[3.5,3.7]
-    # epileptors.state_variable_range['y1'] = np.r_[-0.1,1]
-    # epileptors.state_variable_range['x2'] = np.r_[-2.,0.]
-    # epileptors.state_variable_range['y2'] = np.r_[0.,2.]
-    # epileptors.state_variable_range['g'] = np.r_[-1.,1.]
-
-    # change time scale of slow variable
-    # epileptors.tt = epileptors.tt / 5
+    epileptors.state_variable_range['x1'] = np.r_[-0.5, 0.1]
+    epileptors.state_variable_range['z'] = np.r_[3.5,3.7]
+    epileptors.state_variable_range['y1'] = np.r_[-0.1,1]
+    epileptors.state_variable_range['x2'] = np.r_[-2.,0.]
+    epileptors.state_variable_range['y2'] = np.r_[0.,2.]
+    epileptors.state_variable_range['g'] = np.r_[-1.,1.]
 
     ####################### 3. Integrator for Models ##########################
     # define cov noise for the stochastic heun integrato
@@ -83,6 +83,13 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
                         period=period,
                         variables_of_interest=[1]
                     )
+
+    # use new coord/gain mat if avail
+    if modseeg:
+        mon_SEEG.sensors.locations = modseeg
+        mon_SEEG.gain = modgain
+        print "modified gain and chan xyz"
+
     # To avoid adding analytical gain matrix for subcortical sources
     con.cortical[:] = True     
 
@@ -91,8 +98,8 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
 
     ############## 6. Initialize Simulator #############
     epileptor_equil = epileptor_equil = models.Epileptor()
-    epileptor_equil.x0 = -2.3
-    init_cond = get_equilibrium(epileptor_equil, np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
+    epileptor_equil.x0 = x0norm
+    init_cond = tvbsim.initialConditions.get_equilibrium(epileptor_equil, np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
     init_cond_reshaped = np.repeat(init_cond, num_regions).reshape((1, len(init_cond), num_regions, 1))
     # initialize simulator object
     sim = simulator.Simulator(model=epileptors,

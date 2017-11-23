@@ -26,6 +26,7 @@ remote            := $(MARCC_USER)@gateway2.marcc.jhu.edu
 	rsync -aP adamli@139.124.148.56:/home/vep/Pipeline/0-Raw/${patient}/seeg/*.edf /Users/adam2392/Downloads/${patient}/;\
 }
 
+# rsync -aP /Users/adam2392/Documents/tvb/metadata/ adamli@139.124.148.56:/home/adamli/metadata/;
 ######################### Functions to Make #########################
 # sync-to-remote-data: *sync-data
 download: *download-patient

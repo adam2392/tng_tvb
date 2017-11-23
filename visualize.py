@@ -12,19 +12,51 @@ def getindexofregion(regions, ezregion=[], pzregion=[]):
 
     return ezindices, pzindices
 
+def normalizetime(ts):
+    tsrange = (np.max(ts, 1) - np.min(ts, 1))
+    ts = ts/tsrange[:,np.newaxis]
+    return ts
+
 def highpassfilter(seegts):
     b, a = scipy.signal.butter(2, 0.1, btype='highpass', output='ba')
     seegf = np.zeros(seegts.shape)
 
     numcontacts, _ = seegts.shape
     for i in range(0, numcontacts):
-        seegf[i,:] = scipy.signal.filtfilt(b, a, seegtf[i, :])
+        seegf[i,:] = scipy.signal.filtfilt(b, a, seegts[i, :])
 
     return seegf
 
-def plotepileptorts(epits, regions, ezregion, pzregion=[]):
-    # initialize figure
-    epifig = plt.figure(figsize=(9,10))
+def plotepileptorts(epits, times, metadata, patient, plotsubset=False):
+    '''
+    Function for plotting the epileptor time series for a given patient
+
+    Can also plot a subset of the time series.
+
+    Performs normalization along each channel separately. 
+    '''
+    # extract metadata
+    regions = metadata['regions']
+    ezregion = metadata['ez']
+    pzregion = metadata['pz']
+    ezindices = metadata['ezindices']
+    pzindices = metadata['pzindices']
+    x0ez = metadata['x0ez']
+    x0pz = metadata['x0pz']
+    x0norm = metadata['x0norm']
+
+    print "ezreion is: ", ezregion
+    print "pzregion is: ", pzregion
+    print "x0 values are (ez, pz, norm): ", x0ez, x0pz, x0norm
+    print "time series shape is: ", epits.shape
+    
+    onsettimes = metadata['onsettimes']
+    offsettimes = metadata['offsettimes']
+    try:
+        onsettimes = np.array([tupl for tupl in onsettimes])
+        offsettimes = np.array([tupl for tupl in offsettimes])
+    except Exception as e:
+        print e
 
     # get shapes of epits
     numregions, numsamps = epits.shape
@@ -33,37 +65,37 @@ def plotepileptorts(epits, regions, ezregion, pzregion=[]):
     timewindowbegin = 0
     timewindowend = numsamps
 
-    # get the ez/pz indices
+    # get the indices for ez and pz region
     ezindices, pzindices = getindexofregion(regions, ezregion, pzregion)
-    
+
     # get random indices not within ez, or pz
     numbers = np.arange(0, numregions)
     numbers = np.delete(numbers, np.concatenate((ezindices, pzindices), axis=0))
     randindices = np.random.choice(numbers, 3)
-    
-    # create the indices of regions to plot
-    regionstoplot = np.array((), dtype='int')
-    regionstoplot = np.append(regionstoplot, ezindices)
-    regionstoplot = np.append(regionstoplot, pzindices)
-    regionstoplot = np.append(regionstoplot, randindices)
-    regionstoplot = np.arange(0,len(regions), dtype='int')
+
+    # define specific regions to plot
+    if plotsubset:
+        regionstoplot = np.array((), dtype='int')
+        regionstoplot = np.append(regionstoplot, ezindices)
+        regionstoplot = np.append(regionstoplot, pzindices)
+        regionstoplot = np.append(regionstoplot, randindices)
+    else:
+        regionstoplot = np.arange(0,len(regions), dtype='int')
+    regionlabels = regions[regionstoplot]
+    # locations to plot for each plot along y axis
+    regf = 0
+    regt = len(regionstoplot)
 
     # Normalize the time series in the time axis to have nice plots
-    epirange = (np.max(epits, 1) - np.min(epits, 1))
-    epits = epits/epirange[:,np.newaxis]
+    epits = normalizetime(epits)
 
     # get the epi ts to plot and the corresponding time indices
     epitoplot = epits[regionstoplot, timewindowbegin:timewindowend]
     timestoplot = times[timewindowbegin:timewindowend]
-
-    regionlabels = regions[regionstoplot]
-
-    # regularization factors for each plot
-    regf = 0
-    regt = len(regionstoplot)
-
-
         
+    ######################### PLOTTING OF EPILEPTOR TS ########################
+    # initialize figure
+    epifig = plt.figure(figsize=(9,7))
     # plot time series
     epilines = plt.plot(timestoplot, epitoplot.T + np.r_[regf:regt], 'k')
     ax = plt.gca()
@@ -79,26 +111,123 @@ def plotepileptorts(epits, regions, ezregion, pzregion=[]):
         else:
             j.set_color(colors[2])
 
+    # plot vertical lines of 'predicted' onset/offset
     for idx in range(0, len(onsettimes)):
-        plt.axvline(onsettimes[idx], color='red')
-        plt.axvline(offsettimes[idx], color='red')
+        plt.axvline(onsettimes[idx], color='red', linestyle='dashed')
+        plt.axvline(offsettimes[idx], color='red', linestyle='dashed')
         
-    ax.set_xlabel('Time (sec)')
+    ax.set_xlabel('Time (msec)')
     ax.set_ylabel('Regions in Parcellation N=84')
-    ax.set_title('Epileptor TVB Simulated TS')
+    ax.set_title('Epileptor TVB Simulated TS for ' + patient + ' nez=' + str(len(ezregion)) + ' npz='+ str(len(pzregion)))
     ax.set_yticks(np.r_[regf:regt])
     ax.set_yticklabels(regions[regionstoplot])
     plt.tight_layout()
     plt.show()
 
-
     return epifig
 
-def plotseegts(seegts, seegxyz, regioncentres, ezregion, pzregion=None):
-    # get 2-3 electrodes closest to ezregion
+def plotseegts(seegts, times, metadata, patient, plotsubset=False):
+    '''
+    Function for plotting the epileptor time series for a given patient
 
-    # get 2-3 electrodes closest to pzregion
-    pass
+    Can also plot a subset of the time series.
+
+    Performs normalization along each channel separately. 
+    '''
+
+    # extract metadata
+    regions = metadata['regions']
+    ezregion = metadata['ez']
+    pzregion = metadata['pz']
+    ezindices = metadata['ezindices']
+    pzindices = metadata['pzindices']
+    x0ez = metadata['x0ez']
+    x0pz = metadata['x0pz']
+    x0norm = metadata['x0norm']
+
+    chanlabels = metadata['seeg_contacts']
+
+    print "ezreion is: ", ezregion
+    print "pzregion is: ", pzregion
+    print "x0 values are (ez, pz, norm): ", x0ez, x0pz, x0norm
+    print "time series shape is: ", seegts.shape
+    
+    onsettimes = metadata['onsettimes']
+    offsettimes = metadata['offsettimes']
+    try:
+        onsettimes = np.array([tupl for tupl in onsettimes])
+        offsettimes = np.array([tupl for tupl in offsettimes])
+    except Exception as e:
+        print e
+
+    # get shapes of epits
+    numchans, numsamps = seegts.shape
+
+    # get the time window range to plot
+    timewindowbegin = 0
+    timewindowend = numsamps
+
+    # get the indices for ez and pz region
+    ezindices, pzindices = getindexofregion(regions, ezregion, pzregion)
+
+    # get random indices not within ez, or pz
+    numbers = np.arange(0, numchans)
+    numbers = np.delete(numbers, np.concatenate((ezindices, pzindices), axis=0))
+    randindices = np.random.choice(numbers, 3)
+
+    # define specific regions to plot
+    if plotsubset:
+        chanstoplot = np.array((), dtype='int')
+        chanstoplot = np.append(chanstoplot, ezindices)
+        chanstoplot = np.append(chanstoplot, pzindices)
+        chanstoplot = np.append(chanstoplot, randindices)
+    else:
+        chanstoplot = np.arange(0,len(chanlabels), dtype='int')
+    # locations to plot for each plot along y axis
+    regf = 0
+    regt = len(chanstoplot)
+
+    # Normalize the time series in the time axis to have nice plots
+    # also high pass filter
+    # seegts = highpassfilter(seegts)
+    seegts = normalizetime(seegts)
+
+    # get the epi ts to plot and the corresponding time indices
+    seegtoplot = seegts[chanstoplot, timewindowbegin:timewindowend]
+    timestoplot = times[timewindowbegin:timewindowend]
+        
+    ######################### PLOTTING OF EPILEPTOR TS ########################
+    # initialize figure
+    seegfig = plt.figure(figsize=(9,7))
+    # plot time series
+    seeglines = plt.plot(timestoplot, seegtoplot.T + np.r_[regf:regt], 'k')
+    ax = plt.gca()
+
+    # plot 3 different colors - normal, ez, pz
+    colormap = plt.cm.gist_ncar #nipy_spectral, Set1,Paired   
+    colors = ['red','blue', 'black']
+    for i,j in enumerate(ax.lines):
+        if i in ezindices:
+            j.set_color(colors[0])
+        elif i in pzindices:
+            j.set_color(colors[1])
+        else:
+            j.set_color(colors[2])
+
+    # plot vertical lines of 'predicted' onset/offset
+    for idx in range(0, len(onsettimes)):
+        plt.axvline(onsettimes[idx], color='red', linestyle='dashed')
+        plt.axvline(offsettimes[idx], color='red', linestyle='dashed')
+        
+    ax.set_xlabel('Time (msec)')
+    ax.set_ylabel('Channels N=' + str(len(chanlabels)))
+    ax.set_title('SEEG TVB Simulated TS for ' + patient + ' nez=' + str(len(ezregion)) + ' npz='+ str(len(pzregion)))
+    ax.set_yticks(np.r_[regf:regt])
+    ax.set_yticklabels(chanlabels[chanstoplot])
+    plt.tight_layout()
+    plt.show()
+
+    return seegfig
 
 def plotzts(zts, ezloc, onsettimes, offsettimes):
     fig = plt.figure()

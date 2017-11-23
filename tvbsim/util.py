@@ -40,7 +40,8 @@ def findclosestcontact(ezindex, region_centers, seeg_xyz):
     ez_regionxyz = region_centers[ezindex]
 
     # convert seeg_xyz dataframe to np array
-    seeg_xyz = pd.DataFrame.as_matrix(seeg_xyz)
+    if type(seeg_xyz) is not np.ndarray:
+        seeg_xyz = pd.DataFrame.as_matrix(seeg_xyz)
     
     # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
     tree = scipy.spatial.KDTree(seeg_xyz)
