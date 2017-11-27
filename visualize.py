@@ -112,9 +112,9 @@ def plotepileptorts(epits, times, metadata, patient, plotsubset=False):
             j.set_color(colors[2])
 
     # plot vertical lines of 'predicted' onset/offset
-    for idx in range(0, len(onsettimes)):
-        plt.axvline(onsettimes[idx], color='red', linestyle='dashed')
-        plt.axvline(offsettimes[idx], color='red', linestyle='dashed')
+    # for idx in range(0, len(onsettimes)):
+    #     plt.axvline(onsettimes[idx], color='red', linestyle='dashed')
+    #     plt.axvline(offsettimes[idx], color='red', linestyle='dashed')
         
     ax.set_xlabel('Time (msec)')
     ax.set_ylabel('Regions in Parcellation N=84')
@@ -215,9 +215,9 @@ def plotseegts(seegts, times, metadata, patient, plotsubset=False):
             j.set_color(colors[2])
 
     # plot vertical lines of 'predicted' onset/offset
-    for idx in range(0, len(onsettimes)):
-        plt.axvline(onsettimes[idx], color='red', linestyle='dashed')
-        plt.axvline(offsettimes[idx], color='red', linestyle='dashed')
+    # for idx in range(0, len(onsettimes)):
+    #     plt.axvline(onsettimes[idx], color='red', linestyle='dashed')
+    #     plt.axvline(offsettimes[idx], color='red', linestyle='dashed')
         
     ax.set_xlabel('Time (msec)')
     ax.set_ylabel('Channels N=' + str(len(chanlabels)))

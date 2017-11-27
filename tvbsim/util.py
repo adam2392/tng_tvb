@@ -46,8 +46,9 @@ def findclosestcontact(ezindex, region_centers, seeg_xyz):
     # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
     tree = scipy.spatial.KDTree(seeg_xyz)
     near_seeg = tree.query(ez_regionxyz)
-    
-    return near_seeg
+    distance = near_seeg[0]
+    seeg_index = near_seeg[1]
+    return seeg_index, distance
 
 def movecontact(seeg_xyz, region_centers, ezindex, seeg_contact):
     '''

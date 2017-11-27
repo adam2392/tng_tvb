@@ -18,40 +18,22 @@ import scipy.spatial.distance as dists
   
 import tvbsim
 
-def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-2.5, x0ez=-1.8, x0pz=-2.1, modseeg=None, modgain=None):
-
-    # intialized hard coded parameters
-    epileptor_r = 0.0002       # Temporal scaling in the third state variable
-    epiks = -0.5                 # Permittivity coupling, fast to slow time scale
-    epitt = 0.05               # time scale of simulation
-    epitau = 10                # Temporal scaling coefficient in fifth st var
-
-    # parameters for heun-stochastic integrator
-    heun_ts = 0.05
-    noise_cov = np.array([0.001, 0.001, 0.,\
-                    0.0001, 0.0001, 0.])
-
-    # parameter for simulator monitor to sample data
-    period = 1.0 # period of sampling for TVB (1=1000Hz)
-
+def initconn(confile):
     ####################### 1. Structural Connectivity ########################
     con = connectivity.Connectivity.from_file(confile)
     # set connectivity speed to instantaneous
     con.speed = np.inf
     # normalize weights
     con.weights = con.weights/np.max(con.weights)
-    
-    # determine what the regions are for this certain parcellation
-    # and get the ez indices, pz indices desired
-    regions = con.region_labels
-    ezindices, pzindices = getindexofregion(regions, ezregion, pzregion)
-    num_regions = len(regions)
 
+    # To avoid adding analytical gain matrix for subcortical sources
+    con.cortical[:] = True     
+
+    return con
+
+def initepileptor(r, ks, tt, tau, x0norm, x0ez, x0pz, ezindices, pzindices, num_regions):
     ####################### 2. Neural Mass Model @ Nodes ######################
-    epileptors = models.Epileptor(Ks=epiks, r=epileptor_r, tau=epitau, tt=epitt, variables_of_interest=['z', 'x2-x1'])
-
-    # # permitivity coupling
-    # epileptors.Ks = epiks
+    epileptors = models.Epileptor(Ks=ks, r=r, tau=tau, tt=tt, variables_of_interest=['z', 'x2-x1'])
 
     # set x0 values (degree of epileptogenicity) for entire model
     epileptors.x0 = np.ones(num_regions) * x0norm
@@ -67,15 +49,22 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
     epileptors.state_variable_range['y2'] = np.r_[0.,2.]
     epileptors.state_variable_range['g'] = np.r_[-1.,1.]
 
+    return epileptors
+
+def initintegrator(heun_ts, noise_cov):
     ####################### 3. Integrator for Models ##########################
     # define cov noise for the stochastic heun integrato
     hiss = noise.Additive(nsig=noise_cov)
     heunint = integrators.HeunStochastic(dt=heun_ts, noise=hiss)
+    return heunint
 
+def initcoupling(a):
     ################## 4. Difference Coupling Between Nodes ###################
     # define a simple difference coupling
     coupl = coupling.Difference(a=1.)
+    return coupl
 
+def initmonitors(period, seegfile, gainmatfile, varindex):
     ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #############
     mon_tavg = monitors.TemporalAverage(period=period) # monitor model
     mon_SEEG = monitors.iEEG.from_file(sensors_fname=seegfile,
@@ -84,31 +73,59 @@ def initmodel(confile, seegfile, gainmatfile, ezregion=[], pzregion=[], x0norm=-
                         variables_of_interest=[1]
                     )
 
-    # use new coord/gain mat if avail
-    if modseeg:
-        mon_SEEG.sensors.locations = modseeg
-        mon_SEEG.gain = modgain
-        print "modified gain and chan xyz"
+    return [mon_tavg, mon_SEEG]
 
-    # To avoid adding analytical gain matrix for subcortical sources
-    con.cortical[:] = True     
-
-   
-    num_contacts = mon_SEEG.sensors.labels.size
-
-    ############## 6. Initialize Simulator #############
+def initconditions(x0norm, num_regions):
     epileptor_equil = epileptor_equil = models.Epileptor()
     epileptor_equil.x0 = x0norm
     init_cond = tvbsim.initialConditions.get_equilibrium(epileptor_equil, np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
     init_cond_reshaped = np.repeat(init_cond, num_regions).reshape((1, len(init_cond), num_regions, 1))
+
+    return init_cond_reshaped
+
+def setupconfig(epileptors, con, coupl, heunint, monitors, init_cond_reshaped=None):
+    ############## 6. Initialize Simulator #############
     # initialize simulator object
     sim = simulator.Simulator(model=epileptors,
                               initial_conditions=init_cond_reshaped,
                               connectivity=con,
                               coupling=coupl,
                               integrator=heunint,
-                              monitors=[mon_tavg, mon_SEEG])
+                              monitors=monitors)
     configs = sim.configure()
+    return sim, configs
+
+def initentiremodel(confile, seegfile, gainmatfile, period, ezindices, pzindices):
+    # x0c value = -2.05
+    x0norm=-2.5
+    x0ez=-1.6
+    x0pz=-2.05
+    
+    # intialized hard coded parameters
+    epileptor_r = 0.0002       # Temporal scaling in the third state variable
+    epiks = -0.5                 # Permittivity coupling, fast to slow time scale
+    epitt = 0.05               # time scale of simulation
+    epitau = 10                # Temporal scaling coefficient in fifth st var
+
+    # depends on epileptor variables of interest: it is where the x2-y2 var is
+    varindex = [1]
+    
+    # parameters for heun-stochastic integrator
+    heun_ts = 0.05
+    noise_cov = np.array([0.001, 0.001, 0.,\
+                    0.0001, 0.0001, 0.])
+    
+
+    # use new coord/gain mat if avail
+    if modseeg:
+        mon_SEEG.sensors.locations = modseeg
+        mon_SEEG.gain = modgain
+        print "modified gain and chan xyz"
+
+    
+   
+    num_contacts = mon_SEEG.sensors.labels.size
+
 
     return sim, configs
 
