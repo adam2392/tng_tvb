@@ -4,6 +4,7 @@ from matplotlib import colors, cm
 import time
 import scipy 
 from matplotlib import pyplot as plt
+# from sklearn.preprocessing import MinMaxScaler
 
 def getindexofregion(regions, ezregion=[], pzregion=[]):
     sorter = np.argsort(regions)
@@ -17,7 +18,20 @@ def normalizetime(ts):
     ts = ts/tsrange[:,np.newaxis]
     return ts
 
+def normalizeseegtime(ts):
+    tsrange = (np.max(ts, 1) - np.min(ts, 1))
+    ts = ts/tsrange[:,np.newaxis]
+
+    avg = np.mean(ts, axis=1)
+    ts  = ts - avg[:, np.newaxis]
+    return ts
+
+def minmaxts(ts):
+    scaler = MinMaxScaler()
+    return scaler.fit_transform(ts)
+
 def highpassfilter(seegts):
+    # seegts = seegts.T
     b, a = scipy.signal.butter(2, 0.1, btype='highpass', output='ba')
     seegf = np.zeros(seegts.shape)
 
@@ -126,7 +140,7 @@ def plotepileptorts(epits, times, metadata, patient, plotsubset=False):
 
     return epifig
 
-def plotseegts(seegts, times, metadata, patient, plotsubset=False):
+def plotseegts(seegts, times, metadata, patient, ezseegindex, plotsubset=False):
     '''
     Function for plotting the epileptor time series for a given patient
 
@@ -151,6 +165,8 @@ def plotseegts(seegts, times, metadata, patient, plotsubset=False):
     print "pzregion is: ", pzregion
     print "x0 values are (ez, pz, norm): ", x0ez, x0pz, x0norm
     print "time series shape is: ", seegts.shape
+    print "ez seeg index is: ", ezseegindex
+
     
     onsettimes = metadata['onsettimes']
     offsettimes = metadata['offsettimes']
@@ -167,52 +183,76 @@ def plotseegts(seegts, times, metadata, patient, plotsubset=False):
     timewindowbegin = 0
     timewindowend = numsamps
 
-    # get the indices for ez and pz region
-    ezindices, pzindices = getindexofregion(regions, ezregion, pzregion)
-
     # get random indices not within ez, or pz
     numbers = np.arange(0, numchans)
-    numbers = np.delete(numbers, np.concatenate((ezindices, pzindices), axis=0))
-    randindices = np.random.choice(numbers, 3)
+    numbers = np.delete(numbers, ezseegindex, axis=0)
+    randindices = np.random.choice(numbers, 5)
 
     # define specific regions to plot
     if plotsubset:
         chanstoplot = np.array((), dtype='int')
-        chanstoplot = np.append(chanstoplot, ezindices)
-        chanstoplot = np.append(chanstoplot, pzindices)
+        chanstoplot = np.append(chanstoplot, ezseegindex)
+        # chanstoplot = np.append(chanstoplot, pzindices)
         chanstoplot = np.append(chanstoplot, randindices)
     else:
         chanstoplot = np.arange(0,len(chanlabels), dtype='int')
+
     # locations to plot for each plot along y axis
     regf = 0
     regt = len(chanstoplot)
+
+    reg = np.linspace(regf, regt*2, regt)
 
     # Normalize the time series in the time axis to have nice plots
     # also high pass filter
     # seegts = highpassfilter(seegts)
     seegts = normalizetime(seegts)
 
+    print "regt is: ", regt
+    print "chanstoplot are: ", chanstoplot
+    print min(seegts[0,:])
+    print max(seegts[0,:])
+
     # get the epi ts to plot and the corresponding time indices
     seegtoplot = seegts[chanstoplot, timewindowbegin:timewindowend]
     timestoplot = times[timewindowbegin:timewindowend]
         
-    ######################### PLOTTING OF EPILEPTOR TS ########################
+    ######################### PLOTTING OF SEEG TS ########################
     # initialize figure
-    seegfig = plt.figure(figsize=(9,7))
+    seegfig = plt.figure(figsize=(9,5))
     # plot time series
-    seeglines = plt.plot(timestoplot, seegtoplot.T + np.r_[regf:regt], 'k')
+    seeglines = plt.plot(timestoplot, seegtoplot.T + reg[:regt], 'k')
+    # seeglines = plt.plot(seegtoplot.T + np.r_[:regt], 'k')
     ax = plt.gca()
 
     # plot 3 different colors - normal, ez, pz
-    colormap = plt.cm.gist_ncar #nipy_spectral, Set1,Paired   
     colors = ['red','blue', 'black']
-    for i,j in enumerate(ax.lines):
-        if i in ezindices:
-            j.set_color(colors[0])
-        elif i in pzindices:
-            j.set_color(colors[1])
-        else:
-            j.set_color(colors[2])
+    # for i,j in enumerate(ax.lines):
+    #     if i == ezseegindex:
+    #         j.set_color(colors[0])
+    #     # elif i == 0:
+    #     #     j.set_color(colors[1])
+    #     else:
+    #         j.set_color(colors[2])
+    if plotsubset:
+        # lines = ax.lines
+        # lines[0].set_color(colors[0])
+        for i,j in enumerate(seeglines):
+            if i == 0:
+                j.set_color(colors[0])
+            elif i==0:
+                j.set_color(colors[1])
+            else:
+                j.set_color(colors[2])
+    else:
+        for i,j in enumerate(ax.lines):
+            if i == ezseegindex:
+                print "setting color"
+                j.set_color(colors[0])
+            elif i == ezseegindex:
+                j.set_color(colors[1])
+            else:
+                j.set_color(colors[2])
 
     # plot vertical lines of 'predicted' onset/offset
     # for idx in range(0, len(onsettimes)):
@@ -222,7 +262,7 @@ def plotseegts(seegts, times, metadata, patient, plotsubset=False):
     ax.set_xlabel('Time (msec)')
     ax.set_ylabel('Channels N=' + str(len(chanlabels)))
     ax.set_title('SEEG TVB Simulated TS for ' + patient + ' nez=' + str(len(ezregion)) + ' npz='+ str(len(pzregion)))
-    ax.set_yticks(np.r_[regf:regt])
+    ax.set_yticks(reg[:regt])
     ax.set_yticklabels(chanlabels[chanstoplot])
     plt.tight_layout()
     plt.show()

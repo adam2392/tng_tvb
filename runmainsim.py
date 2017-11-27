@@ -115,18 +115,28 @@ def initentiremodel(confile, seegfile, gainmatfile, period, ezindices, pzindices
     noise_cov = np.array([0.001, 0.001, 0.,\
                     0.0001, 0.0001, 0.])
     
-
     # use new coord/gain mat if avail
     if modseeg:
         mon_SEEG.sensors.locations = modseeg
         mon_SEEG.gain = modgain
         print "modified gain and chan xyz"
 
+    ######## 1. Connectivity
+    conn = initconn(confile)
+    ######## 2. Model
+    epileptors =initepileptor(epileptor_r, epiks, epitt, epitau, x0norm, \
+                              x0ez, x0pz, ezindices, pzindices, num_regions)    
+    ####################### 3. Integrator for Models ##########################
+    heunint = initintegrator(heun_ts, noise_cov)
+    ################## 4. Difference Coupling Between Nodes ###################
+    coupl = initcoupling(a=1.)
+    ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #############
+    monitors = initmonitors(period, seegfile, gainmatfile, varindex)
+
+    # get initial conditions and then setup entire simulation configuration
+    initcond = initconditions(x0norm, num_regions)
+    sim, configs = setupconfig(epileptors, con, coupl, heunint, monitors, initcond)
     
-   
-    num_contacts = mon_SEEG.sensors.labels.size
-
-
     return sim, configs
 
 def runsim(sim, sim_length):
@@ -156,6 +166,7 @@ def postprocts(epits, seegts, times, samplerate=1000):
     new_zts = epits[sampstoreject:, 0, :, :].squeeze().T
     new_seegts = seegts[sampstoreject:, :, :, :].squeeze().T
 
+    # don't reject any time period
     new_times = times
     new_epits = epits[:, 1, :, :].squeeze().T
     new_zts = epits[:, 0, :, :].squeeze().T

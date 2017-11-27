@@ -48,27 +48,37 @@ def findclosestcontact(ezindex, region_centers, seeg_xyz):
     near_seeg = tree.query(ez_regionxyz)
     distance = near_seeg[0]
     seeg_index = near_seeg[1]
+
     return seeg_index, distance
 
-def movecontact(seeg_xyz, region_centers, ezindex, seeg_contact):
+def movecontact(seeg_xyz, region_centers, ezindex, seeg_index):
     '''
     This function moves the contact and the entire electrode the correct distance, so that the contact
     is on the ezregion now
     '''
     ez_regionxyz = region_centers[ezindex]
-    closest_seeg = seeg_xyz.loc[seeg_contact]
-    seeg_labels = np.array(seeg_xyz.index, dtype='str')
+    closest_seeg = seeg_xyz.iloc[seeg_index]
 
+    # perform some processing to get all the contact indices for this electrode
+    seeg_labels = np.array(seeg_xyz.index, dtype='str')
+    seeg_contact = seeg_xyz.iloc[seeg_index].index[0]
     electrodeindices = getallcontacts(seeg_labels, seeg_contact)
 
     # get the euclidean distance that will be moved for this electrode
-    x_dist = closest_seeg['x'] - ez_regionxyz[0][0]
-    y_dist = closest_seeg['y'] - ez_regionxyz[0][1]
-    z_dist = closest_seeg['z'] - ez_regionxyz[0][2]
+    x_dist = closest_seeg['x'].values[0] - ez_regionxyz[0][0]
+    y_dist = closest_seeg['y'].values[0] - ez_regionxyz[0][1]
+    z_dist = closest_seeg['z'].values[0] - ez_regionxyz[0][2]
+    distancetomove = [x_dist, y_dist, z_dist]
 
     # createa copy of the seeg_xyz df and modify the electrode
     new_seeg_xyz = seeg_xyz.copy()
-    new_seeg_xyz.iloc[electrodeindices] = new_seeg_xyz.iloc[electrodeindices] + [x_dist, y_dist, z_dist]
+    new_seeg_xyz.iloc[electrodeindices] = new_seeg_xyz.iloc[electrodeindices] - distancetomove
+
+    print "Closest contact to ezregion: ", region_centers[ezindex], ' is ', seeg_contact
+    print "That is located at: ", closest_seeg
+    print "It will move: ", distancetomove
+    print "New location after movement is", new_seeg_xyz.iloc[seeg_index]
+
     return new_seeg_xyz
 
 def getallcontacts(seeg_labels, seeg_contact):
