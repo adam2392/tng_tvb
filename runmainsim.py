@@ -147,44 +147,6 @@ def runsim(sim, sim_length):
     (times, epilepts), (_, seegts) = sim.run(simulation_length=sim_length)
     return times, epilepts, seegts
 
-
-def getindexofregion(regions, ezregion=[], pzregion=[]):
-    sorter = np.argsort(regions)
-    ezindices = sorter[np.searchsorted(regions, ezregion, sorter=sorter)]
-    pzindices = sorter[np.searchsorted(regions, pzregion, sorter=sorter)]
-
-    return ezindices, pzindices
-
-def postprocts(epits, seegts, times, samplerate=1000):
-    # reject certain 5 seconds of simulation
-    secstoreject = 7
-    sampstoreject = secstoreject * samplerate
-
-    # get the time series processed and squeezed that we want to save
-    new_times = times[sampstoreject:]
-    new_epits = epits[sampstoreject:, 1, :, :].squeeze().T
-    new_zts = epits[sampstoreject:, 0, :, :].squeeze().T
-    new_seegts = seegts[sampstoreject:, :, :, :].squeeze().T
-
-    # don't reject any time period
-    new_times = times
-    new_epits = epits[:, 1, :, :].squeeze().T
-    new_zts = epits[:, 0, :, :].squeeze().T
-    new_seegts = seegts[:,:, :, :].squeeze().T
-
-    return new_times, new_epits, new_seegts, new_zts
-
-# assuming onset is the first bifurcation and then every other one is onsets
-# every other bifurcation after the first one is the offset
-def findonsetoffset(zts):
-    maxpeaks, minpeaks = peakdetect.peakdetect(zts, delta=0.2)
-    
-    # get every other peaks
-    onsettime, _ = zip(*maxpeaks)
-    offsettime, _ = zip(*minpeaks)
-    
-    return onsettime, offsettime
-
 if __name__ == '__main__':
     patient='id002_cj'
     # 1000 = 1 second

@@ -28,6 +28,8 @@ ssh                             := ssh $(port)
 }
 
 # rsync -aP /Users/adam2392/Documents/tvb/metadata/ adamli@139.124.148.56:/home/adamli/metadata/;
+# rsync -aP /Volumes/ADAM\ LI/pydata/output/mvar/ adamli@139.124.148.56:/home/adamli/data/;
+# rsync -aP /Volumes/ADAM\ LI/pydata/converted/ adamli@139.124.148.56:/home/adamli/data/converted/;
 ######################### Functions to Make #########################
 # sync-to-remote-data: *sync-data
 download: *download-patient

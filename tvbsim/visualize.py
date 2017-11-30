@@ -6,13 +6,6 @@ import scipy
 from matplotlib import pyplot as plt
 # from sklearn.preprocessing import MinMaxScaler
 
-def getindexofregion(regions, ezregion=[], pzregion=[]):
-    sorter = np.argsort(regions)
-    ezindices = sorter[np.searchsorted(regions, ezregion, sorter=sorter)]
-    pzindices = sorter[np.searchsorted(regions, pzregion, sorter=sorter)]
-
-    return ezindices, pzindices
-
 def normalizetime(ts):
     tsrange = (np.max(ts, 1) - np.min(ts, 1))
     ts = ts/tsrange[:,np.newaxis]
