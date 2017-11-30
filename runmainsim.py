@@ -177,7 +177,7 @@ def postprocts(epits, seegts, times, samplerate=1000):
 # assuming onset is the first bifurcation and then every other one is onsets
 # every other bifurcation after the first one is the offset
 def findonsetoffset(zts):
-    maxpeaks, minpeaks = peakdetect.peakdetect(zts)
+    maxpeaks, minpeaks = peakdetect.peakdetect(zts, delta=0.2)
     
     # get every other peaks
     onsettime, _ = zip(*maxpeaks)
@@ -238,7 +238,7 @@ if __name__ == '__main__':
     onsettimes = None
     offsettimes = None
     try:
-        onsettimes, offsettimes = findonsetoffset(zts[:, ezindices].squeeze())
+        onsettimes, offsettimes = findonsetoffset(zts[ezindices, :].squeeze())
     except:
         print "Still not working..."
 

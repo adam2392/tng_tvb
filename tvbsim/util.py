@@ -74,11 +74,13 @@ def movecontact(seeg_xyz, region_centers, ezindex, seeg_index):
     new_seeg_xyz = seeg_xyz.copy()
     new_seeg_xyz.iloc[electrodeindices] = new_seeg_xyz.iloc[electrodeindices] - distancetomove
 
+    print "\n\n movecontact function summary: \n"
     print "Closest contact to ezregion: ", region_centers[ezindex], ' is ', seeg_contact
     print "That is located at: ", closest_seeg
     print "It will move: ", distancetomove
     print "New location after movement is", new_seeg_xyz.iloc[seeg_index]
-
+    print "\n\n"
+    
     return new_seeg_xyz
 
 def getallcontacts(seeg_labels, seeg_contact):
