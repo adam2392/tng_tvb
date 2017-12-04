@@ -11,8 +11,11 @@ entrypoints==0.2.3
 enum34==1.1.6
 funcsigs==1.0.2
 functools32==3.2.3.post2
+futures==3.1.1
+h5py==2.7.1
 html5lib==0.9999999
 ipykernel==4.6.1
+ipyparallel==6.0.2
 ipython==5.5.0
 ipython-genutils==0.2.0
 ipywidgets==7.0.1
@@ -56,6 +59,7 @@ qtconsole==4.3.1
 scandir==1.5
 scikit-learn==0.19.0
 scipy==0.19.1
+seaborn==0.8.1
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.11.0

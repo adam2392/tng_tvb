@@ -26,7 +26,7 @@ ssh                             := ssh $(port)
 	@{ rsync -aP adamli@139.124.148.56:/home/vep/Pipeline/0-Raw/${patient}/seeg/*.eeg /Users/adam2392/Downloads/${patient}/;\
 	rsync -aP adamli@139.124.148.56:/home/vep/Pipeline/0-Raw/${patient}/seeg/*.edf /Users/adam2392/Downloads/${patient}/;\
 }
-
+# rsync -aP /Users/adam2392/Documents/pydata/output/mvar/ adamli@139.124.148.56:/home/adamli/data/;
 # rsync -aP /Users/adam2392/Documents/tvb/metadata/ adamli@139.124.148.56:/home/adamli/metadata/;
 # rsync -aP /Volumes/ADAM\ LI/pydata/output/mvar/ adamli@139.124.148.56:/home/adamli/data/;
 # rsync -aP /Volumes/ADAM\ LI/pydata/converted/ adamli@139.124.148.56:/home/adamli/data/converted/;

@@ -3,6 +3,19 @@ import numpy as np
 import pandas as pd
 import scipy
 
+import sys
+sys.path.append('../')
+import peakdetect
+
+'''
+Module: Util
+Description: These functions and objects are used to assist in setting up any sort of simulation environment. 
+
+PostProcess helps analyze the simulated data and perform rejection of senseless data and to analyze the z time series and determine an onset/offset period.
+
+MoveContacts helps analyze the simulated data's structural input data like seeg_xyz and region_centers to determine how to move a certain seeg contact and it's corresponding electrode. In addition, it can determine the region/contact with the closest point, so that can be determined as an EZ region.
+'''
+
 def extractseegxyz(seegfile):
     '''
     This is just a wrapper function to retrieve the seeg coordinate data in a pd dataframe
@@ -15,6 +28,17 @@ def extractcon(confile):
     '''
     con = connectivity.Connectivity.from_file(confile)
     return con
+
+def getall_sourceandelecs(confile, seegfile, project_dir):
+    ####### Initialize files needed to 
+    sensorsfile = os.path.join(project_dir, "seeg.txt")
+    confile = os.path.join(project_dir, "connectivity.zip")
+
+    # extract the seeg_xyz coords and the region centers
+    seeg_xyz = tvbsim.util.extractseegxyz(sensorsfile)
+    con = initconn(confile)
+
+    return seeg_xyz, con
 
 class PostProcess():
     '''
@@ -45,8 +69,8 @@ class PostProcess():
 
     # assuming onset is the first bifurcation and then every other one is onsets
     # every other bifurcation after the first one is the offset
-    def findonsetoffset(self, zts):
-        maxpeaks, minpeaks = peakdetect.peakdetect(zts, delta=0.2)
+    def findonsetoffset(self, zts, delta=0.):
+        maxpeaks, minpeaks = peakdetect.peakdetect(zts, delta=delta)
         
         # get every other peaks
         onsettime, _ = zip(*maxpeaks)
@@ -75,6 +99,9 @@ class MoveContacts():
             self.reg_xyz = pd.DataFrame.as_matrix(self.reg_xyz)
                 
         self.VERBOSE=VERBOSE
+
+    def set_seegxyz(self, seeg_xyz):
+        self.seeg_xyz = seeg_xyz
 
     def simplest_gain_matrix(self, seeg_xyz):
         '''
@@ -113,17 +140,23 @@ class MoveContacts():
         indice = sorter[np.searchsorted(self.region_labels, region, sorter=sorter)]
         return indice
 
-    def findclosestcontact(self, ezindex):
+    def findclosestcontact(self, ezindex, elecmovedindices=[]):
         '''
         This function finds the closest contact to an ezregion
         '''
         # get the ez region's xyz coords
         ez_regionxyz = self.reg_xyz[ezindex]
 
+        # create a mask of the indices we already moved
+        elec_indices = np.arange(0, self.seeg_xyz.shape[0])
+        movedmask = [element for i, element in enumerate(elec_indices) if i not in elecmovedindices]
+
+
         # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
-        tree = scipy.spatial.KDTree(self.seeg_xyz)
+        tree = scipy.spatial.KDTree(self.seeg_xyz[movedmask, :])
         near_seeg = tree.query(ez_regionxyz)
         
+        # get the distance and the index at the min
         distance = near_seeg[0]
         seeg_index = near_seeg[1]
         return seeg_index, distance
@@ -137,6 +170,7 @@ class MoveContacts():
         closest_seeg = self.seeg_xyz[seeg_index]
         seeg_contact = self.seeg_labels[seeg_index]
 
+        seeg_label = seeg_contact.split("'")[0]
         # perform some processing to get all the contact indices for this electrode
         electrodeindices = self.getallcontacts(seeg_contact)
 
@@ -152,6 +186,9 @@ class MoveContacts():
         new_seeg_xyz = self.seeg_xyz.copy()
         new_seeg_xyz[electrodeindices] = new_seeg_xyz[electrodeindices] + distancetomove
 
+        # modify the object's seeg xyz
+        self.seeg_xyz[electrodeindices] = self.seeg_xyz[electrodeindices] + distancetomove
+
         if self.VERBOSE:
             print "\n\n movecontact function summary: \n"
             print "Closest contact to ezregion: ", ez_regionxyz, ' is ', seeg_contact
@@ -161,9 +198,9 @@ class MoveContacts():
             # print electrodeindices
             print "\n\n"
         
-        return new_seeg_xyz
+        return new_seeg_xyz, electrodeindices
 
-    def findclosestregion(self, seegindex):
+    def findclosestregion(self, seegindex, p=2):
         '''
         This function finds the closest contact to an ezregion
         '''
@@ -172,7 +209,7 @@ class MoveContacts():
 
         # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
         tree = scipy.spatial.KDTree(self.reg_xyz)
-        near_region = tree.query(contact_xyz)
+        near_region = tree.query(contact_xyz, p=p)
         
         distance = near_region[0]
         region_index = near_region[1]
