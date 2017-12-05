@@ -1,6 +1,8 @@
 # Ignored folders added by me
 _tvbdata/
 _tvblibrary/
+tvbdata/
+tvblibrary/
 metadata/
 output/
 demo_scripts/
