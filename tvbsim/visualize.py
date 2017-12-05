@@ -209,7 +209,7 @@ class RawPlotter(Plotter):
 
         print "ez seeg index is: ", ezseegindex
         # get the channels to plot indices
-        chanstoplot = defineindicestoplot(chanlabels, plotsubset, np.array([ezseegindex], dtype=int), pzindices=[])
+        chanstoplot = defineindicestoplot(chanlabels, plotsubset, ezseegindex, pzindices=[])
         chanstoplot = chanstoplot.astype(int)
         # locations to plot for each plot along y axis
         # locations to plot for each plot along y axis
@@ -283,7 +283,7 @@ class RawPlotter(Plotter):
     def plotlabeledregion(self, xreg, yreg, ezindices, label):
         self.axes.plot(xreg[ezindices] , yreg[ezindices], 'bo', markersize=12, label=label)  ### EZ
 
-    def plotcontactsinbrain(self, cort_surf, regioncentres, regionlabels, seeg_xyz, seeg_labels, incr_cont, ezindices, pzindices=[]):
+    def plotcontactsinbrain(self, cort_surf, regioncentres, regionlabels, seeg_xyz, seeg_labels, incr_cont, patient, ezindices, pzindices=[]):
         # get xyz coords of centres
         xreg, yreg, zreg = regioncentres.T
         numregions = int(regioncentres.shape[0])
@@ -343,7 +343,8 @@ class RawPlotter(Plotter):
 
         self.axes.set_xlabel('x')
         self.axes.set_ylabel('y')
-
+        self.axes.set_title('SEEG Implantations for ' + patient + 
+            ' nez=' + str(len(ezindices)) + ' npz='+ str(len(pzindices)), **self.title_font)            
         self.axes.grid(True)
         self.axes.legend()
         plt.show()
