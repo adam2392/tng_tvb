@@ -10,6 +10,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 def normalizetime(ts):
     tsrange = (np.max(ts, 1) - np.min(ts, 1))
+    print tsrange
     ts = ts/tsrange[:,np.newaxis]
     return ts
 def normalizeseegtime(ts):
@@ -25,7 +26,7 @@ def minmaxts(ts):
 
 def highpassfilter(seegts):
     # seegts = seegts.T
-    b, a = scipy.signal.butter(2, 0.1, btype='highpass', output='ba')
+    b, a = scipy.signal.butter(5, 0.5, btype='highpass', analog=False, output='ba')
     seegf = np.zeros(seegts.shape)
 
     numcontacts, _ = seegts.shape
@@ -37,7 +38,10 @@ def highpassfilter(seegts):
 def defineindicestoplot(allindices, plotsubset, ezindices=[], pzindices=[]):
     # get random indices not within ez, or pz
     numbers = np.arange(0, len(allindices), dtype=int)
-    numbers = np.delete(numbers, np.concatenate((ezindices, pzindices), axis=0))
+    # print ezindices
+    print numbers
+    numbers = np.delete(numbers, ezindices)
+    numbers = np.delete(numbers, pzindices)
     randindices = np.random.choice(numbers, 3)
 
     if plotsubset:
@@ -64,10 +68,22 @@ class Plotter():
         self.title_font = title_font
 
 class RawPlotter(Plotter):
-    def __init__(self, axis_font, title_font, color_new, figsize=None):
+    def __init__(self, axis_font=None, title_font=None, color_new=None, figsize=None):
+        if not axis_font:
+            axis_font = {'family':'Arial', 'size':'30'}
+
+        if not title_font:
+            ### Set the font dictionaries (for plot title and axis titles)
+            title_font = {'fontname':'Arial', 'size':'30', 'color':'black', 'weight':'normal',
+          'verticalalignment':'bottom'} # Bottom vertical alignment for more space
+
+        if not color_new:
+            color_new = ['peru', 'dodgerblue', 'slategrey', 
+             'skyblue', 'springgreen', 'fuchsia', 'limegreen', 
+             'orangered',  'gold', 'crimson', 'teal', 'blueviolet', 'black', 'cyan', 'lightseagreen',
+             'lightpink', 'red', 'indigo', 'mediumorchid', 'mediumspringgreen']
         Plotter.__init__(self, axis_font, title_font)
         self.initializefig(figsize)
-
         self.color_new = color_new
 
     def initializefig(self, figsize=None):
@@ -209,13 +225,17 @@ class RawPlotter(Plotter):
 
         print "ez seeg index is: ", ezseegindex
         # get the channels to plot indices
-        chanstoplot = defineindicestoplot(chanlabels, plotsubset, ezseegindex, pzindices=[])
+        chanstoplot = defineindicestoplot(chanlabels, plotsubset, ezindices=ezseegindex, pzindices=[])
         chanstoplot = chanstoplot.astype(int)
+
+        # hard coded modify
+        chanstoplot = [11, 12, 13, 15, 16, 17]
         # locations to plot for each plot along y axis
         # locations to plot for each plot along y axis
         regf = 0; regt = len(chanstoplot)
         reg = np.linspace(0, (len(chanstoplot)+1)*2, len(chanstoplot)+1)
-        reg = reg[1:]
+        reg = reg[0:]
+        # regt = len(regionstoplot)
 
         # Normalize the time series in the time axis to have nice plots also high pass filter
         # seegts = highpassfilter(seegts)
@@ -228,34 +248,44 @@ class RawPlotter(Plotter):
         print "ez seeg index is: ", ezseegindex
         print "chanstoplot are: ", chanstoplot
 
+        
         # get the epi ts to plot and the corresponding time indices
         seegtoplot = seegts[chanstoplot, timewindowbegin:timewindowend]
         timestoplot = times[timewindowbegin:timewindowend]
-    #     seegtoplot = seegtoplot - np.mean(seegtoplot, axis=1)[:, np.newaxis]
+
+        seegtoplot = seegtoplot - np.mean(seegtoplot, axis=1)[:, np.newaxis]
             
         ######################### PLOTTING OF SEEG TS ########################
+        plottedts = seegtoplot.T 
+        yticks = np.nanmean(seegtoplot, axis=1, dtype='float64')
+
+        # print np.mean(seegts[14,:])
+        # print type(seegtoplot[0,0])
+        # print type(seegtoplot)
+        # print plottedts.shape
+        # print yticks
         # plot time series
-        self.axes.plot(timestoplot, seegtoplot.T + reg[:len(chanstoplot)], 
+        self.axes.plot(timestoplot, seegtoplot.T + np.r_[regf:regt], 
                              color='black', linewidth=3)
         
         # plot 3 different colors - normal, ez, pz
         colors = ['red','blue', 'black']
-        if plotsubset: # plotting subset of all the seeg channels
-            for idx, chan in enumerate(chanstoplot):
-                if chan == ezseegindex:
-                    self.axes.plot(timestoplot, seegtoplot[idx,:].T + reg[idx], 
-                             color='red', linewidth=3)
-                else:
-                    self.axes.plot(timestoplot, seegtoplot[idx,:].T + reg[idx], 
-                             color='black', linewidth=3)
-        else:   # plotting all the seeg channels
-            for idx, chan in enumerate(chanstoplot):
-                if chan == ezseegindex:
-                    self.axes.plot(timestoplot, seegtoplot[chan,:].T + reg[chan], 
-                             color='red', linewidth=3)
-                else:
-                    self.axes.plot(timestoplot, seegtoplot[chan,:].T + reg[chan], 
-                             color='black', linewidth=3)
+        # if plotsubset: # plotting subset of all the seeg channels
+        #     for idx, chan in enumerate(chanstoplot):
+        #         if chan == ezseegindex:
+        #             self.axes.plot(timestoplot, seegtoplot[idx,:].T + reg[idx], 
+        #                      color='red', linewidth=3)
+        #         else:
+        #             self.axes.plot(timestoplot, seegtoplot[idx,:].T + reg[idx], 
+        #                      color='black', linewidth=3)
+        # else:   # plotting all the seeg channels
+        #     for idx, chan in enumerate(chanstoplot):
+        #         if chan == ezseegindex:
+        #             self.axes.plot(timestoplot, seegtoplot[chan,:].T + reg[chan], 
+        #                      color='red', linewidth=3)
+        #         else:
+        #             self.axes.plot(timestoplot, seegtoplot[chan,:].T + reg[chan], 
+        #                      color='black', linewidth=3)
 
         # adapt the axis fonts for this plot
         plt.rc('font', **self.axis_font)
@@ -268,7 +298,8 @@ class RawPlotter(Plotter):
         self.axes.set_title('SEEG TVB Simulated TS for ' + patient + ' nez=' + str(len(ezregion)) + ' npz='+ str(len(pzregion)), **self.title_font)            
         self.axes.set_xlabel('Time (msec)')
         self.axes.set_ylabel('Channels N=' + str(len(chanlabels)))
-        self.axes.set_yticks(reg)
+        self.axes.set_yticks(np.r_[regf:regt])
+        # self.axes.set_yticks(yticks)
         self.axes.set_yticklabels(chanlabels[chanstoplot])
         self.fig.tight_layout()
         plt.show()
@@ -348,6 +379,8 @@ class RawPlotter(Plotter):
         self.axes.grid(True)
         self.axes.legend()
         plt.show()
+
+        return self.fig
 
 # def plotepileptorts(epits, times, metadata, patient, plotsubset=False):
 #     '''

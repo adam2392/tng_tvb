@@ -6,6 +6,7 @@ import scipy
 import sys
 sys.path.append('../')
 import peakdetect
+import zipfile
 
 '''
 Module: Util
@@ -57,6 +58,93 @@ def getall_sourceandelecs(confile, seegfile, project_dir):
     con = initconn(confile)
 
     return seeg_xyz, con
+
+def read_surf(directory, use_subcort):
+    '''
+    Pass in directory for where the entire metadata for this patient is
+    '''
+    # Shift to account for 0 - unknown region, not included later
+    reg_map_cort = np.genfromtxt((os.path.join(directory, "region_mapping_cort.txt")), dtype=int) - 1
+    reg_map_subc = np.genfromtxt((os.path.join(directory, "region_mapping_subcort.txt")), dtype=int) - 1
+
+    with zipfile.ZipFile(os.path.join(directory, "surface_cort.zip")) as zip:
+        with zip.open('vertices.txt') as fhandle:
+            verts_cort = np.genfromtxt(fhandle)
+        with zip.open('normals.txt') as fhandle:
+            normals_cort = np.genfromtxt(fhandle)
+        with zip.open('triangles.txt') as fhandle:
+            triangles_cort = np.genfromtxt(fhandle, dtype=int)
+
+    with zipfile.ZipFile(os.path.join(directory, "surface_subcort.zip")) as zip:
+        with zip.open('vertices.txt') as fhandle:
+            verts_subc = np.genfromtxt(fhandle)
+        with zip.open('normals.txt') as fhandle:
+            normals_subc = np.genfromtxt(fhandle)
+        with zip.open('triangles.txt') as fhandle:
+            triangles_subc = np.genfromtxt(fhandle, dtype=int)
+
+    vert_areas_cort = compute_vertex_areas(verts_cort, triangles_cort)
+    vert_areas_subc = compute_vertex_areas(verts_subc, triangles_subc)
+
+    if not use_subcort:
+        return (verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
+    else:
+        verts = np.concatenate((verts_cort, verts_subc))
+        normals = np.concatenate((normals_cort, normals_subc))
+        areas = np.concatenate((vert_areas_cort, vert_areas_subc))
+        regmap = np.concatenate((reg_map_cort, reg_map_subc))
+
+        return (verts, normals, areas, regmap)
+def compute_triangle_areas(vertices, triangles):
+    """Calculates the area of triangles making up a surface."""
+    tri_u = vertices[triangles[:, 1], :] - vertices[triangles[:, 0], :]
+    tri_v = vertices[triangles[:, 2], :] - vertices[triangles[:, 0], :]
+    tri_norm = np.cross(tri_u, tri_v)
+    triangle_areas = np.sqrt(np.sum(tri_norm ** 2, axis=1)) / 2.0
+    triangle_areas = triangle_areas[:, np.newaxis]
+    return triangle_areas
+
+
+def compute_vertex_areas(vertices, triangles):
+    triangle_areas = compute_triangle_areas(vertices, triangles)
+    vertex_areas = np.zeros((vertices.shape[0]))
+    for triang, vertices in enumerate(triangles):
+        for i in range(3):
+            vertex_areas[vertices[i]] += 1./3. * triangle_areas[triang]
+
+    return vertex_areas
+def gain_matrix_inv_square(vertices, areas, region_mapping,
+                       nregions, sensors):
+    '''
+    Computes a gain matrix using an inverse square fall off (like a mean field model)
+    Parameters
+    ----------
+    vertices             np.ndarray of floats of size n x 3, where n is the number of vertices
+    areas                np.ndarray of floats of size n x 3
+    region_mapping       np.ndarray of ints of size n
+    nregions             int of the number of regions
+    sensors              np.ndarray of floats of size m x 3, where m is the number of sensors
+
+    Returns
+    -------
+    np.ndarray of size m x n
+    '''
+
+    nverts = vertices.shape[0]
+    nsens = sensors.shape[0]
+
+    reg_map_mtx = np.zeros((nverts, nregions), dtype=int)
+    for i, region in enumerate(region_mapping):
+       if region >= 0:
+           reg_map_mtx[i, region] = 1
+
+    gain_mtx_vert = np.zeros((nsens, nverts))
+    for sens_ind in range(nsens):
+        a = sensors[sens_ind, :] - vertices
+        na = np.sqrt(np.sum(a**2, axis=1))
+        gain_mtx_vert[sens_ind, :] = areas / na**2
+
+    return gain_mtx_vert.dot(reg_map_mtx)
 
 class PostProcess():
     '''
@@ -126,8 +214,13 @@ class MoveContacts():
         This is a function to recompute a new gain matrix based on xyz that moved
         G = 1 / ( 4*pi * sum(sqrt(( X - X[:, new])^2))^2)
         '''
+        # NOTE IF YOU MOVE SEEGXYZ ONTO REGXYZ, YOU DIVIDE BY 0, SO THERE IS A PROBLEM
         #reg_xyz = con.centres
         dr = self.reg_xyz - seeg_xyz[:, np.newaxis]
+
+        if 0 in dr:
+            print "Computing simplest gain matrix will result in error! Dividing by 0!"
+
         ndr = np.sqrt((dr**2).sum(axis=-1))
         Vr = 1.0 / (4 * np.pi) / ndr**2
         return Vr
