@@ -103,15 +103,12 @@ def compute_triangle_areas(vertices, triangles):
     triangle_areas = np.sqrt(np.sum(tri_norm ** 2, axis=1)) / 2.0
     triangle_areas = triangle_areas[:, np.newaxis]
     return triangle_areas
-
-
 def compute_vertex_areas(vertices, triangles):
     triangle_areas = compute_triangle_areas(vertices, triangles)
     vertex_areas = np.zeros((vertices.shape[0]))
     for triang, vertices in enumerate(triangles):
         for i in range(3):
             vertex_areas[vertices[i]] += 1./3. * triangle_areas[triang]
-
     return vertex_areas
 def gain_matrix_inv_square(vertices, areas, region_mapping,
                        nregions, sensors):

@@ -229,7 +229,7 @@ class RawPlotter(Plotter):
         chanstoplot = chanstoplot.astype(int)
 
         # hard coded modify
-        chanstoplot = [11, 12, 13, 15, 16, 17]
+        # chanstoplot = [11, 12, 13, 15, 16, 17]
         # locations to plot for each plot along y axis
         # locations to plot for each plot along y axis
         regf = 0; regt = len(chanstoplot)

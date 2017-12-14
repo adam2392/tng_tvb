@@ -42,6 +42,7 @@ def initepileptor(r, ks, tt, tau, x0norm, x0ez, x0pz, ezindices, pzindices, num_
     # set pz regions
     epileptors.x0[pzindices] = x0pz
 
+    # Constrain the epileptor's state variable ranges. Consider getting rid of.
     epileptors.state_variable_range['x1'] = np.r_[-0.5, 0.1]
     epileptors.state_variable_range['z'] = np.r_[3.5,3.7]
     epileptors.state_variable_range['y1'] = np.r_[-0.1,1]
