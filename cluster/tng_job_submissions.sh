@@ -20,6 +20,8 @@ numez=${numez:-0}
 numpz=${numpz:-0}
 
 echo ${movecontacts}
+echo ${numez}
+echo ${numpz}
 
 # Pause before running to check
 printf "About to run on patients (press enter to continue): $patients" 

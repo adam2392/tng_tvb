@@ -100,7 +100,7 @@ def runclustersim(patient,eznum=1,pznum=0):
         pzregion = []
     else:
         print >> sys.stderr, "Not implemented pz num >= 1 yet"
-        break
+        raise
     
     
     if MOVECONTACT:
