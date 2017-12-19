@@ -83,11 +83,14 @@ def runclustersim(patient,eznum=1,pznum=0,metadatadir=None,outputdatadir=None,MO
 
     
     randez = np.random.randint(0, len(regions), size=eznum)
+    randpz = np.random.randint(0, len(regions), size=pznum)
+
     if eznum <= 1:
         ezregion = list(regions[randez])
     else:
         randez = np.random.randint(0, len(regions), size=pznum)
         ezregion = regions[randez]
+        
     if pznum == 1:
         pzregion = list(regions[randpz])
     elif pznum == 0:
