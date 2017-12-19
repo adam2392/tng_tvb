@@ -18,6 +18,11 @@ To install this, just simply clone from github repo along with the prerequisite 
 
     git clone https://github.com/adam2392/tng_tvb
 
+Setup a virtual env and then run
+
+    source activate venv
+    pip install -r requirements.txt
+
 ## Running Simulations
 ### 1. Locally Running on Notebook
 Modify the shell file to include your local paths to tvb lib and data, and then run it.
