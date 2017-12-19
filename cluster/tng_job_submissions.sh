@@ -98,10 +98,10 @@ movecontacts=${movecontacts} "
 	--exclusive \
 	--time=${walltime} \
 	--nodes=${NUM_NODES} \
-	--ntasks-per-node=${NUM_PROCSPERNODE} \
 	--cpus-per-task=${NUM_CPUPERTASK} \
 	--job-name=${jobname} "
-
+	# --ntasks-per-node=${NUM_PROCSPERNODE} \
+	
 	# build a scavenger job, gpu job, or other job
 	echo $sbatcomm $exvars runtvbjob.sbatch 
 	printf "Sbatch should run now\n"
