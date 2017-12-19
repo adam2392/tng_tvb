@@ -1,11 +1,12 @@
 #!/bin/bash
-
 . /soft/miniconda3/activate
 source activate tvbforwardsim
 
 # to submit oarsub -S ./tng_job_submissions
 patients=(
-	'id001_ac id002_cj id014_rb'
+	'id001_ac 
+	id002_cj
+	id014_rb'
 	)
 
 # 1. Prompt user for input that runs the analysis
@@ -26,6 +27,13 @@ echo ${numpz}
 # Pause before running to check
 printf "About to run on patients (press enter to continue): $patients" 
 read answer
+
+metadatadir='/home/adamli/metadata/'
+outputdatadir='/home/adamli/data/tvbforwardsim/'
+printf "\nThis is the data directories: \n"
+printf "$metadatadir \n"
+printf "$outputdatadir \n"
+printf "\n"
 
 ################################### 2. DEFINE SLURM PARAMS ###########################################
 NUM_PROCSPERNODE=1  	# number of processors per node (1-24). Use 24 for GNU jobs.
@@ -78,12 +86,21 @@ for patient in $patients; do
 	# printf "\n \n The number of windows to parallelize on is: $numWins \n"
 	
 	# create export commands
-	exvars="--export=patient=${patient},numez=${numez},numpz=${numpz} "
+	exvars="--export=patient=${patient},\
+numez=${numez},\
+numpz=${numpz},\
+metadatadir=${metadatadir},\
+outputdatadir=${outputdatadir},\
+movecontacts=${movecontacts} "
 
 	# build basic sbatch command with all params parametrized
-	sbatcomm="sbatch --exclusive --time=${walltime} --nodes=${NUM_NODES} \
-	 --ntasks-per-node=${NUM_PROCSPERNODE} --cpus-per-task=${NUM_CPUPERTASK} \
-	 --job-name=${jobname} "
+	sbatcomm="sbatch \
+	--exclusive \
+	--time=${walltime} \
+	--nodes=${NUM_NODES} \
+	--ntasks-per-node=${NUM_PROCSPERNODE} \
+	--cpus-per-task=${NUM_CPUPERTASK} \
+	--job-name=${jobname} "
 
 	# build a scavenger job, gpu job, or other job
 	echo $sbatcomm $exvars runtvbjob.sbatch 

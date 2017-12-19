@@ -17,15 +17,12 @@ import peakdetect
 from runmainsim import *
 import tvbsim
 
-import multiprocessing as mp
-from contextlib import closing
+def runclustersim(patient,eznum=1,pznum=0,metadatadir=None,outputdatadir=None,MOVECONTACT=1):
+    sys.stdout.write(patient)
+    # metadatadir = '/home/adamli/metadata/'
+    # outputdatadir = '/home/adamli/data/tvbforwardsim/'
 
-def runclustersim(patient,eznum=1,pznum=0):
-    print(patient)
-    # eznum = 1
-    # pznum = 0
-    MOVECONTACT = 1
-
+    ###### SIMULATION LENGTH AND SAMPLING ######
     # 1000 = 1 second
     samplerate = 1000 # Hz
     sim_length = 240*samplerate    
@@ -48,7 +45,6 @@ def runclustersim(patient,eznum=1,pznum=0):
     x0norm=-2.5
     x0ez=-1.6
     x0pz=-2.04
-
     # depends on epileptor variables of interest: it is where the x2-y2 var is
     varindex = [1]
 
@@ -58,12 +54,10 @@ def runclustersim(patient,eznum=1,pznum=0):
     noise_cov = np.array([0.001, 0.001, 0.,\
                     0.0001, 0.0001, 0.])
 
-    root_dir = os.path.join('/home/adamli/')
-    project_dir = os.path.join(root_dir, "metadata/",patient)
-    outputdir = os.path.join('/home/adamli/data/tvbforwardsim/', patient)
+    project_dir = os.path.join(metadatadir, patient)
+    outputdir = os.path.join(outputdatadir, patient)
     if not os.path.exists(outputdir):
         os.mkdir(outputdir)
-        
     tvbsim.util.renamefiles(patient, project_dir)
 
     ####### Initialize files needed to 
@@ -151,8 +145,9 @@ def runclustersim(patient,eznum=1,pznum=0):
         
     filename = os.path.join(outputdir, patient+'_sim_nez'+str(len(ezregion))+\
                                         '_npz'+str(len(pzregion))+'.npz')
-    print("Project directory for meta data is : ", project_dir)
-    print("File to be saved is: ", filename)
+
+    sys.stdout.write("\nProject directory for meta data is : " + project_dir)
+    sys.stdout.write("\nFile to be saved is: " + filename)
     
     ####################### 2. Neural Mass Model @ Nodes ######################
     epileptors = initepileptor(epileptor_r, epiks, epitt, epitau, x0norm, \
@@ -165,7 +160,7 @@ def runclustersim(patient,eznum=1,pznum=0):
     monitors = initmonitors(period, sensorsfile, gainmatfile, varindex)
 
     if MOVECONTACT:
-        print "moving contacts for ", patient
+        sys.stdout.write("\nmoving contacts for " + patient)
         # modify the config of the monitors
         monitors[1].sensors.locations = movecontact.seeg_xyz
         monitors[1].gain = modgain
@@ -209,7 +204,6 @@ def runclustersim(patient,eznum=1,pznum=0):
         'offsettimes':offsettimes,
         'patient':patient,
     }
-
     # save tseries
     np.savez_compressed(filename, epits=epits, seegts=seegts, \
              times=times, zts=zts, metadata=meta)
@@ -219,5 +213,9 @@ if __name__ == '__main__':
     patient = str(sys.argv[1]).lower()
     eznum = int(sys.argv[2])
     pznum = int(sys.argv[3])
+    metadatadir = str(sys.argv[4])
+    outputdatadir = str(sys.argv[5])
+    movecontacts = int(sys.argv[6])
 
-    runclustersim(patient,eznum,pznum)
+    sys.stdout.write('Running cluster simulation...\n')
+    runclustersim(patient,eznum,pznum,metadatadir,outputdatadir,movecontacts)

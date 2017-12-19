@@ -23,5 +23,8 @@ echo ${SLURM_SUBMIT_DIR}
 echo ${patient}
 echo ${numez}
 echo ${numpz}
+echo ${metadatadir}
+echo ${outputdatadir}
+echo ${movecontacts}
 
-python runclustersim.py ${patient} ${numez} ${numpz}
+python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${movecontacts}
