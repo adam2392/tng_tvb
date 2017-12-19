@@ -95,13 +95,13 @@ movecontacts=${movecontacts} "
 
 	# build basic sbatch command with all params parametrized
 	sbatcomm="sbatch \
-	--exclusive \
 	--time=${walltime} \
 	--nodes=${NUM_NODES} \
 	--cpus-per-task=${NUM_CPUPERTASK} \
 	--job-name=${jobname} "
+		# --exclusive \
 	# --ntasks-per-node=${NUM_PROCSPERNODE} \
-	
+
 	# build a scavenger job, gpu job, or other job
 	echo $sbatcomm $exvars runtvbjob.sbatch 
 	printf "Sbatch should run now\n"
