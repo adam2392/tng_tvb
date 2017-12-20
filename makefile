@@ -19,11 +19,11 @@ ssh                             := ssh $(port)
 
 
 # download fragility results for tvb sim
-*download-pert:
-	@{ rsync -aP adamli@139.124.148.56:/home/adamli/data/output/tvbsim/pert/ /Volumes/ADAM\ LI/pydata/output/tvbsim/pert/;\
-}
+# *download-pert:
+# 	@{ rsync -aP adamli@139.124.148.56:/home/adamli/data/output/tvbsim/pert/ /Volumes/ADAM\ LI/pydata/output/tvbsim/*/pert/;\
+# }
 *download-mvar:
-	@{ rsync -aP adamli@139.124.148.56:/home/adamli/data/output/tvbsim/ /Volumes/ADAM\ LI/pydata/output/tvbsim/mvar/;\
+	@{ rsync -aP adamli@139.124.148.56:/home/adamli/data/output/tvbsim/ /Volumes/ADAM\ LI/pydata/output/tvbsim/;\
 }
 
 *download-fft:
@@ -49,7 +49,7 @@ ssh                             := ssh $(port)
 ######################### Functions to Make #########################
 download: *download-patient
 download-eeg: *download-eeg
-download-pert: *download-pert
+# download-pert: *download-pert
 download-mvar: *download-mvar
 download-freq: *download-fft
 
