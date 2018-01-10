@@ -10,7 +10,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 def normalizetime(ts):
     tsrange = (np.max(ts, 1) - np.min(ts, 1))
-    print tsrange
+
     ts = ts/tsrange[:,np.newaxis]
     return ts
 def normalizeseegtime(ts):
@@ -91,8 +91,8 @@ class RawPlotter(Plotter):
         self.fig = plt.figure(figsize=figsize)
         self.axes = plt.gca()
 
-    def plotzts(self, zts, ezloc, onsettimes, offsettimes):
-        self.axes.plot(zts, color='black')
+    def plotzts(self, zts, onsettimes=[], offsettimes=[]):
+        self.axes.plot(zts.squeeze(), color='black')
         self.axes.set_title('Z Region Time Series', **self.title_font)
         
         # adapt the axis fonts for this plot
@@ -108,7 +108,7 @@ class RawPlotter(Plotter):
         
         return self.fig
 
-    def plotepileptorts(self, epits, times, metadata, patient, onsettimes, offsettimes, plotsubset=False):
+    def plotepileptorts(self, epits, times, metadata, onsettimes, offsettimes, patient='', plotsubset=False):
         '''
         Function for plotting the epileptor time series for a given patient
 
@@ -197,7 +197,7 @@ class RawPlotter(Plotter):
 
         return self.fig
 
-    def plotseegts(self, seegts, times, metadata, onsettimes, offsettimes, patient, ezseegindex=[], plotsubset=False):
+    def plotseegts(self, seegts, times, metadata, onsettimes, offsettimes, ezseegindex=[], patient='', plotsubset=False):
         '''
         Function for plotting the epileptor time series for a given patient
 
@@ -240,14 +240,6 @@ class RawPlotter(Plotter):
         # Normalize the time series in the time axis to have nice plots also high pass filter
         # seegts = highpassfilter(seegts)
         seegts = normalizetime(seegts)
-
-        print "ezreion is: ", ezregion
-        print "pzregion is: ", pzregion
-        print "x0 values are (ez, pz, norm): ", x0ez, x0pz, x0norm
-        print "time series shape is: ", seegts.shape
-        print "ez seeg index is: ", ezseegindex
-        print "chanstoplot are: ", chanstoplot
-
         
         # get the epi ts to plot and the corresponding time indices
         seegtoplot = seegts[chanstoplot, timewindowbegin:timewindowend]

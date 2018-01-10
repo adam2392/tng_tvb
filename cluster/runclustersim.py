@@ -18,6 +18,7 @@ from runmainsim import *
 import tvbsim
 
 def runclustersim(patient,eznum=1,pznum=0,metadatadir=None,outputdatadir=None,MOVECONTACT=1):
+
     sys.stdout.write(patient)
     # metadatadir = '/home/adamli/metadata/'
     # outputdatadir = '/home/adamli/data/tvbforwardsim/'

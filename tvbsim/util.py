@@ -25,7 +25,7 @@ def renamefiles(patient, project_dir):
     try:
         os.rename(sensorsfile, newsensorsfile)
     except:
-        print "Already renamed seeg.xyz possibly!"
+        print("Already renamed seeg.xyz possibly!")
 
     # convert gain_inv-square.mat file into gain_inv-square.txt file
     gainmatfile = os.path.join(project_dir, "gain_inv-square.mat")
@@ -33,7 +33,7 @@ def renamefiles(patient, project_dir):
     try:
         os.rename(gainmatfile, newgainmatfile)
     except:
-        print "Already renamed gain_inv-square.mat possibly!"
+        print("Already renamed gain_inv-square.mat possibly!")
 
 def extractseegxyz(seegfile):
     '''
@@ -176,8 +176,8 @@ class PostProcess():
         maxpeaks, minpeaks = peakdetect.peakdetect(zts, delta=delta)
         
         # get every other peaks
-        onsettime, _ = zip(*maxpeaks)
-        offsettime, _ = zip(*minpeaks)
+        onsettime, _ = zip(*minpeaks)
+        offsettime, _ = zip(*maxpeaks)
         
         return onsettime, offsettime
 
@@ -216,7 +216,7 @@ class MoveContacts():
         dr = self.reg_xyz - seeg_xyz[:, np.newaxis]
 
         if 0 in dr:
-            print "Computing simplest gain matrix will result in error! Dividing by 0!"
+            print("Computing simplest gain matrix will result in error! Dividing by 0!")
 
         ndr = np.sqrt((dr**2).sum(axis=-1))
         Vr = 1.0 / (4 * np.pi) / ndr**2
@@ -230,8 +230,8 @@ class MoveContacts():
         elec_label = seeg_contact.split("'")[0]
         isleftside = seeg_contact.find("'")
         if self.VERBOSE:
-            print seeg_contact
-            print elec_label
+            print(seeg_contact)
+            print(elec_label)
         
         # get indices depending on if it is a left/right hemisphere electrode
         if isleftside != -1:
@@ -259,7 +259,6 @@ class MoveContacts():
         elec_indices = np.arange(0, self.seeg_xyz.shape[0])
         movedmask = [element for i, element in enumerate(elec_indices) if i not in elecmovedindices]
 
-
         # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
         tree = scipy.spatial.KDTree(self.seeg_xyz[movedmask, :])
         near_seeg = tree.query(ez_regionxyz)
@@ -282,7 +281,7 @@ class MoveContacts():
         # perform some processing to get all the contact indices for this electrode
         electrodeindices = self.getallcontacts(seeg_contact)
 
-        print closest_seeg
+        print(closest_seeg)
 
         # get the euclidean distance that will be moved for this electrode
         x_dist = ez_regionxyz[0] - closest_seeg[0]
@@ -298,13 +297,67 @@ class MoveContacts():
         self.seeg_xyz[electrodeindices] = self.seeg_xyz[electrodeindices] + distancetomove
 
         if self.VERBOSE:
-            print "\n\n movecontact function summary: \n"
-            print "Closest contact to ezregion: ", ez_regionxyz, ' is ', seeg_contact
-            print "That is located at: ", closest_seeg
-            print "It will move: ", distancetomove
-            print "New location after movement is", new_seeg_xyz[seeg_index]
+            print("\n\n movecontact function summary: \n")
+            print("Closest contact to ezregion: ", ez_regionxyz, ' is ', seeg_contact)
+            print("That is located at: ", closest_seeg)
+            print("It will move: ", distancetomove)
+            print("New location after movement is", new_seeg_xyz[seeg_index])
             # print electrodeindices
-            print "\n\n"
+        
+        return new_seeg_xyz, electrodeindices
+
+    def movecontactto(self, ezindex, seeg_index, distance=0, axis='auto'):
+        '''
+        This function moves the contact and the entire electrode the correct distance, so that the contact
+        is on the ezregion now
+        '''
+        ez_regionxyz = self.reg_xyz[ezindex] # get xyz of ez region
+        closest_seeg = self.seeg_xyz[seeg_index] # get the closest seeg's xyz
+        seeg_contact = self.seeg_labels[seeg_index] # get the closest seeg's label
+
+        seeg_label = seeg_contact.split("'")[0]
+        # perform some processing to get all the contact indices for this electrode
+        electrodeindices = self.getallcontacts(seeg_contact)
+
+        # get the euclidean distance that will be moved for this electrode
+        x_dist = ez_regionxyz[0] - closest_seeg[0]
+        y_dist = ez_regionxyz[1] - closest_seeg[1]
+        z_dist = ez_regionxyz[2] - closest_seeg[2]
+        distancetomove = [x_dist, y_dist, z_dist]
+
+        if axis == 'auto' and distance != 0:
+            # note: the current method moves the contact in the direction of the original
+            # contact's position before movement
+            # move all 3, just perturb, so |distancetomove| - perturb == distance
+            dist = np.sqrt(distance**2 / 3.)
+            x_dist = min(abs(x_dist-dist), abs(x_dist+dist))
+            y_dist = min(abs(y_dist-dist), abs(y_dist+dist))
+            z_dist = min(abs(z_dist-dist), abs(z_dist+dist))
+            distancetomove = [x_dist, y_dist, z_dist]
+        elif axis=='x':
+            # move x
+            pass
+        elif axis=='y':
+            # move y
+            pass
+        elif axis=='z':
+            # move z
+            pass
+
+        # createa copy of the seeg_xyz df and modify the electrode
+        new_seeg_xyz = self.seeg_xyz.copy()
+        new_seeg_xyz[electrodeindices] = new_seeg_xyz[electrodeindices] + distancetomove
+
+        # modify the object's seeg xyz
+        self.seeg_xyz[electrodeindices] = self.seeg_xyz[electrodeindices] + distancetomove
+
+        if self.VERBOSE:
+            print("\n\n movecontact function summary: \n")
+            print("Closest contact to ezregion: ", ez_regionxyz, ' is ', seeg_contact)
+            print("That is located at: ", closest_seeg)
+            print("It will move: ", distancetomove)
+            print("New location after movement is", new_seeg_xyz[seeg_index])
+            # print electrodeindices
         
         return new_seeg_xyz, electrodeindices
 
@@ -359,10 +412,10 @@ if __name__ == '__main__':
 
     gainmat = simplest_gain_matrix(new_seeg_xyz.as_matrix(), reg_xyz=region_centers)
 
-    print gainmat.shape
-    print seeg_contact
-    print seeg_xyz.iloc[electrodeindices]
-    print new_seeg_xyz.iloc[electrodeindices]
+    # print gainmat.shape
+    # print seeg_contact
+    # print seeg_xyz.iloc[electrodeindices]
+    # print new_seeg_xyz.iloc[electrodeindices]
 
-    # print near_seeg[1].ravel()
-    print seeg_xyz.iloc[near_seeg[1]]
+    # # print near_seeg[1].ravel()
+    # print seeg_xyz.iloc[near_seeg[1]]

@@ -25,6 +25,7 @@ ssh                             := ssh $(port)
 *download-mvar:
 	@{ rsync -aP adamli@139.124.148.56:/home/adamli/data/output/tvbsim/ /Volumes/ADAM\ LI/pydata/output/tvbsim/;\
 }
+# rsync -aP /Volumes/ADAM\ LI/pydata/output/tvbsim/ adamli@139.124.148.56:/home/adamli/data/output/tvbsim/ 
 
 *download-fft:
 	@{ rsync -aP adamli@139.124.148.56:/home/adamli/data/output/frequencyanalysis/ /Volumes/ADAM\ LI/pydata/output/frequencyanalysis/;\
