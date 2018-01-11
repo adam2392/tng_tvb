@@ -172,7 +172,7 @@ class PostProcess():
 
     # assuming onset is the first bifurcation and then every other one is onsets
     # every other bifurcation after the first one is the offset
-    def findonsetoffset(self, zts, delta=0.):
+    def findonsetoffset(self, zts, delta=0.2/8):
         maxpeaks, minpeaks = peakdetect.peakdetect(zts, delta=delta)
         
         # get every other peaks
