@@ -296,6 +296,8 @@ class MoveContacts():
         # modify the object's seeg xyz
         self.seeg_xyz[electrodeindices] = self.seeg_xyz[electrodeindices] + distancetomove
 
+        # print(new_seeg_xyz-ez_regionxyz)
+
         if self.VERBOSE:
             print("\n\n movecontact function summary: \n")
             print("Closest contact to ezregion: ", ez_regionxyz, ' is ', seeg_contact)

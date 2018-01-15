@@ -16,7 +16,7 @@ def initepileptor(r, ks, tt, tau, x0norm, x0ez, x0pz,
     y1 = second
     z = third
     x2 = fourth
-    y2 = fourth
+    y2 = fifth
     '''
 
     ####################### 2. Neural Mass Model @ Nodes ######################
