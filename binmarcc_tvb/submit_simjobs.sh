@@ -6,9 +6,13 @@
 # cluster with nodes, CPUS, tasks, GPUs
 #
 ##############################################################
+module unload git
+
 ml python
 ml parallel
+ml anaconda-python/2.7
 
+source activate tvb
 # patients listed 5 per row
 patients=(
     'id001_ac
@@ -67,7 +71,7 @@ else
 fi
 
 # 2. Define Slurm Parameters
-NUM_PROCSPERNODE=24  	# number of processors per node (1-24). Use 24 for GNU jobs.
+NUM_PROCSPERNODE=1  	# number of processors per node (1-24). Use 24 for GNU jobs.
 NUM_NODES=1				# number of nodes to request
 NUM_CPUPERTASK=1
 
@@ -88,7 +92,7 @@ for patient in $patients; do
 numez=${numez},\
 numpz=${numpz},\
 metadatadir=${metadatadir},\
-outputdatadir=${outputdatadir},
+outputdatadir=${outputdatadir},\
 numprocs=${NUM_PROCSPERNODE} "
 
 	# build basic sbatch command with all params parametrized

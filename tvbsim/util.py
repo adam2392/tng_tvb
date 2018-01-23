@@ -153,14 +153,14 @@ class PostProcess():
 
     def postprocts(self, samplerate=1000):
         # reject certain 5 seconds of simulation
-        secstoreject = 7
-        sampstoreject = secstoreject * samplerate
+        # secstoreject = 7
+        # sampstoreject = secstoreject * samplerate
 
-        # get the time series processed and squeezed that we want to save
-        new_times = self.times[sampstoreject:]
-        new_epits = self.epits[sampstoreject:, 1, :, :].squeeze().T
-        new_zts = self.epits[sampstoreject:, 0, :, :].squeeze().T
-        new_seegts = self.seegts[sampstoreject:, :, :, :].squeeze().T
+        # # get the time series processed and squeezed that we want to save
+        # new_times = self.times[sampstoreject:]
+        # new_epits = self.epits[sampstoreject:, 1, :, :].squeeze().T
+        # new_zts = self.epits[sampstoreject:, 0, :, :].squeeze().T
+        # new_seegts = self.seegts[sampstoreject:, :, :, :].squeeze().T
 
         # don't reject any time period
         new_times = self.times
@@ -180,6 +180,69 @@ class PostProcess():
         offsettime, _ = zip(*maxpeaks)
         
         return onsettime, offsettime
+
+    def getseiztimes(self, onsettimes, offsettimes):
+        minsize = np.min((len(onsettimes),len(offsettimes)))
+        seizonsets = []
+        seizoffsets = []
+        
+        # perform some checks
+        if minsize == 0:
+            print("no full onset/offset available!")
+            return 0
+        
+        idx = 0
+        # to store the ones we are checking rn
+        _onset = onsettimes[idx]
+        _offset = offsettimes[idx]
+        seizonsets.append(_onset)
+        
+        # start loop after the first onset/offset pair
+        for i in range(1,minsize):        
+            # to store the previoius values
+            _nextonset = onsettimes[i]
+            _nextoffset = offsettimes[i]
+            
+            # check this range and add the offset if it was a full seizure
+            # before the next seizure
+            if _nextonset < _offset:
+                _offset = _nextoffset
+            else:
+                seizoffsets.append(_offset)
+                idx = i
+                # to store the ones we are checking rn
+                _onset = onsettimes[idx]
+                _offset = offsettimes[idx]
+                seizonsets.append(_onset)
+        if len(seizonsets) != len(seizoffsets):
+            seizonsets = seizonsets[0:len(seizoffsets)]
+        return seizonsets, seizoffsets
+            
+    def getonsetsoffsets(self, zts, ezindices, pzindices):
+        # create lambda function for checking the indices
+        check = lambda indices: isinstance(indices,np.ndarray) and len(indices)>=1
+
+        onsettimes=np.array([])
+        offsettimes=np.array([])
+        if check(ezindices):
+            for ezindex in ezindices:
+                _onsettimes, _offsettimes = postprocessor.findonsetoffset(zts[ezindex, :].squeeze(), 
+                                                                        delta=0.2/8)
+                onsettimes = np.append(onsettimes, np.asarray(_onsettimes))
+                offsettimes = np.append(offsettimes, np.asarray(_offsettimes))
+
+        if check(pzindices):
+            for pzindex in pzindices:
+                _onsettimes, _offsettimes = postprocessor.findonsetoffset(zts[pzindex, :].squeeze(), 
+                                                                        delta=0.2/8)
+                onsettimes = np.append(onsettimes, np.asarray(_onsettimes))
+                offsettimes = np.append(offsettimes, np.asarray(_offsettimes))
+
+        # first sort onsettimes and offsettimes
+        onsettimes.sort()
+        offsettimes.sort()
+        
+        return onsettimes, offsettimes
 
 class MoveContacts():
     '''

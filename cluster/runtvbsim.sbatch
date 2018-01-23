@@ -25,6 +25,7 @@ echo ${numez}
 echo ${numpz}
 echo ${metadatadir}
 echo ${outputdatadir}
-echo ${movecontacts}
+echo ${iregion}
 
-python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${movecontacts}
+# python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${movecontacts}
+python runclustersim_overregions.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${iregion}

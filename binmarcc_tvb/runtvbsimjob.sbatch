@@ -14,6 +14,9 @@
 #---------------------------------------------------------------------
 
 ml python
+ml anaconda-python/2.7
+
+source activate tvb
 # . /soft/miniconda3/activate
 # source activate tvbforwardsim
 
@@ -29,7 +32,7 @@ echo ${outputdatadir}
 echo ${numprocs}
 # echo ${movecontacts}
 
-for iwin in $(seq 1 $numprocs); do
-	python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${iwin}
-done
+# for iwin in $(seq 1 $numprocs); do
+python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${numprocs}
+# done
 exit
