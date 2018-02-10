@@ -39,3 +39,5 @@ def initepileptor(r, ks, tt, tau, x0norm, x0ez, x0pz,
     # epileptors.state_variable_range['g'] = np.r_[-1.,1.]
 
     return epileptors
+def initemptyepileptor():
+    return models.Epileptor()

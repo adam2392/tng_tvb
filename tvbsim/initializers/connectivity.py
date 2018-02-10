@@ -5,11 +5,11 @@ from tvb.simulator.lab import *
 
 import numpy as np
 
-def initconn(confile):
+def initconn(confile, speed=np.inf):
     ####################### 1. Structural Connectivity ########################
     con = connectivity.Connectivity.from_file(confile)
     # set connectivity speed to instantaneous
-    con.speed = np.inf
+    con.speed = speed
     # normalize weights
     con.weights = con.weights/np.max(con.weights)
 

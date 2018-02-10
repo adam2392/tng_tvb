@@ -8,6 +8,9 @@ sys.path.append('../')
 import peakdetect
 import zipfile
 
+import math as m
+
+from scipy.signal import butter, lfilter
 '''
 Module: Util
 Description: These functions and objects are used to assist in setting up any sort of simulation environment. 
@@ -16,6 +19,26 @@ PostProcess helps analyze the simulated data and perform rejection of senseless 
 
 MoveContacts helps analyze the simulated data's structural input data like seeg_xyz and region_centers to determine how to move a certain seeg contact and it's corresponding electrode. In addition, it can determine the region/contact with the closest point, so that can be determined as an EZ region.
 '''
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band', analog=False)
+    return b, a
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = scipy.signal.filtfilt(b, a, data)
+    return y
+def butter_highpass(lowcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    b, a = butter(order, low, btype='highpass', analog=False)
+    return b, a
+def butter_highpass_filter(data, lowcut, fs, order=5):
+    b, a = butter_highpass(lowcut, fs, order=order)
+    y = scipy.signal.filtfilt(b, a, data)
+    return y
 
 def renamefiles(patient, project_dir):
     ####### Initialize files needed to 
@@ -153,96 +176,124 @@ class PostProcess():
 
     def postprocts(self, samplerate=1000):
         # reject certain 5 seconds of simulation
-        # secstoreject = 7
-        # sampstoreject = secstoreject * samplerate
+        secstoreject = 15
+        sampstoreject = secstoreject * samplerate
 
-        # # get the time series processed and squeezed that we want to save
-        # new_times = self.times[sampstoreject:]
-        # new_epits = self.epits[sampstoreject:, 1, :, :].squeeze().T
-        # new_zts = self.epits[sampstoreject:, 0, :, :].squeeze().T
-        # new_seegts = self.seegts[sampstoreject:, :, :, :].squeeze().T
+        # get the time series processed and squeezed that we want to save
+        new_times = self.times[sampstoreject:]
+        new_epits = self.epits[sampstoreject:, 1, :, :].squeeze().T
+        new_zts = self.epits[sampstoreject:, 0, :, :].squeeze().T
+        new_seegts = self.seegts[sampstoreject:, :, :, :].squeeze().T
 
         # don't reject any time period
-        new_times = self.times
-        new_epits = self.epits[:, 1, :, :].squeeze().T
-        new_zts = self.epits[:, 0, :, :].squeeze().T
-        new_seegts = self.seegts[:,:, :, :].squeeze().T
+        # new_times = self.times
+        # new_epits = self.epits[:, 1, :, :].squeeze().T
+        # new_zts = self.epits[:, 0, :, :].squeeze().T
+        # new_seegts = self.seegts[:,:, :, :].squeeze().T
 
         return new_times, new_epits, new_seegts, new_zts
 
     # assuming onset is the first bifurcation and then every other one is onsets
     # every other bifurcation after the first one is the offset
     def findonsetoffset(self, zts, delta=0.2/8):
-        maxpeaks, minpeaks = peakdetect.peakdetect(zts, delta=delta)
-        
+        maxpeaks, minpeaks = peakdetect.peakdetect(zts.squeeze(), delta=delta)
+        minpeaks = np.asarray(minpeaks)
+        maxpeaks = np.asarray(maxpeaks)
+
         # get every other peaks
-        onsettime, _ = zip(*minpeaks)
-        offsettime, _ = zip(*maxpeaks)
+        if minpeaks.ndim == 2:
+            onsettime = minpeaks[:,0]
+        else:
+            # print("minpeaks are: ", minpeaks)
+            onsettime = np.array([np.nan])
+        # get every other peaks
+        if maxpeaks.ndim == 2:
+            offsettime = maxpeaks[:,0]
+        else:
+            # print("maxpeaks are ", maxpeaks)
+            offsettime = np.array([np.nan])
+
+        # get the difference in size of onset/offset arrays
+        diffsize = abs(onsettime.size - offsettime.size)
+        # pad the arrays to have nans if the array sizes are uneven
+        if onsettime.size > offsettime.size:
+            offsettime = np.append(offsettime, np.nan*np.ones(diffsize), axis=0)
+        elif onsettime.size < offsettime.size:
+            onsettime = np.append(offsettime, np.nan*np.ones(diffsize), axis=0)
         
         return onsettime, offsettime
 
-    def getseiztimes(self, onsettimes, offsettimes):
-        minsize = np.min((len(onsettimes),len(offsettimes)))
+    def getseiztimes(self, settimes):
+        # perform some checks
+        if settimes.size == 0:
+            print("no onset/offset available!")
+            return 0
+
+        # sort in place the settimes by onsets, since those will forsure have 1
+        settimes = settimes[settimes[:,0].argsort()]
+
+        # get the onsets/offset pairs now
+        onsettimes = settimes[:,0]
+        offsettimes = settimes[:,1]
         seizonsets = []
         seizoffsets = []
         
-        # perform some checks
-        if minsize == 0:
-            print("no full onset/offset available!")
-            return 0
-        
-        idx = 0
-        # to store the ones we are checking rn
-        _onset = onsettimes[idx]
-        _offset = offsettimes[idx]
-        seizonsets.append(_onset)
-        
         # start loop after the first onset/offset pair
-        for i in range(1,minsize):        
-            # to store the previoius values
-            _nextonset = onsettimes[i]
-            _nextoffset = offsettimes[i]
-            
-            # check this range and add the offset if it was a full seizure
-            # before the next seizure
-            if _nextonset < _offset:
-                _offset = _nextoffset
+        for i in range(0,len(onsettimes)):        
+            # get current onset/offset times
+            curronset = onsettimes[i]
+            curroffset = offsettimes[i]
+
+            # handle first case
+            if i == 0:
+                prevonset = curronset
+                prevoffset = curroffset
+                seizonsets.append(prevonset)
+            # check current onset/offset
             else:
-                seizoffsets.append(_offset)
-                idx = i
-                # to store the ones we are checking rn
-                _onset = onsettimes[idx]
-                _offset = offsettimes[idx]
-                seizonsets.append(_onset)
-        if len(seizonsets) != len(seizoffsets):
-            seizonsets = seizonsets[0:len(seizoffsets)]
+                # if the onset now is greater then the offset
+                # we have one seizure instance
+                if curronset > prevoffset:
+                    seizoffsets.append(prevoffset)
+                    prevonset = curronset
+                    prevoffset = curroffset
+                    seizonsets.append(prevonset)
+                else:
+                    # just move the offset along
+                    prevoffset = curroffset
+            # if at any point, offset is nan, then just return
+            if np.isnan(prevoffset):
+                print('returning cuz prevoffset is nan!')
+                return seizonsets, seizoffsets
+
+        if not np.isnan(prevoffset):
+            seizoffsets.append(prevoffset)
+
         return seizonsets, seizoffsets
-            
-    def getonsetsoffsets(self, zts, ezindices, pzindices):
+
+    def getonsetsoffsets(self, zts, indices,delta=0.2/8):
         # create lambda function for checking the indices
         check = lambda indices: isinstance(indices,np.ndarray) and len(indices)>=1
 
-        onsettimes=np.array([])
-        offsettimes=np.array([])
-        if check(ezindices):
-            for ezindex in ezindices:
-                _onsettimes, _offsettimes = postprocessor.findonsetoffset(zts[ezindex, :].squeeze(), 
-                                                                        delta=0.2/8)
-                onsettimes = np.append(onsettimes, np.asarray(_onsettimes))
-                offsettimes = np.append(offsettimes, np.asarray(_offsettimes))
+        onsettimes = []
+        offsettimes = []
+        settimes = []
 
-        if check(pzindices):
-            for pzindex in pzindices:
-                _onsettimes, _offsettimes = postprocessor.findonsetoffset(zts[pzindex, :].squeeze(), 
-                                                                        delta=0.2/8)
-                onsettimes = np.append(onsettimes, np.asarray(_onsettimes))
-                offsettimes = np.append(offsettimes, np.asarray(_offsettimes))
+        # go through and get onset/offset times of ez indices
+        if check(indices):
+            for index in indices:
+                _onsettimes, _offsettimes = self.findonsetoffset(zts[index, :].squeeze(), delta=delta)
+                settimes.append(list(zip(_onsettimes, _offsettimes)))
+                
+        # flatten out list structure if there is one
+        settimes = [item for sublist in settimes for item in sublist]
+        settimes = np.asarray(settimes).squeeze()
 
-        # first sort onsettimes and offsettimes
-        onsettimes.sort()
-        offsettimes.sort()
-        
-        return onsettimes, offsettimes
+        # do an error check and reshape arrays if necessary
+        if settimes.ndim == 1:
+            settimes = settimes.reshape(1,settimes.shape[0])
+
+        return settimes
 
 class MoveContacts():
     '''
@@ -252,22 +303,31 @@ class MoveContacts():
     Will be able to move contacts, compute a new xyz coordinate map of the contacts and
     re-compute a gain matrix.
     '''
-    def __init__(self, seeg_labels, seeg_xyz, region_labels, reg_xyz, VERBOSE=False):
+    def __init__(self, seeg_labels=[], seeg_xyz=[], region_labels=[], reg_xyz=[], VERBOSE=False):
         self.seeg_xyz = seeg_xyz
         self.reg_xyz = reg_xyz
 
         self.seeg_labels = seeg_labels
         self.region_labels = region_labels
 
-        if type(self.seeg_xyz) is not np.ndarray:
+        if type(self.seeg_xyz) is not np.ndarray and len(seeg_xyz) > 0:
             self.seeg_xyz = pd.DataFrame.as_matrix(self.seeg_xyz)
-        if type(self.reg_xyz) is not np.ndarray:
+        if type(self.reg_xyz) is not np.ndarray and len(reg_xyz) > 0:
             self.reg_xyz = pd.DataFrame.as_matrix(self.reg_xyz)
                 
         self.VERBOSE=VERBOSE
 
+    ''' 
+    Functions for loading data into the object
+    '''
     def set_seegxyz(self, seeg_xyz):
         self.seeg_xyz = seeg_xyz
+    def load_regionlabels(self, region_labels):
+        self.region_labels = region_labels
+    def load_regxyz(self, reg_xyz):
+        self.reg_xyz = reg_xyz
+    def load_seeglabels(self, seeg_labels):
+        self.seeg_labels = seeg_labels
 
     def simplest_gain_matrix(self, seeg_xyz):
         '''
@@ -277,9 +337,10 @@ class MoveContacts():
         # NOTE IF YOU MOVE SEEGXYZ ONTO REGXYZ, YOU DIVIDE BY 0, SO THERE IS A PROBLEM
         #reg_xyz = con.centres
         dr = self.reg_xyz - seeg_xyz[:, np.newaxis]
-
         if 0 in dr:
-            print("Computing simplest gain matrix will result in error! Dividing by 0!")
+            print("Computing simplest gain matrix will result \
+                in error when contact is directly on top of any region!\
+                Dividing by 0!")
 
         ndr = np.sqrt((dr**2).sum(axis=-1))
         Vr = 1.0 / (4 * np.pi) / ndr**2
@@ -290,17 +351,29 @@ class MoveContacts():
         Gets the entire electrode contacts' indices, so that we can modify the corresponding xyz
         '''
         # get the elec label name
-        elec_label = seeg_contact.split("'")[0]
         isleftside = seeg_contact.find("'")
         if self.VERBOSE:
             print(seeg_contact)
-            print(elec_label)
         
+        contacts = []
+        for tempcontact in self.seeg_labels:
+            for idx, s in enumerate(tempcontact):
+                if s.isdigit():
+                    elec_label = tempcontact[0:idx]
+                    break
+            contacts.append((elec_label, int(tempcontact[len(elec_label):])))
+
         # get indices depending on if it is a left/right hemisphere electrode
         if isleftside != -1:
+            elec_label = seeg_contact.split("'")[0]
             electrodeindices = [i for i,item in enumerate(self.seeg_labels) if elec_label+"'" in item]
         else:
-            electrodeindices = [i for i,item in enumerate(self.seeg_labels) if elec_label in item]
+            for idx, s in enumerate(seeg_contact):
+                if s.isdigit():
+                    elec_label = seeg_contact[0:idx]
+                    break
+            electrodeindices = [i for i,item in enumerate(contacts) if elec_label == item[0]]
+        print('\nelec label is %s' % elec_label)
         return electrodeindices
 
     def getindexofregion(self, region):
@@ -336,8 +409,8 @@ class MoveContacts():
         This function moves the contact and the entire electrode the correct distance, so that the contact
         is on the ezregion now
         '''
-        ez_regionxyz = self.reg_xyz[ezindex]
-        closest_seeg = self.seeg_xyz[seeg_index]
+        ez_regionxyz = self.reg_xyz[ezindex,:]
+        closest_seeg = self.seeg_xyz[seeg_index,:].copy()
         seeg_contact = self.seeg_labels[seeg_index]
 
         seeg_label = seeg_contact.split("'")[0]
@@ -371,33 +444,57 @@ class MoveContacts():
         
         return new_seeg_xyz, electrodeindices
 
+    def cart2sph(self, x, y, z):
+        '''
+        Transform Cartesian coordinates to spherical
+        
+        Paramters:
+        x           (float) X coordinate
+        y           (float) Y coordinate
+        z           (float) Z coordinate
+
+        :return: radius, elevation, azimuth
+        '''
+        x2_y2 = x**2 + y**2
+        r = m.sqrt(x2_y2 + z**2)                    # r
+        elev = m.atan2(m.sqrt(x2_y2), z)            # Elevation / phi
+        az = m.atan2(y, x)                          # Azimuth / theta
+        return r, elev, az
+
+    def sph2cart(self, r, elev, az):
+        x = r*m.sin(elev)*m.cos(az)
+        y = r*m.sin(elev)*m.sin(az)
+        z = r*m.cos(elev)
+        return x,y,z
+
+
     def movecontactto(self, ezindex, seeg_index, distance=0, axis='auto'):
         '''
         This function moves the contact and the entire electrode the correct distance, so that the contact
         is on the ezregion now
         '''
-        ez_regionxyz = self.reg_xyz[ezindex] # get xyz of ez region
-        closest_seeg = self.seeg_xyz[seeg_index] # get the closest seeg's xyz
+        ez_regionxyz = self.reg_xyz[ezindex,:] # get xyz of ez region
+        closest_seeg = self.seeg_xyz[seeg_index,:].copy() # get the closest seeg's xyz
         seeg_contact = self.seeg_labels[seeg_index] # get the closest seeg's label
 
         seeg_label = seeg_contact.split("'")[0]
         # perform some processing to get all the contact indices for this electrode
         electrodeindices = self.getallcontacts(seeg_contact)
 
+        # dist = np.sqrt(distance**2 / 3.)
         # get the euclidean distance that will be moved for this electrode
         x_dist = ez_regionxyz[0] - closest_seeg[0]
         y_dist = ez_regionxyz[1] - closest_seeg[1]
         z_dist = ez_regionxyz[2] - closest_seeg[2]
+
         distancetomove = [x_dist, y_dist, z_dist]
 
-        if axis == 'auto' and distance != 0:
-            # note: the current method moves the contact in the direction of the original
-            # contact's position before movement
-            # move all 3, just perturb, so |distancetomove| - perturb == distance
-            dist = np.sqrt(distance**2 / 3.)
-            x_dist = min(abs(x_dist-dist), abs(x_dist+dist))
-            y_dist = min(abs(y_dist-dist), abs(y_dist+dist))
-            z_dist = min(abs(z_dist-dist), abs(z_dist+dist))
+        if axis == 'auto' and distance > 0:
+            # modify the distance in sphereical coordinates
+            r, elev, az = self.cart2sph(x_dist, y_dist, z_dist)
+            r = r - distance 
+            x_dist, y_dist, z_dist = self.sph2cart(r, elev, az)
+
             distancetomove = [x_dist, y_dist, z_dist]
         elif axis=='x':
             # move x
@@ -421,7 +518,7 @@ class MoveContacts():
             print("Closest contact to ezregion: ", ez_regionxyz, ' is ', seeg_contact)
             print("That is located at: ", closest_seeg)
             print("It will move: ", distancetomove)
-            print("New location after movement is", new_seeg_xyz[seeg_index])
+            print("New location after movement is", new_seeg_xyz[seeg_index], '\n')
             # print electrodeindices
         
         return new_seeg_xyz, electrodeindices

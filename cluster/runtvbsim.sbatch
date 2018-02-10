@@ -25,7 +25,12 @@ echo ${numez}
 echo ${numpz}
 echo ${metadatadir}
 echo ${outputdatadir}
+
+echo ${dist}
 echo ${iregion}
 
-# python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${movecontacts}
-python runclustersim_overregions.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${iregion}
+python runtvbsim_v2.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
+# python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${dist} ${iregion}
+# python runclustersim_overregions.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${iregion}
+
+exit

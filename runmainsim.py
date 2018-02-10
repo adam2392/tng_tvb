@@ -19,7 +19,7 @@ import scipy.spatial.distance as dists
 import tvbsim
 
 def initconditions(x0norm, num_regions):
-    epileptor_equil = epileptor_equil = models.Epileptor()
+    epileptor_equil = models.Epileptor()
     epileptor_equil.x0 = x0norm
     init_cond = tvbsim.initialConditions.get_equilibrium(epileptor_equil, np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
     init_cond_reshaped = np.repeat(init_cond, num_regions).reshape((1, len(init_cond), num_regions, 1))
