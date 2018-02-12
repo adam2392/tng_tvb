@@ -23,7 +23,7 @@ echo "Metadatadir is: ${metadatadir}"
 echo "Outputdatadir is: ${outputdatadir}"
 echo "Distance to move is: ${dist}"
 
-python runtvbsim_v2.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
+python runtvbsim.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
 # python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${dist} ${iregion}
 # python runclustersim_overregions.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${iregion}
 
