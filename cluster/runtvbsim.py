@@ -44,7 +44,7 @@ if __name__ == '__main__':
     movedist = float(sys.argv[4])
 
     if not os.path.exists(outputdatadir):
-    os.makedirs(outputdatadir)
+        os.makedirs(outputdatadir)
 
     tvbsim.util.renamefiles(patient, metadatadir)
     # get the important files
@@ -73,9 +73,9 @@ if __name__ == '__main__':
     # setup models and integrators
     ######### Epileptor Parameters ##########
     epileptor_r = 0.00035#/1.5   # Temporal scaling in the third state variable
-    epiks = -2                  # Permittivity coupling, fast to slow time scale
+    epiks = -0.5                  # Permittivity coupling, fast to slow time scale
     epitt = 0.05                   # time scale of simulation
-    epitau = 10                 # Temporal scaling coefficient in fifth st var
+    epitau = 10                   # Temporal scaling coefficient in fifth st var
     x0norm=-2.35 # x0c value = -2.05
     x0ez=-1.85
     # x0pz=-2.2
