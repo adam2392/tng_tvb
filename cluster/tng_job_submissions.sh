@@ -4,13 +4,11 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	# 'id013_pg'
 	# 'id001_ac' 
 	# id002_cj
 	# id014_rb'
 	'id008_gc id013_pg'
 	)
-patient='id013_pg'
 
 # 1. Prompt user for input that runs the analysis
 echo "Begin analysis." # print beginning statement
@@ -33,7 +31,7 @@ dist=${dist:--1}
 # echo ${numez}
 # echo ${numpz}
 # echo ${x0ez}
-echo ${x0pz}
+# echo ${x0pz}
 echo ${dist}
 
 # Pause before running to check
@@ -83,37 +81,6 @@ else
 fi
 
 printf "Running tvb sim\n"
-# for iregion in $(seq 0 83); do
-# 	echo $iregion
-
-# 	# set jobname
-# 	jobname="${patient}_submit_tvbsim.log"
-	
-# 	# create export commands
-# 	exvars="--export=patient=${patient},\
-# numez=${numez},\
-# numpz=${numpz},\
-# metadatadir=${metadatadir},\
-# outputdatadir=${outputdatadir},\
-# iregion=${iregion} "
-
-# 	# build basic sbatch command with all params parametrized
-# 	sbatcomm="sbatch \
-# 	--time=${walltime} \
-# 	--nodes=${NUM_NODES} \
-# 	--cpus-per-task=${NUM_CPUPERTASK} \
-# 	--job-name=${jobname} "
-
-# 	# build a scavenger job, gpu job, or other job
-# 	echo $sbatcomm $exvars runtvbjob.sbatch 
-# 	printf "Sbatch should run now\n"
-	
-# 	${sbatcomm} $exvars ./runtvbsim.sbatch
-
-# 	read -p "Continuing in 0.5 Seconds...." -t 0.5
-# 	echo "Continuing ...."
-# done
-
 for patient in $patients; do
 	echo $patient
 
@@ -121,12 +88,6 @@ for patient in $patients; do
 	jobname="${patient}_submit_tvbsim.log"
 	
 	# create export commands
-# 	exvars="--export=patient=${patient},\
-# numez=${numez},\
-# numpz=${numpz},\
-# metadatadir=${metadatadir},\
-# outputdatadir=${outputdatadir},\
-# dist=${dist} "
 	exvars="--export=patient=${patient},\
 metadatadir=${metadatadir},\
 outputdatadir=${outputdatadir},\

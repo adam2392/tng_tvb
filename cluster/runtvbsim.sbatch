@@ -9,10 +9,8 @@
 # Author: Adam Li (ali39@jhu.edu).
 # Created on 2017-10-31. 
 #---------------------------------------------------------------------
-# SLURM job script to run serial Python
-# on MARCC using GNU parallel
+# SLURM job script to run TVB Simulations
 #---------------------------------------------------------------------
-
 . /soft/miniconda3/activate
 source activate tvbforwardsim
 
@@ -20,14 +18,10 @@ source activate tvbforwardsim
 echo "Runninng sbatch tvb forward sim file..."
 echo ${SBATCH_JOB_NAME}
 echo ${SLURM_SUBMIT_DIR}
-echo ${patient}
-echo ${numez}
-echo ${numpz}
-echo ${metadatadir}
-echo ${outputdatadir}
-
-echo ${dist}
-echo ${iregion}
+echo "Patient is: ${patient}"
+echo "Metadatadir is: ${metadatadir}"
+echo "Outputdatadir is: ${outputdatadir}"
+echo "Distance to move is: ${dist}"
 
 python runtvbsim_v2.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
 # python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${dist} ${iregion}
