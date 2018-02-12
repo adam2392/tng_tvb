@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # set ez/pz regions
     maintvbexp.setezregion(ezregions=ezregions)
     maintvbexp.setpzregion(pzregions=[])
-
+    allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
     # setup models and integrators
     ######### Epileptor Parameters ##########
     epileptor_r = 0.00035#/1.5   # Temporal scaling in the third state variable
@@ -104,7 +104,6 @@ if __name__ == '__main__':
     times, epilepts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
     ######################## POST PROCESSING ########################
-    allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
     secstoreject = 15
 
     postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
