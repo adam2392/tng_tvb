@@ -96,7 +96,7 @@ if __name__ == '__main__':
     maintvbexp.initintegrator(ts=heun_ts, noise_cov=noise_cov)
 
     for ind in maintvbexp.ezind:
-        print(maintvbexp.move_electrodetoreg(ind, dist))   
+        print(maintvbexp.move_electrodetoreg(ind, movedist))   
 
     ######################## run simulation ########################
     configs = maintvbexp.setupsim(a=1., period=period, moved=False)
