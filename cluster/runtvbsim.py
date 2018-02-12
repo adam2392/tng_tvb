@@ -65,9 +65,10 @@ if __name__ == '__main__':
 	maintvbexp.loadgainmat(gainfile=gainfile)
 	maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
 
+	ezregions, pzregions = clinregions(patient)
 	# set ez/pz regions
 	maintvbexp.setezregion(ezregions=ezregions)
-	maintvbexp.setpzregion(pzregions=[])
+	# maintvbexp.setpzregion(pzregions=[])
 
 	# setup models and integrators
 	######### Epileptor Parameters ##########
@@ -77,7 +78,8 @@ if __name__ == '__main__':
 	epitau = 10                 # Temporal scaling coefficient in fifth st var
 	x0norm=-2.35 # x0c value = -2.05
 	x0ez=-1.85
-	x0pz=-2.2
+	# x0pz=-2.2
+	x0pz = None
 	######### Integrator Parameters ##########
 	# parameters for heun-stochastic integrator
 	heun_ts = 0.05
@@ -89,7 +91,7 @@ if __name__ == '__main__':
 	sim_length = 80*_samplerate    
 	period = 1./_factor
 
-	maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=None,
+	maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
 	                        r=epileptor_r, Ks=epiks, tt=epitt, tau=epitau)
 	maintvbexp.initintegrator(ts=heun_ts, noise_cov=noise_cov)
 
