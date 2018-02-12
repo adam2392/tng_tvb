@@ -7,9 +7,14 @@
 #SBATCH --error=_out/%A.err
 
 # Author: Adam Li (ali39@jhu.edu).
-# Created on 2017-10-31. 
+# Created on 2018-02-12. 
 #---------------------------------------------------------------------
 # SLURM job script to run TVB Simulations
+# Parameter List
+# - meta data dir 			the directory containing all the structural
+#							data needed to run TVB sims
+# - output data dir 		the output directory to save the results of
+# 							the simulation
 #---------------------------------------------------------------------
 . /soft/miniconda3/activate
 source activate tvbforwardsim
@@ -24,7 +29,5 @@ echo "Outputdatadir is: ${outputdatadir}"
 echo "Distance to move is: ${dist}"
 
 python runtvbsim.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
-# python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${dist} ${iregion}
-# python runclustersim_overregions.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${iregion}
 
 exit

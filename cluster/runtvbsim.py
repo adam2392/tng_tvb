@@ -48,9 +48,9 @@ if __name__ == '__main__':
 
     tvbsim.util.renamefiles(patient, metadatadir)
     # get the important files
-    getfilepath = lambda filename: os.path.join(metadatadir, filename)
-    seegfile = getfilepath('seeg.txt')
-    gainfile = getfilepath('gain_inv-square.txt')
+    getmetafile = lambda filename: os.path.join(metadatadir, patient, filename)
+    seegfile = getmetafile('seeg.txt')
+    gainfile = getmetafile('gain_inv-square.txt')
 
     ## OUTPUTFILE NAME ##
     filename = os.path.join(outputdatadir, 
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
-    con = connectivity.Connectivity.from_file(os.path.join(metadatadir, "connectivity.zip"))
+    con = connectivity.Connectivity.from_file(getmetafile("connectivity.zip"))
     maintvbexp = tvbsim.MainTVBSim(con)
     # load the necessary data files to run simulation
     maintvbexp.loadseegxyz(seegfile=seegfile)
