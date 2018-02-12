@@ -47,8 +47,9 @@ if __name__ == '__main__':
         os.makedirs(outputdatadir)
 
     tvbsim.util.renamefiles(patient, metadatadir)
+    metadatadir = os.path.join(metadatadir, patient)
     # get the important files
-    getmetafile = lambda filename: os.path.join(metadatadir, patient, filename)
+    getmetafile = lambda filename: os.path.join(metadatadir, filename)
     seegfile = getmetafile('seeg.txt')
     gainfile = getmetafile('gain_inv-square.txt')
 
