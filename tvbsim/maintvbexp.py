@@ -99,15 +99,15 @@ class MainTVBSim(TVBExp, MoveContactExp):
         ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #############
         mon_tavg = monitors.TemporalAverage(period=period) # monitor model
         mon_SEEG = monitors.iEEG.from_file(period=period,
-                                           variables_of_interest=[1],
+                                           variables_of_interest=[1])
                                            # sensors_fname=self.seegfile,
                                            # rm_f_name=regmapfile,
-                                           projection_fname=self.gainfile)
+                                           # projection_fname=self.gainfile)
         sim_monitors = [mon_tavg, mon_SEEG]
         # set to the object's seeg xyz and gain mat
-        if moved:
-            sim_monitors[1].sensors.locations = self.seeg_xyz
-            sim_monitors[1].gain = self.gainmat
+        # if moved:
+        sim_monitors[1].sensors.locations = self.seeg_xyz
+        sim_monitors[1].gain = self.gainmat
         self.monitors = sim_monitors
 
         # initialize simulator object

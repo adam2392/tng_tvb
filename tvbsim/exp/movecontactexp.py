@@ -16,7 +16,8 @@ class MoveContactExp(object):
         '''
         # NOTE IF YOU MOVE SEEGXYZ ONTO REGXYZ, YOU DIVIDE BY 0, SO THERE IS A PROBLEM
         #reg_xyz = con.centres
-        dr = self.reg_xyz - self.seeg_xyz[:, np.newaxis]
+        dr = self.conn.centres - self.seeg_xyz[:, np.newaxis]
+        print("Computing simple gain mat!")
         if 0 in dr:
             print("Computing simplest gain matrix will result \
                 in error when contact is directly on top of any region!\
