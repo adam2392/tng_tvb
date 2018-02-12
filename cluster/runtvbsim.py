@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     ## OUTPUTFILE NAME ##
     filename = os.path.join(outputdatadir, 
-            patient+'_dist' + str(dist) + '.npz')
+            patient+'_dist' + str(movedist) + '.npz')
 
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
@@ -95,9 +95,8 @@ if __name__ == '__main__':
                             r=epileptor_r, Ks=epiks, tt=epitt, tau=epitau)
     maintvbexp.initintegrator(ts=heun_ts, noise_cov=noise_cov)
 
-    # dist = -1
-    # for ind in maintvbexp.ezind:
-    #     print(maintvbexp.move_electrodetoreg(ind, dist))   
+    for ind in maintvbexp.ezind:
+        print(maintvbexp.move_electrodetoreg(ind, dist))   
 
     ######################## run simulation ########################
     configs = maintvbexp.setupsim(a=1., period=period, moved=False)
