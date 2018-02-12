@@ -8,8 +8,8 @@ from exp.movecontactexp import MoveContactExp
 import warnings
 
 class MainTVBSim(TVBExp, MoveContactExp):
-    def __init__(self, conn):
-        TVBExp.__init__(self, conn)
+    def __init__(self, conn, condspeed=np.inf):
+        TVBExp.__init__(self, conn=conn, condspeed=condspeed)
 
     def setezregion(self, ezregions, rand=False):
         if np.asarray(ezregions).size == 1:
