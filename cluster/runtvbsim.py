@@ -68,7 +68,7 @@ if __name__ == '__main__':
     ezregions, pzregions = clinregions(patient)
     # set ez/pz regions
     maintvbexp.setezregion(ezregions=ezregions)
-    # maintvbexp.setpzregion(pzregions=[])
+    maintvbexp.setpzregion(pzregions=[])
 
     # setup models and integrators
     ######### Epileptor Parameters ##########
@@ -134,7 +134,7 @@ if __name__ == '__main__':
             'ez': maintvbexp.ezregion,
             'pz': maintvbexp.pzregion,
             'ezindices': maintvbexp.ezind,
-            'pzindices': maintvbexp.ezind,
+            'pzindices': maintvbexp.pzind,
             'onsettimes':seizonsets,
             'offsettimes':seizoffsets,
             'patient':patient,
