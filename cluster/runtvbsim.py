@@ -3,7 +3,6 @@ sys.path.append('../_tvblibrary/')
 sys.path.append('../_tvbdata/')
 sys.path.append('../')
 import tvbsim
-
 from tvb.simulator.lab import *
 import os.path
 import numpy as np
@@ -101,7 +100,7 @@ if __name__ == '__main__':
 
     ######################## run simulation ########################
     configs = maintvbexp.setupsim(a=1., period=period, moved=False)
-    display(configs)
+    print(configs)
     times, epilepts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
     ######################## POST PROCESSING ########################
