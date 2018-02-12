@@ -139,6 +139,7 @@ if __name__ == '__main__':
 	        'onsettimes':seizonsets,
 	        'offsettimes':seizoffsets,
 	        'patient':patient,
+	        'samplerate': samplerate,
 	        'epiparams': maintvbexp.getepileptorparams()
 	    }
 	# save tseries
