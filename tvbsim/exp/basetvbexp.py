@@ -23,7 +23,9 @@ class TVBExp(object):
             'ks': self.epileptors.Ks,
             'tau': self.epileptors.tau,
             'tt': self.epileptors.tt,
-            'x0': self.epileptors.x0
+            'x0': self.epileptors.x0,
+            'nsig': self.integrator.noise.nsig,
+            'ntau': self.integrator.noise.ntau,
         }
         return params
     def getconnparams(self):

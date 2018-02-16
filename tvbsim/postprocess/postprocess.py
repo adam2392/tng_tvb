@@ -56,10 +56,12 @@ class PostProcessor(object):
         # check = lambda indices: isinstance(indices,np.ndarray) and len(indices)>=1
         settimes = []
 
+        # for delt in [delta, 0.6, 0.8]:
         # go through and get onset/offset times of ez indices
         # if check(indices):
         for index in np.asarray(indices):
-            _onsettimes, _offsettimes = self._findonsetoffset(zts[index, :].squeeze(), delta=delta)
+            _onsettimes, _offsettimes = self._findonsetoffset(zts[index, :].squeeze(), 
+                                                            delta=delta)
             settimes.append(list(zip(_onsettimes, _offsettimes)))
                 
         # flatten out list structure if there is one
@@ -75,7 +77,7 @@ class PostProcessor(object):
         # perform some checks
         if settimes.size == 0:
             print("no onset/offset available!")
-            return 0
+            return [0], [0]
 
         # sort in place the settimes by onsets, since those will forsure have 1
         settimes = settimes[settimes[:,0].argsort()]

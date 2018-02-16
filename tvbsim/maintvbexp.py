@@ -43,13 +43,14 @@ class MainTVBSim(TVBExp, MoveContactExp):
         if rand==True:
             self.pzind, self.pzregion = self.sample_randregions(1)
 
-    def initintegrator(self, ts=0.05, noise_cov=None, noiseon=True):
+    def initintegrator(self, ts=0.05, noise_cov=None, ntau=0, noiseon=True):
         if noise_cov is None:
             noise_cov = np.array([0.001, 0.001, 0.,\
                                   0.0001, 0.0001, 0.])
         ####################### 3. Integrator for Models ##########################
         # define cov noise for the stochastic heun integrato
-        hiss = noise.Additive(nsig=noise_cov)
+        hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
+        # hiss = noise.Multiplicative(nsig=noise_cov)
         if noiseon:
             heunint = integrators.HeunStochastic(dt=ts, noise=hiss)
         else:
@@ -84,11 +85,13 @@ class MainTVBSim(TVBExp, MoveContactExp):
             try:
                 epileptors.x0[self.ezind] = x0ez
             except AttributeError:
+                sys.stderr.write("EZ index not set yet! Do you want to proceed with simulation?")
                 warnings.warn("EZ index not set yet! Do you want to proceed with simulation?")
         if x0pz is not None:
             try:
                 epileptors.x0[self.pzind] = x0pz
             except AttributeError:
+                sys.stderr.write("PZ index not set yet! Do you want to proceed with simulation?")
                 warnings.warn("pz index not set yet! Do you want to proceed with simulation?")
         self.epileptors = epileptors
 

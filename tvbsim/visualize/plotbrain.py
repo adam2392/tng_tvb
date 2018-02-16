@@ -77,10 +77,11 @@ class VisualBrain(BaseVisualModel):
         self.ax.plot(self.xreg[numregions//2:], 
                      self.yreg[numregions//2:], 'ko')
     def plotlabeledregion(self, indices, label, color='blue'):
-        self.ax.plot(self.xreg[indices], 
-                    self.yreg[indices], 
-                    color=color, marker='o', 
-                    linestyle="None", markersize=12, label=label)  ### EZ
+        if indices.size > 0:
+            self.ax.plot(self.xreg[indices], 
+                        self.yreg[indices], 
+                        color=color, marker='o', 
+                        linestyle="None", markersize=12, label=label)  ### EZ
 
     def plotcontactsinbrain(self, ezindices=np.array([],dtype='int'), pzindices=np.array([],dtype='int')):
         numcontacts = len(self.xs)

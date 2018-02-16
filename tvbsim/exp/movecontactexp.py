@@ -22,6 +22,7 @@ class MoveContactExp(object):
             print("Computing simplest gain matrix will result \
                 in error when contact is directly on top of any region!\
                 Dividing by 0!")
+
         ndr = np.sqrt((dr**2).sum(axis=-1))
         Vr = 1.0 / (4 * np.pi) / ndr**2
         return Vr

@@ -128,7 +128,7 @@ if __name__ == '__main__':
             'x0norm':x0norm,
             'regions': maintvbexp.conn.region_labels,
             'regions_centers': maintvbexp.conn.centres,
-            'seeg_contacts': maintvbexp.seeg_labels,
+            'chanlabels': maintvbexp.seeg_labels,
             'seeg_xyz': maintvbexp.seeg_xyz,
             'ez': maintvbexp.ezregion,
             'pz': maintvbexp.pzregion,
