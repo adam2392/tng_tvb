@@ -4,10 +4,10 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	# 'id001_ac' 
-	# id002_cj
-	# id014_rb'
-	'id008_gc id013_pg'
+	'id001_ac 
+	id002_cj
+	id014_rb
+	id008_gc id013_pg'
 	)
 
 # 1. Prompt user for input that runs the analysis
@@ -17,7 +17,7 @@ echo "Begin analysis." # print beginning statement
 # read -p "Enter num pz: " numpz
 # read -p "Enter ez x0 value: " x0ez
 # read -p "Enter pz x0 value: " x0pz
-read -p "Enter distance: " dist
+# read -p "Enter distance: " dist
 
 # set values and their defauls
 # movecontacts=${modelType:-1}
@@ -25,7 +25,7 @@ read -p "Enter distance: " dist
 # numpz=${numpz:-1}
 # x0ez=${x0ez:--1.6}
 # x0pz=${x0pz:--2.0}
-dist=${dist:--1}
+# dist=${dist:--1}
 
 # echo ${movecontacts}
 # echo ${numez}

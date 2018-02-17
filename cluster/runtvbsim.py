@@ -59,7 +59,7 @@ if __name__ == '__main__':
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
     con = connectivity.Connectivity.from_file(getmetafile("connectivity.zip"))
-    maintvbexp = tvbsim.MainTVBSim(con)
+    maintvbexp = tvbsim.MainTVBSim(con, condspeed=np.inf)
     # load the necessary data files to run simulation
     maintvbexp.loadseegxyz(seegfile=seegfile)
     maintvbexp.loadgainmat(gainfile=gainfile)
@@ -72,19 +72,25 @@ if __name__ == '__main__':
     allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
     # setup models and integrators
     ######### Epileptor Parameters ##########
-    epileptor_r = 0.00035#/1.5   # Temporal scaling in the third state variable
+    epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
     epiks = -0.5                  # Permittivity coupling, fast to slow time scale
-    epitt = 0.05                   # time scale of simulation
+    epitt = 0.02                   # time scale of simulation
     epitau = 10                   # Temporal scaling coefficient in fifth st var
     x0norm=-2.35 # x0c value = -2.05
-    x0ez=-1.85
+    x0ez=-1.9
     # x0pz=-2.2
     x0pz = None
+
+    if maintvbexp.ezregion is None:
+        x0ez = None
+    if maintvbexp.pzregion is None:
+        x0pz = None
     ######### Integrator Parameters ##########
     # parameters for heun-stochastic integrator
     heun_ts = 0.05
     noise_cov = np.array([0.001, 0.001, 0.,\
                           0.0001, 0.0001, 0.])
+    ntau = 2
     # simulation parameters
     _factor = 1
     _samplerate = 1000*_factor # Hz
@@ -93,10 +99,19 @@ if __name__ == '__main__':
 
     maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
                             r=epileptor_r, Ks=epiks, tt=epitt, tau=epitau)
-    maintvbexp.initintegrator(ts=heun_ts, noise_cov=noise_cov)
+    maintvbexp.initintegrator(ts=heun_ts, noise_cov=noise_cov, ntau=ntau)
 
     for ind in maintvbexp.ezind:
-        print(maintvbexp.move_electrodetoreg(ind, movedist))   
+        new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
+    print(elecindicesmoved)
+    print(maintvbexp.seeg_labels[elecindicesmoved])
+
+    if movedist != 0:
+        simplegain = maintvbexp.simplest_gain_matrix()
+        maintvbexp.gainmat = simplegain
+    else:
+        gainmat = maintvbexp.gain_matrix_inv_square()
+        maintvbexp.gainmat = gainmat
 
     ######################## run simulation ########################
     configs = maintvbexp.setupsim(a=1., period=period, moved=False)
@@ -104,8 +119,9 @@ if __name__ == '__main__':
     times, epilepts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
     ######################## POST PROCESSING ########################
-    secstoreject = 15
+    secstoreject = 20
 
+    allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
     postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
     times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
 
@@ -119,7 +135,6 @@ if __name__ == '__main__':
     noisemodel = tvbsim.postprocess.filters.FilterLinearNoise(samplerate=_samplerate)
     seegts = noisemodel.filter_rawdata(seegts, freqrange)
     # seegts = noisemodel.notchlinenoise(seegts, freq=linefreq)
-    print(seegts.shape)
     print(zip(seizonsets,seizoffsets))
 
     metadata = {
