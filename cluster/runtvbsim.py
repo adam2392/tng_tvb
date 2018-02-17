@@ -15,6 +15,10 @@ def clinregions(patient):
         ezregions = ['ctx-rh-lateralorbitofrontal', 'ctx-rh-temporalpole']
         pzregions = ['ctx-rh-superiorfrontal', 'ctx-rh-rostralmiddlefrontal', 'ctx-lh-lateralorbitofrontal']
 
+    if 'id002' in patient:
+        ezregions = ['ctx-lh-lateraloccipital']
+        pzregions = ['ctx-lh-inferiorparietal', 'ctx-lh-superiorparietal']
+
     # 008
     if 'id008' in patient:
         ezregions = ['Right-Amygdala', 'Right-Hippocampus']
