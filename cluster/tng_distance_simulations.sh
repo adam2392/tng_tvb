@@ -72,7 +72,7 @@ printf "Running tvb sim\n"
 for patient in $patients; do
 	echo $patient
 
-	for dist in $(seq 0 0.5 15);
+	for dist in $(seq 0 0.5 15); do
 		echo $dist
 		# set jobname
 		jobname="${patient}_$dist_submit_tvbsim.log"
