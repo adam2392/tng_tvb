@@ -57,15 +57,6 @@ NUM_CPUPERTASK=1
 ## job reqs
 walltime=2:00:0					# the walltime for each computation
 
-# create concatenated strings in unix to ensure proper passing of list of patients
-buff=''
-for patient in $patients; do
-	buff+=$patient
-	buff+=' '
-done
-echo $buff
-printf "\n"
-
 #### Create all logging directories if needed
 # _logs = the parallel logfile for resuming job at errors 
 outdir=_out
@@ -88,11 +79,11 @@ for patient in $patients; do
 		
 		# create export commands
 		exvars="--export=patient=${patient},\
-	metadatadir=${metadatadir},\
-	outputdatadir=${outputdatadir},\
-	dist=${dist} "
-	# x0ez=${x0ez},\
-	# x0pz=${x0pz},\
+metadatadir=${metadatadir},\
+outputdatadir=${outputdatadir},\
+dist=${dist} "
+# x0ez=${x0ez},\
+# x0pz=${x0pz},\
 
 		# build basic sbatch command with all params parametrized
 		sbatcomm="sbatch \
