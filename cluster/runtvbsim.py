@@ -14,17 +14,42 @@ def clinregions(patient):
     if 'id001' in patient:
         ezregions = ['ctx-rh-lateralorbitofrontal', 'ctx-rh-temporalpole']
         pzregions = ['ctx-rh-superiorfrontal', 'ctx-rh-rostralmiddlefrontal', 'ctx-lh-lateralorbitofrontal']
-
     if 'id002' in patient:
         ezregions = ['ctx-lh-lateraloccipital']
         pzregions = ['ctx-lh-inferiorparietal', 'ctx-lh-superiorparietal']
 
+    # if 'id003' in patient:
+    #     ezregions = ['ctx-lh-insula']
+    #     pzregions = []
+    # if 'id004' in patient: ''' '''
+    #     ezregions = ['ctx-lh-posteriorcingulate', 'ctx-lh-middlefrontal', 'ctx-lh-superiorfrontal']
+    #     pzregions = []
+    # if 'id005' in patient: ''' '''
+    #     ezregions = ['ctx-lh-posteriorcingulate', 'ctx-lh-precuneus']
+    #     pzregions = []
+    # if 'id006' in patient: ''' '''
+    #     ezregions = ['ctx-rh-precentral']
+    #     pzregions = []
+    # if 'id007' in patient: ''' '''
+    #     ezregions = ['ctx-rh-amygdala', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']
+    #     pzregions = []
     # 008
     if 'id008' in patient:
         ezregions = ['Right-Amygdala', 'Right-Hippocampus']
         pzregions = ['ctx-rh-superiortemporal', 'ctx-rh-temporalpole', 'ctx-rh-inferiortemporal',
          'ctx-rh-medialorbitofrontal', 'ctx-rh-lateralorbitofrontal']
-
+    # if 'id009' in patient:
+    #     ezregions = []
+    #     pzregions = []
+    # if 'id010' in patient:
+    #     ezregions = []
+    #     pzregions = []
+    # if 'id011' in patient:
+    #     ezregions = []
+    #     pzregions = []
+    # if 'id012' in patient:
+    #     ezregions = []
+    #     pzregions = []
     # 013
     if 'id013' in patient:
         ezregions = ['ctx-rh-fusiform']
@@ -37,6 +62,9 @@ def clinregions(patient):
              'ctx-lh-temporalpole','ctx-rh-entorhinal']
         pzregions = ['ctx-lh-superiortemporal', 'ctx-lh-middletemporal', 'ctx-lh-inferiortemporal',
              'ctx-lh-insula', 'ctx-lh-parahippocampal']
+    # if 'id015' in patient:
+    #     ezregions = []
+    #     pzregions = []
     return ezregions, pzregions
 
 if __name__ == '__main__':

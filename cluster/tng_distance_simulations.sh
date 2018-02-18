@@ -36,7 +36,7 @@ printf "About to run on patients (press enter to continue): $patients"
 read answer
 
 metadatadir='/home/adamli/data/metadata/'
-outputdatadir='/home/adamli/data/tvbforwardsim/traindata/varydist_1/' # and with allregions/
+outputdatadir='/home/adamli/data/tvbforwardsim/traindata/varydist_2/' # and with allregions/
 printf "\nThis is the data directories: \n"
 printf "$metadatadir \n"
 printf "$outputdatadir \n"
@@ -68,9 +68,33 @@ else
 	mkdir $outdir
 fi
 
+# build basic sbatch command with all params parametrized
+sbatcomm="sbatch \
+--time=${walltime} \
+--nodes=${NUM_NODES} \
+--cpus-per-task=${NUM_CPUPERTASK} \
+--job-name=${jobname} "
+
 printf "Running tvb sim\n"
 for patient in $patients; do
 	echo $patient
+
+	dist=-1
+	echo $dist
+	# set jobname
+	jobname="${patient}_$dist_submit_tvbsim.log"
+		
+		# create export commands
+	exvars="--export=patient=${patient},\
+metadatadir=${metadatadir},\
+outputdatadir=${outputdatadir},\
+dist=${dist} "
+	# build a scavenger job, gpu job, or other job
+	echo $sbatcomm $exvars runtvbsim.sbatch 
+	printf "Sbatch should run now\n"
+	${sbatcomm} $exvars ./runtvbsim.sbatch
+	read -p "Continuing in 0.5 Seconds...." -t 0.5
+	echo "Continuing ...."
 
 	for dist in $(seq 0 0.5 15); do
 		echo $dist
@@ -84,13 +108,6 @@ outputdatadir=${outputdatadir},\
 dist=${dist} "
 # x0ez=${x0ez},\
 # x0pz=${x0pz},\
-
-		# build basic sbatch command with all params parametrized
-		sbatcomm="sbatch \
-		--time=${walltime} \
-		--nodes=${NUM_NODES} \
-		--cpus-per-task=${NUM_CPUPERTASK} \
-		--job-name=${jobname} "
 
 		# build a scavenger job, gpu job, or other job
 		echo $sbatcomm $exvars runtvbjob.sbatch 
