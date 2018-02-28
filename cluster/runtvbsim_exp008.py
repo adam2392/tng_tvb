@@ -34,10 +34,9 @@ def clinregions(patient):
         pzregions = ['ctx-rh-postcentral', 'ctx-rh-superiorparietal']
     if 'id007' in patient: 
         ''' '''
-        ezregions = ['ctx-rh-amygdala', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']
-        pzregions = ['right-hippocampus', 'ctx-rh-entorhinal', 'ctx-rh-medialorbitofrontal',
-                     'ctx-rh-inferiortemporal', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']
-    # 008
+        ezregions = ['Right-Amygdala', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']
+        pzregions = ['Right-Hippocampus', 'ctx-rh-entorhinal', 'ctx-rh-medialorbitofrontal',
+                 'ctx-rh-inferiortemporal', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']    # 008
     if 'id008' in patient:
         ezregions = ['Right-Amygdala', 'Right-Hippocampus']
         pzregions = ['ctx-rh-superiortemporal', 'ctx-rh-temporalpole', 'ctx-rh-inferiortemporal', 'ctx-rh-medialorbitofrontal', 'ctx-rh-lateralorbitofrontal']
@@ -50,13 +49,13 @@ def clinregions(patient):
         pzregions = ['ctx-rh-lateralorbitofrontal', 'ctx-rh-rostralmiddlefrontal',
                      'ctx-rh-superiorfrontal', 'ctx-rh-caudalmiddlefrontal'] # rlofc, rrmfc, rsfc, rcmfg
     if 'id011' in patient:
-        ezregions = ['right-hippocampus', 'right-amygdala'] # rhi, ramg
-        pzregions = ['right-thalamus-proper', 'right-caudate', 'right-putamen',
-                     'ctx-rh-insula', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rth, rcd, rpu, rins, rentc, rtmp
+        ezregions = ['Right-Hippocampus', 'Right-Amygdala'] # rhi, ramg
+        pzregions = ['Right-Thalamus-Proper', 'Right-Caudate', 'Right-Putamen',
+                 'ctx-rh-insula', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rth, rcd, rpu, rins, rentc, rtmp
     if 'id012' in patient:
-        ezregions = ['right-hippocampus', 'ctx-rh-fusiform', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rhi, rfug, rentc, rtmp
+        ezregions = ['Right-Hippocampus', 'ctx-rh-fusiform', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rhi, rfug, rentc, rtmp
         pzregions = ['ctx-lh-fusiform', 'ctx-rh-inferiorparietal', 'ctx-rh-inferiortemporal',
-                     'ctx-rh-lateraloccipital', 'ctx-rh-parahippocampal', 'ctx-rh-precuneus', 'ctx-rh-supramarginal'] # lfug, ripc, ritg, rloc, rphig, rpcunc, rsmg
+                 'ctx-rh-lateraloccipital', 'ctx-rh-parahippocampal', 'ctx-rh-precuneus', 'ctx-rh-supramarginal'] # lfug, ripc, ritg, rloc, rphig, rpcunc, rsmg
     # 013
     if 'id013' in patient:
         ezregions = ['ctx-rh-fusiform']
