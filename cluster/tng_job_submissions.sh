@@ -34,7 +34,7 @@ echo "Begin analysis." # print beginning statement
 # numpz=${numpz:-1}
 # x0ez=${x0ez:--1.6}
 # x0pz=${x0pz:--2.0}
-# dist=${dist:--1}
+dist=${dist:--1}
 
 # echo ${movecontacts}
 # echo ${numez}
