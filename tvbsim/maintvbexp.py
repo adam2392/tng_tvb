@@ -13,37 +13,47 @@ class MainTVBSim(TVBExp, MoveContactExp):
 
     def setezregion(self, ezregions, rand=False):
         if np.asarray(ezregions).size == 1:
-            self.ezind = np.array(self._getindexofregion(ezregions))
-            self.ezregion = np.array(ezregions)
-        elif np.asarray(pzregions).size > 1:
+            ezind = np.array(self._getindexofregion(ezregions))
+            ezregion = np.array(ezregions)
+        elif np.asarray(ezregions).size > 1:
             ezinds = []
             ezregs = []
             for ezreg in ezregions:
                 ezregs.append(ezreg)
                 ezinds.append(self._getindexofregion(ezreg))
-            self.ezind = np.array(ezinds)
-            self.ezregion = np.array(ezregs)
+            ezind = np.array(ezinds)
+            ezregion = np.array(ezregs)
         else:
-            self.ezind = []
-            self.ezregion = None
+            ezind = []
+            ezregion = None
             
+        if np.asarray(ezind).size == 1:
+            ezind = [ezind]
+
+        self.ezind = ezind
+        self.ezregion = ezregion
         if rand==True:
             self.ezind, self.ezregion = self.sample_randregions(1)
     def setpzregion(self, pzregions, rand=False):
         if np.asarray(pzregions).size == 1:
-            self.pzind = np.array(self._getindexofregion(pzregions))
-            self.pzregion = np.array(pzregions)
+            pzind = np.array(self._getindexofregion(pzregions))
+            pzregion = np.array(pzregions)
         elif np.asarray(pzregions).size > 1:
             pzinds = []
             pzregs = []
             for pzreg in pzregions:
                 pzregs.append(pzreg)
                 pzinds.append(self._getindexofregion(pzreg))
-            self.pzind = np.array(pzinds)
-            self.pzregion = np.array(pzregs)
+            pzind = np.array(pzinds)
+            pzregion = np.array(pzregs)
         else:
-            self.pzind = []
-            self.pzregion = None
+            pzind = []
+            pzregion = None
+
+        if np.asarray(pzind).size == 1:
+            pzind = [pzind]
+        self.pzind = pzind
+        self.pzregion = pzregion
 
         if rand==True:
             self.pzind, self.pzregion = self.sample_randregions(1)
