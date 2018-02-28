@@ -15,7 +15,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         if np.asarray(ezregions).size == 1:
             self.ezind = np.array(self._getindexofregion(ezregions))
             self.ezregion = np.array(ezregions)
-        else:
+        elif np.asarray(pzregions).size > 1:
             ezinds = []
             ezregs = []
             for ezreg in ezregions:
@@ -23,6 +23,10 @@ class MainTVBSim(TVBExp, MoveContactExp):
                 ezinds.append(self._getindexofregion(ezreg))
             self.ezind = np.array(ezinds)
             self.ezregion = np.array(ezregs)
+        else:
+            self.ezind = []
+            self.ezregion = None
+            
         if rand==True:
             self.ezind, self.ezregion = self.sample_randregions(1)
     def setpzregion(self, pzregions, rand=False):
@@ -38,8 +42,9 @@ class MainTVBSim(TVBExp, MoveContactExp):
             self.pzind = np.array(pzinds)
             self.pzregion = np.array(pzregs)
         else:
-            self.pzind = np.array([])
+            self.pzind = []
             self.pzregion = None
+
         if rand==True:
             self.pzind, self.pzregion = self.sample_randregions(1)
 

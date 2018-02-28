@@ -109,7 +109,7 @@ if __name__ == '__main__':
         # set ez/pz regions
         maintvbexp.setezregion(ezregions=ezregion)
         maintvbexp.setpzregion(pzregions=[])
-        allindices = np.concatenate((maintvbexp.ezind, maintvbexp.pzind), axis=0).astype(int)
+        allindices = np.concatenate((maintvbexp.ezind, maintvbexp.pzind), axis=0).astype(int) 
         # setup models and integrators
         ######### Epileptor Parameters ##########
         epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
