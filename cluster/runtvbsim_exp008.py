@@ -83,8 +83,8 @@ if __name__ == '__main__':
     if not os.path.exists(os.path.join(outputdatadir, patient)):
         os.makedirs(os.path.join(outputdatadir, patient))
 
-    tvbsim.util.renamefiles(patient, metadatadir)
     metadatadir = os.path.join(metadatadir, patient)
+    tvbsim.util.renamefiles(metadatadir)
     # get the important files
     getmetafile = lambda filename: os.path.join(metadatadir, filename)
     seegfile = getmetafile('seeg.txt')

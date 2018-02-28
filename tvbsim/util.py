@@ -17,7 +17,7 @@ PostProcess helps analyze the simulated data and perform rejection of senseless 
 
 MoveContacts helps analyze the simulated data's structural input data like seeg_xyz and region_centers to determine how to move a certain seeg contact and it's corresponding electrode. In addition, it can determine the region/contact with the closest point, so that can be determined as an EZ region.
 '''
-def renamefiles(patient, project_dir):
+def renamefiles(project_dir):
     ####### Initialize files needed to 
     # convert seeg.xyz to seeg.txt file
     sensorsfile = os.path.join(project_dir, "seeg.xyz")
