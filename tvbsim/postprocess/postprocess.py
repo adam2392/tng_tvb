@@ -95,7 +95,11 @@ class PostProcessor(object):
             settimes = settimes.reshape(1,settimes.shape[0])
 
         # sort in place the settimes by onsets, since those will forsure have 1
-        settimes = settimes[settimes[:,0].argsort()]
+        try:
+            settimes = settimes[settimes[:,0].argsort()]
+        except IndexError:
+            warnings.warn('Probably no settimes detected for this patient. Need to reanalyze z tiem series.')
+            settimes = settimes
 
         return settimes
 
