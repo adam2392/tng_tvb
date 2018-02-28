@@ -23,8 +23,8 @@ def renamefiles(patient, project_dir):
     sensorsfile = os.path.join(project_dir, "seeg.xyz")
     newsensorsfile = os.path.join(project_dir, "seeg.txt")
     try:
-        copyfile(sensorsfile, newsensorsfile)
-        # os.rename(sensorsfile, newsensorsfile)
+        # copyfile(sensorsfile, newsensorsfile)
+        os.rename(sensorsfile, newsensorsfile)
     except:
         print("Already renamed seeg.xyz possibly!")
 
@@ -32,8 +32,8 @@ def renamefiles(patient, project_dir):
     gainmatfile = os.path.join(project_dir, "gain_inv-square.mat")
     newgainmatfile = os.path.join(project_dir, "gain_inv-square.txt")
     try:
-        copyfile(gainmatfile, newgainmatfile)
-        # os.rename(gainmatfile, newgainmatfile)
+        # copyfile(gainmatfile, newgainmatfile)
+        os.rename(gainmatfile, newgainmatfile)
     except:
         print("Already renamed gain_inv-square.mat possibly!")
 
