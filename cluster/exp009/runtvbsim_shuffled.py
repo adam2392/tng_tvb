@@ -7,6 +7,7 @@ from tvb.simulator.lab import *
 import os.path
 import numpy as np
 import pandas as pd
+import random
 
 def clinregions(patient):
     ''' THE REAL CLINICALLY ANNOTATED AREAS '''
