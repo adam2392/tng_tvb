@@ -80,8 +80,9 @@ if __name__ == '__main__':
     outputdatadir = str(sys.argv[3])
     movedist = float(sys.argv[4])
 
-    if not os.path.exists(os.path.join(outputdatadir, patient)):
-        os.makedirs(os.path.join(outputdatadir, patient))
+    outputdatadir = os.path.join(outputdatadir, patient)
+    if not os.path.exists(outputdatadir):
+        os.makedirs(outputdatadir)
 
     metadatadir = os.path.join(metadatadir, patient)
     tvbsim.util.renamefiles(metadatadir)
@@ -103,7 +104,7 @@ if __name__ == '__main__':
     allclinregions = ezregions + pzregions
     for idx, ezregion in enumerate(allclinregions):
         ## OUTPUTFILE NAME ##
-        filename = os.path.join(outputdatadir, \
+        filename = os.path.join(outputdatadir,
                     patient+'_dist' + str(movedist) +   '_' + str(idx) + '.npz')
 
         # set ez/pz regions

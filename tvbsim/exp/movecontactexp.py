@@ -90,9 +90,9 @@ class MoveContactExp(object):
             # original version
             gain_mtx_vert[sens_ind, :] = self.areas / (na**2)
 
+            ## To Do: Refactor to use a more physically accurate way to project source activity
             # adding a 1 in the denominator to softmax the gain matrix
             softmax_inds = np.where(na < 1)[0]
-
             if len(softmax_inds) > 0:
                 print("na was less than one, so softmaxing here at 1.")
                 # epsilon = 1 - a
