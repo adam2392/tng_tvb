@@ -49,7 +49,7 @@ printf "About to run on patients (press enter to continue): $patients"
 read answer
 
 metadatadir='/home/adamli/data/metadata/'
-outputdatadir='/home/adamli/data/tvbforwardsim/exp009/' # and with allregions/
+outputdatadir='/home/adamli/data/tvbforwardsim/exp008/' # and with allregions/
 printf "\nThis is the data directories: \n"
 printf "$metadatadir \n"
 printf "$outputdatadir \n"
