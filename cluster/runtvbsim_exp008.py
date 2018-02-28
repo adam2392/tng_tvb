@@ -187,7 +187,8 @@ if __name__ == '__main__':
                 'offsettimes':seizoffsets,
                 'patient':patient,
                 'samplerate': _samplerate,
-                'epiparams': maintvbexp.getepileptorparams()
+                'epiparams': maintvbexp.getepileptorparams(),
+                'gainmat': gainmat
             }
         # save tseries
         np.savez_compressed(filename, epits=epits, seegts=seegts, \
