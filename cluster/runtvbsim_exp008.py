@@ -103,8 +103,8 @@ if __name__ == '__main__':
     allclinregions = ezregions + pzregions
     for idx, ezregion in enumerate(allclinregions):
         ## OUTPUTFILE NAME ##
-        filename = os.path.join(outputdatadir, 
-            patient+'_dist' + str(movedist) +   '_' + str(idx) '.npz')
+        filename = os.path.join(outputdatadir, \
+                    patient+'_dist' + str(movedist) +   '_' + str(idx) + '.npz')
 
         # set ez/pz regions
         maintvbexp.setezregion(ezregions=ezregion)
