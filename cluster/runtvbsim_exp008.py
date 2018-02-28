@@ -110,9 +110,7 @@ if __name__ == '__main__':
         maintvbexp.setezregion(ezregions=ezregion)
         maintvbexp.setpzregion(pzregions=[])
 
-        print(maintvbexp.ezind)
-        print(maintvbexp.pzind)
-        allindices = np.concatenate((maintvbexp.ezind, maintvbexp.pzind), axis=0).astype(int) 
+        allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind), axis=0).astype(int) 
 
         # setup models and integrators
         ######### Epileptor Parameters ##########
