@@ -92,6 +92,9 @@ if __name__ == '__main__':
     gainfile = getmetafile('gain_inv-square.txt')
 
     ''' RANDOMLY SAMPLE FROM ANOTHER PATIENT '''
+    patients = ['id001_ac', 'id002_cj', 'id003_cm', 'id004_cv',
+            'id005_et', 'id006_fb', 'id008_gc', 'id009_il',
+           'id010_js', 'id011_ml', 'id012_pc', 'id013_pg', 'id014_rb']
     patsamples = list(patients)
     patsamples.remove(patient)
     randpat = random.choice(patsamples)

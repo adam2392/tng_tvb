@@ -98,7 +98,8 @@ class PostProcessor(object):
         try:
             settimes = settimes[settimes[:,0].argsort()]
         except IndexError:
-            warnings.warn('Probably no settimes detected for this patient. Need to reanalyze z tiem series.')
+            warnings.warn('Probably no settimes detected for this patient.'
+                          'Need to reanalyze z tiem series.')
             settimes = settimes
 
         return settimes
