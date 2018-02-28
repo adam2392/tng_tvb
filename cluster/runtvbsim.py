@@ -34,10 +34,9 @@ def clinregions(patient):
         pzregions = ['ctx-rh-postcentral', 'ctx-rh-superiorparietal']
     if 'id007' in patient: 
         ''' '''
-        ezregions = ['ctx-rh-amygdala', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']
-        pzregions = ['right-hippocampus', 'ctx-rh-entorhinal', 'ctx-rh-medialorbitofrontal',
-                     'ctx-rh-inferiortemporal', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']
-    # 008
+        ezregions = ['Right-Amygdala', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']
+        pzregions = ['Right-Hippocampus', 'ctx-rh-entorhinal', 'ctx-rh-medialorbitofrontal',
+                 'ctx-rh-inferiortemporal', 'ctx-rh-temporalpole', 'ctx-rh-lateralorbitofrontal']    # 008
     if 'id008' in patient:
         ezregions = ['Right-Amygdala', 'Right-Hippocampus']
         pzregions = ['ctx-rh-superiortemporal', 'ctx-rh-temporalpole', 'ctx-rh-inferiortemporal', 'ctx-rh-medialorbitofrontal', 'ctx-rh-lateralorbitofrontal']
@@ -50,13 +49,13 @@ def clinregions(patient):
         pzregions = ['ctx-rh-lateralorbitofrontal', 'ctx-rh-rostralmiddlefrontal',
                      'ctx-rh-superiorfrontal', 'ctx-rh-caudalmiddlefrontal'] # rlofc, rrmfc, rsfc, rcmfg
     if 'id011' in patient:
-        ezregions = ['right-hippocampus', 'right-amygdala'] # rhi, ramg
-        pzregions = ['right-thalamus-proper', 'right-caudate', 'right-putamen',
-                     'ctx-rh-insula', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rth, rcd, rpu, rins, rentc, rtmp
+        ezregions = ['Right-Hippocampus', 'Right-Amygdala'] # rhi, ramg
+        pzregions = ['Right-Thalamus-Proper', 'Right-Caudate', 'Right-Putamen',
+                 'ctx-rh-insula', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rth, rcd, rpu, rins, rentc, rtmp
     if 'id012' in patient:
-        ezregions = ['right-hippocampus', 'ctx-rh-fusiform', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rhi, rfug, rentc, rtmp
+        ezregions = ['Right-Hippocampus', 'ctx-rh-fusiform', 'ctx-rh-entorhinal', 'ctx-rh-temporalpole'] # rhi, rfug, rentc, rtmp
         pzregions = ['ctx-lh-fusiform', 'ctx-rh-inferiorparietal', 'ctx-rh-inferiortemporal',
-                     'ctx-rh-lateraloccipital', 'ctx-rh-parahippocampal', 'ctx-rh-precuneus', 'ctx-rh-supramarginal'] # lfug, ripc, ritg, rloc, rphig, rpcunc, rsmg
+                 'ctx-rh-lateraloccipital', 'ctx-rh-parahippocampal', 'ctx-rh-precuneus', 'ctx-rh-supramarginal'] # lfug, ripc, ritg, rloc, rphig, rpcunc, rsmg
     # 013
     if 'id013' in patient:
         ezregions = ['ctx-rh-fusiform']
@@ -107,16 +106,16 @@ if __name__ == '__main__':
     ezregions, pzregions = clinregions(patient)
     # set ez/pz regions
     maintvbexp.setezregion(ezregions=ezregions)
-    maintvbexp.setpzregion(pzregions=[])
+    maintvbexp.setpzregion(pzregions=pzregions)
     allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
     # setup models and integrators
     ######### Epileptor Parameters ##########
     epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
     epiks = -10                  # Permittivity coupling, fast to slow time scale
-    epitt = 0.02                   # time scale of simulation
+    epitt = 0.05                   # time scale of simulation
     epitau = 10                   # Temporal scaling coefficient in fifth st var
     x0norm=-2.45 # x0c value = -2.05
-    x0ez=-1.85
+    x0ez=-1.8
     x0pz=-2.0
     # x0pz = None
 
@@ -144,13 +143,6 @@ if __name__ == '__main__':
         new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
     print(elecindicesmoved)
     print(maintvbexp.seeg_labels[elecindicesmoved])
-
-    if movedist != 0:
-        simplegain = maintvbexp.simplest_gain_matrix()
-        maintvbexp.gainmat = simplegain
-    else:
-        gainmat = maintvbexp.gain_matrix_inv_square()
-        maintvbexp.gainmat = gainmat
 
     ######################## run simulation ########################
     configs = maintvbexp.setupsim(a=1., period=period, moved=False)
@@ -192,7 +184,8 @@ if __name__ == '__main__':
             'offsettimes':seizoffsets,
             'patient':patient,
             'samplerate': _samplerate,
-            'epiparams': maintvbexp.getepileptorparams()
+            'epiparams': maintvbexp.getepileptorparams(),
+            'gainmat': maintvbexp.gainmat
         }
     # save tseries
     np.savez_compressed(filename, epits=epits, seegts=seegts, \

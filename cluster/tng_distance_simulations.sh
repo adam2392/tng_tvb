@@ -4,10 +4,10 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	'id001_ac 
-	id002_cj
-	id014_rb
-	id008_gc id013_pg'
+	# 'id001_ac 
+	# id002_cj
+	# id014_rb
+	'id008_gc id013_pg'
 	)
 
 # 1. Prompt user for input that runs the analysis
@@ -36,7 +36,7 @@ printf "About to run on patients (press enter to continue): $patients"
 read answer
 
 metadatadir='/home/adamli/data/metadata/'
-outputdatadir='/home/adamli/data/tvbforwardsim/traindata/varydist_2/' # and with allregions/
+outputdatadir='/home/adamli/data/tvbforwardsim/traindata/full/' # and with allregions/
 printf "\nThis is the data directories: \n"
 printf "$metadatadir \n"
 printf "$outputdatadir \n"
@@ -96,7 +96,7 @@ dist=${dist} "
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."
 
-	for dist in $(seq 0 0.5 15); do
+	for dist in $(seq -1 2 15); do
 		echo $dist
 		# set jobname
 		jobname="${patient}_$dist_submit_tvbsim.log"
