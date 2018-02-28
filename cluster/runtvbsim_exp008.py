@@ -155,7 +155,7 @@ if __name__ == '__main__':
         ######################## POST PROCESSING ########################
         secstoreject = 20
 
-        allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
+        allindices = np.concatenate((maintvbexp.ezind, maintvbexp.pzind), axis=0).astype(int)
         postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
         times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
 
