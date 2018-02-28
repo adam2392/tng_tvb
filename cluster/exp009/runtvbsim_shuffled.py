@@ -85,6 +85,7 @@ if __name__ == '__main__':
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
+    buffmetadatadir = metadatadir
     metadatadir = os.path.join(metadatadir, patient)
     tvbsim.util.renamefiles(metadatadir)
     # get the important files
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     patsamples.remove(patient)
     randpat = random.choice(patsamples)
     # initialize structural connectivity and main simulator object
-    con = connectivity.Connectivity.from_file(os.path.join(metadatadir(randpat), "connectivity.zip"))
+    con = connectivity.Connectivity.from_file(os.path.join(buffmetadatadir, randpat, "connectivity.zip"))
 
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
