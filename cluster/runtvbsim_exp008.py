@@ -121,7 +121,7 @@ if __name__ == '__main__':
         epitt = 0.02                   # time scale of simulation
         epitau = 10                   # Temporal scaling coefficient in fifth st var
         x0norm=-2.45 # x0c value = -2.05
-        x0ez=-1.85
+        x0ez=-1.65
         x0pz=-2.0
         # x0pz = None
 
