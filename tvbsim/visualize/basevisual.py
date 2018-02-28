@@ -38,7 +38,7 @@ class BaseVisualModel(object):
         '''
         # plot vertical lines of 'predicted' onset/offset
         for idx in range(0, len(onsettimes)):
-            self.ax.axvline(onsettimes[idx], color='red', linestyle='dashed')
+            self.ax.axvline(onsettimes[idx], color='green', linestyle='dashed')
         for idx in range(0, len(offsettimes)):
             self.ax.axvline(offsettimes[idx], color='red', linestyle='dashed')
 

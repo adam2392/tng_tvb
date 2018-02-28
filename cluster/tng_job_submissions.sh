@@ -6,8 +6,17 @@ source activate tvbforwardsim
 patients=(
 	'id001_ac 
 	id002_cj
-	id014_rb
-	id008_gc id013_pg'
+	id003_cm
+	id004_cv
+	id005_et
+	id006_fb
+	id008_gc
+	id009_il
+	id010_js
+	id011_ml
+	id012_pc
+	id013_pg
+	id014_rb'
 	)
 
 # 1. Prompt user for input that runs the analysis
@@ -39,7 +48,7 @@ printf "About to run on patients (press enter to continue): $patients"
 read answer
 
 metadatadir='/home/adamli/data/metadata/'
-outputdatadir='/home/adamli/data/tvbforwardsim/exp005/' # and with allregions/
+outputdatadir='/home/adamli/data/tvbforwardsim/exp008/' # and with allregions/
 printf "\nThis is the data directories: \n"
 printf "$metadatadir \n"
 printf "$outputdatadir \n"
@@ -58,7 +67,7 @@ NUM_NODES=1				# number of nodes to request
 NUM_CPUPERTASK=1
 
 ## job reqs
-walltime=2:00:0					# the walltime for each computation
+walltime=6:00:0					# the walltime for each computation
 
 # create concatenated strings in unix to ensure proper passing of list of patients
 buff=''

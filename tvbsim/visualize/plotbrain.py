@@ -83,7 +83,7 @@ class VisualBrain(BaseVisualModel):
                         color=color, marker='o', 
                         linestyle="None", markersize=12, label=label)  ### EZ
 
-    def plotcontactsinbrain(self, ezindices=np.array([],dtype='int'), pzindices=np.array([],dtype='int')):
+    def plotcontactsinbrain(self, ezindices=np.array([],dtype='int'), pzindices=np.array([],dtype='int'), titlestr=None):
         numcontacts = len(self.xs)
         numregions = len(self.xreg)
         incr_cont = self.incr_cont
@@ -123,7 +123,7 @@ class VisualBrain(BaseVisualModel):
         self.ax.text(self.xs[0], self.ys[0],  
                         str(self.seeg_labels[ii]), 
                         color = self.color_new[ii], 
-                        fontsize = 20)
+                        fontsize = 25)
 
         for ii in range(1,nCols_new):
             self.ax.plot(self.xs[incr_cont[ii-1]:incr_cont[ii]], 
@@ -131,17 +131,22 @@ class VisualBrain(BaseVisualModel):
                         self.color_new[ii] , marker = 'o', label= self.seeg_labels[incr_cont[ii-1]])
             self.ax.text(self.xs[incr_cont[ii-1]], 
                         self.ys[incr_cont[ii-1]],  
-                        str(self.seeg_labels[incr_cont[ii-1]]), color = self.color_new[ii], fontsize = 20)
+                        str(self.seeg_labels[incr_cont[ii-1]]), color = self.color_new[ii], fontsize = 35)
 
         for er in range(numregions):
-            self.ax.text(self.xreg[er], self.yreg[er] + 0.7, str(er+1), color = 'g', fontsize = 15)
+            self.ax.text(self.xreg[er], self.yreg[er] + 0.7, str(er+1), color = 'g', fontsize = 22)
 
+        self.ax.set_xticks([])
+        self.ax.set_yticks([])
         self.ax.set_xlabel('x')
         self.ax.set_ylabel('y')
-        self.ax.set_title('SEEG Implantations for ' + 
-            ' nez=' + str(ezindices.size) + 
-            ' npz='+ str(pzindices.size), **self.title_font)            
+        if titlestr is None:
+            self.ax.set_title('SEEG Implantations for ' + 
+                ' nez=' + str(ezindices.size) + 
+                ' npz='+ str(pzindices.size), **self.title_font)   
+        else:
+            self.ax.set_title(titlestr)         
         self.ax.grid(True)
-        self.ax.legend(loc="lower left")
+        self.ax.legend(loc="lower left", fontsize=35)
 
         return self.fig, self.ax

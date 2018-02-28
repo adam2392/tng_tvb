@@ -7,4 +7,4 @@ export LC_ALL=$LANG
 
 # add tvb data and library to path and launch notebook
 export PYTHONPATH=$(pwd)/_tvbdata:$(pwd)/_tvblibrary:$PYTHONPATH;
-jupyter notebook
+jupyter lab 

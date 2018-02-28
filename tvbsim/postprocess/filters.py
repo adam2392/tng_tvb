@@ -49,6 +49,16 @@ class FilterLinearNoise(object):
         data = filtfilt(b, a, rawdata)
         return data, filters
 
+    @classmethod
+    def apply_lowpass(self, rawdata, cut, order=5):
+        # the Nyquist frequency
+        nyq = self.samplerate/2. 
+        b, a = butter(N=order, Wn=cut/nyq, btype='lowpass', analog=False)
+
+        # run filtfilt for zero phase distortion
+        data = filtfilt(b, a, rawdata)
+        return data, filters
+
     def filter_rawdata(self, rawdata, freqrange, btype='bandpass', order=4):
         freqrange = np.asarray(freqrange)
 

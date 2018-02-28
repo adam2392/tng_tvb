@@ -81,8 +81,8 @@ if __name__ == '__main__':
     outputdatadir = str(sys.argv[3])
     movedist = float(sys.argv[4])
 
-    if not os.path.exists(outputdatadir):
-        os.makedirs(outputdatadir)
+    if not os.path.exists(os.path.join(outputdatadir, patient)):
+        os.makedirs(os.path.join(outputdatadir, patient))
 
     tvbsim.util.renamefiles(patient, metadatadir)
     metadatadir = os.path.join(metadatadir, patient)
@@ -90,10 +90,6 @@ if __name__ == '__main__':
     getmetafile = lambda filename: os.path.join(metadatadir, filename)
     seegfile = getmetafile('seeg.txt')
     gainfile = getmetafile('gain_inv-square.txt')
-
-    ## OUTPUTFILE NAME ##
-    filename = os.path.join(outputdatadir, 
-            patient+'_dist' + str(movedist) + '.npz')
 
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
@@ -105,95 +101,95 @@ if __name__ == '__main__':
     maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
 
     ezregions, pzregions = clinregions(patient)
-    # set ez/pz regions
-    maintvbexp.setezregion(ezregions=ezregions)
-    maintvbexp.setpzregion(pzregions=[])
-    allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
-    # setup models and integrators
-    ######### Epileptor Parameters ##########
-    epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
-    epiks = -10                  # Permittivity coupling, fast to slow time scale
-    epitt = 0.02                   # time scale of simulation
-    epitau = 10                   # Temporal scaling coefficient in fifth st var
-    x0norm=-2.45 # x0c value = -2.05
-    x0ez=-1.85
-    x0pz=-2.0
-    # x0pz = None
+    allclinregions = ezregions + pzregions
+    for idx, ezregion in enumerate(allclinregions):
+        ## OUTPUTFILE NAME ##
+        filename = os.path.join(outputdatadir, 
+            patient+'_dist' + str(movedist) +   '_' + str(idx) '.npz')
 
-    if maintvbexp.ezregion is None:
-        x0ez = None
-    if maintvbexp.pzregion is None:
-        x0pz = None
-    ######### Integrator Parameters ##########
-    # parameters for heun-stochastic integrator
-    heun_ts = 0.05
-    noise_cov = np.array([0.001, 0.001, 0.,\
-                          0.0001, 0.0001, 0.])
-    ntau = 0
-    # simulation parameters
-    _factor = 1
-    _samplerate = 1000*_factor # Hz
-    sim_length = 80*_samplerate    
-    period = 1./_factor
+        # set ez/pz regions
+        maintvbexp.setezregion(ezregions=ezregion)
+        maintvbexp.setpzregion(pzregions=[])
+        allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
+        # setup models and integrators
+        ######### Epileptor Parameters ##########
+        epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
+        epiks = -10                  # Permittivity coupling, fast to slow time scale
+        epitt = 0.02                   # time scale of simulation
+        epitau = 10                   # Temporal scaling coefficient in fifth st var
+        x0norm=-2.45 # x0c value = -2.05
+        x0ez=-1.85
+        x0pz=-2.0
+        # x0pz = None
 
-    maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
-                            r=epileptor_r, Ks=epiks, tt=epitt, tau=epitau)
-    maintvbexp.initintegrator(ts=heun_ts, noise_cov=noise_cov, ntau=ntau)
+        if maintvbexp.ezregion is None:
+            x0ez = None
+        if maintvbexp.pzregion is None:
+            x0pz = None
+        ######### Integrator Parameters ##########
+        # parameters for heun-stochastic integrator
+        heun_ts = 0.05
+        noise_cov = np.array([0.001, 0.001, 0.,\
+                              0.0001, 0.0001, 0.])
+        ntau = 0
+        # simulation parameters
+        _factor = 1
+        _samplerate = 1000*_factor # Hz
+        sim_length = 80*_samplerate    
+        period = 1./_factor
 
-    for ind in maintvbexp.ezind:
-        new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
-    print(elecindicesmoved)
-    print(maintvbexp.seeg_labels[elecindicesmoved])
+        maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
+                                r=epileptor_r, Ks=epiks, tt=epitt, tau=epitau)
+        maintvbexp.initintegrator(ts=heun_ts, noise_cov=noise_cov, ntau=ntau)
 
-    if movedist != 0:
-        simplegain = maintvbexp.simplest_gain_matrix()
-        maintvbexp.gainmat = simplegain
-    else:
-        gainmat = maintvbexp.gain_matrix_inv_square()
-        maintvbexp.gainmat = gainmat
+        for ind in maintvbexp.ezind:
+            new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
+        print(elecindicesmoved)
+        print(maintvbexp.seeg_labels[elecindicesmoved])
 
-    ######################## run simulation ########################
-    configs = maintvbexp.setupsim(a=1., period=period, moved=False)
-    print(configs)
-    times, epilepts, seegts = maintvbexp.mainsim(sim_length=sim_length)
+        ######################## run simulation ########################
+        initcond = None
+        configs = maintvbexp.setupsim(a=1., period=period, moved=False, initcond=initcond)
+        print(configs)
+        times, epilepts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
-    ######################## POST PROCESSING ########################
-    secstoreject = 20
+        ######################## POST PROCESSING ########################
+        secstoreject = 20
 
-    allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
-    postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
-    times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
+        allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
+        postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
+        times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
 
-    # GET ONSET/OFFSET OF SEIZURE
-    postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
-    settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=100, delta=0.2)# get the actual seizure times and offsets
-    seizonsets, seizoffsets = postprocessor.getseiztimes(settimes)
+        # GET ONSET/OFFSET OF SEIZURE
+        postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
+        settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=100, delta=0.2)# get the actual seizure times and offsets
+        seizonsets, seizoffsets = postprocessor.getseiztimes(settimes)
 
-    freqrange = [0.1, 499]
-    # linefreq = 60
-    noisemodel = tvbsim.postprocess.filters.FilterLinearNoise(samplerate=_samplerate)
-    seegts = noisemodel.filter_rawdata(seegts, freqrange)
-    # seegts = noisemodel.notchlinenoise(seegts, freq=linefreq)
-    print(zip(seizonsets,seizoffsets))
+        freqrange = [0.1, 499]
+        # linefreq = 60
+        noisemodel = tvbsim.postprocess.filters.FilterLinearNoise(samplerate=_samplerate)
+        seegts = noisemodel.filter_rawdata(seegts, freqrange)
+        # seegts = noisemodel.notchlinenoise(seegts, freq=linefreq)
+        print(zip(seizonsets,seizoffsets))
 
-    metadata = {
-            'x0ez':x0ez,
-            'x0pz':x0pz,
-            'x0norm':x0norm,
-            'regions': maintvbexp.conn.region_labels,
-            'regions_centers': maintvbexp.conn.centres,
-            'chanlabels': maintvbexp.seeg_labels,
-            'seeg_xyz': maintvbexp.seeg_xyz,
-            'ez': maintvbexp.ezregion,
-            'pz': maintvbexp.pzregion,
-            'ezindices': maintvbexp.ezind,
-            'pzindices': maintvbexp.pzind,
-            'onsettimes':seizonsets,
-            'offsettimes':seizoffsets,
-            'patient':patient,
-            'samplerate': _samplerate,
-            'epiparams': maintvbexp.getepileptorparams()
-        }
-    # save tseries
-    np.savez_compressed(filename, epits=epits, seegts=seegts, \
-             times=times, zts=zts, metadata=metadata)
+        metadata = {
+                'x0ez':x0ez,
+                'x0pz':x0pz,
+                'x0norm':x0norm,
+                'regions': maintvbexp.conn.region_labels,
+                'regions_centers': maintvbexp.conn.centres,
+                'chanlabels': maintvbexp.seeg_labels,
+                'seeg_xyz': maintvbexp.seeg_xyz,
+                'ez': maintvbexp.ezregion,
+                'pz': maintvbexp.pzregion,
+                'ezindices': maintvbexp.ezind,
+                'pzindices': maintvbexp.pzind,
+                'onsettimes':seizonsets,
+                'offsettimes':seizoffsets,
+                'patient':patient,
+                'samplerate': _samplerate,
+                'epiparams': maintvbexp.getepileptorparams()
+            }
+        # save tseries
+        np.savez_compressed(filename, epits=epits, seegts=seegts, \
+                 times=times, zts=zts, metadata=metadata)

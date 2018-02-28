@@ -24,8 +24,40 @@ class MoveContactExp(object):
                 Dividing by 0!")
 
         ndr = np.sqrt((dr**2).sum(axis=-1))
-        Vr = 1.0 / (4 * np.pi) / ndr**2
+        Vr = 1.0 / (4 * np.pi) / (1+ndr**2)
         return Vr
+    def gain_matrix_dipole(self):
+        """
+
+        Parameters
+        ----------
+        vertices             np.ndarray of floats of size n x 3, where n is the number of vertices
+        orientations         np.ndarray of floats of size n x 3
+        region_mapping       np.ndarray of ints of size n
+        sensors              np.ndarray of floats of size m x 3, where m is the number of sensors
+
+        Returns
+        -------
+        np.ndarray of size m x n
+
+        """
+
+        nverts = self.vertices.shape[0]
+        nsens = self.seeg_xyz.shape[0]
+
+        reg_map_mtx = np.zeros((nverts, nregions), dtype=int)
+        for i, region in enumerate(self.regmap):
+            if region >= 0:
+                reg_map_mtx[i, region] = 1
+        #reg_map_mtx[np.arange(region_mapping.size), region_mapping] = 1.0
+
+        gain_mtx_vert = np.zeros((nsens, nverts))
+        for sens_ind in range(nsens):
+            a = sensors[sens_ind, :] - vertices
+            na = np.sqrt(np.sum(a**2, axis=1))
+            gain_mtx_vert[sens_ind, :] = areas * (np.sum(orientations*a, axis=1)/na**3) / (4.0*np.pi*SIGMA)
+
+        return gain_mtx_vert.dot(reg_map_mtx)
 
     def gain_matrix_inv_square(self):
         '''
@@ -42,6 +74,7 @@ class MoveContactExp(object):
         -------
         np.ndarray of size m x n
         '''
+        pass
         nregions = self.conn.region_labels.shape[0]
         nverts = self.vertices.shape[0]
         nsens = self.seeg_xyz.shape[0]
@@ -53,7 +86,19 @@ class MoveContactExp(object):
         for sens_ind in range(nsens):
             a = self.seeg_xyz[sens_ind, :] - self.vertices
             na = np.sqrt(np.sum(a**2, axis=1))
-            gain_mtx_vert[sens_ind, :] = self.areas / na**2
+
+            # original version
+            gain_mtx_vert[sens_ind, :] = self.areas / (na**2)
+
+            # adding a 1 in the denominator to softmax the gain matrix
+            softmax_inds = np.where(na < 1)[0]
+
+            if len(softmax_inds) > 0:
+                print("na was less than one, so softmaxing here at 1.")
+                # epsilon = 1 - a
+                # na = np.sqrt(np.sum(a**2, axis=1))
+                gain_mtx_vert[sens_ind, softmax_inds] = self.areas[softmax_inds] / (1 + na[softmax_inds]**2)
+                
         return gain_mtx_vert.dot(reg_map_mtx)
     def getallcontacts(self, seeg_contact):
         '''
@@ -145,7 +190,7 @@ class MoveContactExp(object):
 
         if distance == -1:
             warnings.warn("Not moving electrodes, so this call does not do anything!")
-            return None
+            return None, None
         # find the seeg index closest to this region and move it
         seegind, origdistance = self.findclosestcontact(regionind)
 

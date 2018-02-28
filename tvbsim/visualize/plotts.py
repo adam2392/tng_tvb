@@ -36,7 +36,7 @@ class VisualTs(BaseVisualModel):
         
         return self.fig, self.ax
 
-    def plotts(self, ysubset=False, xsubset=False, normalize=True):
+    def plotts(self, ysubset=False, xsubset=False, normalize=True, titlestr=None):
         numchans, numsamps = self.data.shape
 
         # get the channels to plot indices
@@ -62,10 +62,10 @@ class VisualTs(BaseVisualModel):
         datatoplot = self.data[ylabs_toplot, timebegin:timeend]
         # Normalize the time series in the time axis to have nice plots also high pass filter
         if normalize:
-            # overallmax = np.max(datatoplot.ravel())
-            # datatoplot = self._normalizets(datatoplot, overallmax)
-            datatoplot = self._normalizets(datatoplot)
-            datatoplot = datatoplot - np.mean(datatoplot, axis=1)[:, np.newaxis]
+            overallmax = np.max(datatoplot.ravel())
+            datatoplot = self._normalizets(datatoplot, overallmax)
+            # datatoplot = self._normalizets(datatoplot)
+            # datatoplot = datatoplot - np.mean(datatoplot, axis=1)[:, np.newaxis]
 
         ######################### PLOTTING OF SEEG TS ########################
         yticks = np.nanmean(datatoplot, axis=1, dtype='float64')
@@ -77,8 +77,9 @@ class VisualTs(BaseVisualModel):
         self.ax = plt.gca()
         # adapt the axis fonts for this plot
         plt.rc('font', **self.axis_font)
-      
-        titlestr = 'SEEG Time Series Simulated'
+        
+        if titlestr is None:
+            titlestr = 'SEEG Time Series Simulated'
         self.ax.set_title(titlestr, **self.title_font)            
         self.ax.set_xlabel('Time (msec)')
         self.ax.set_ylabel('Channels N=' + str(len(self.ylabels)))

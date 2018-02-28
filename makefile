@@ -30,7 +30,7 @@ ssh                             := ssh $(port)
 # rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp005 ~/Downloads/tngcluster/
 
 *download-fft:
-	@{ rsync -aP adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/frequencyanalysis/ /Volumes/ADAM\ LI/pydata/output/frequencyanalysis/;\
+	@{ rsync -aP adamli@cluster.thevirtualbrain.org:/home/adamli/data/outputfreq ~/Downloads/tngcluster/outputfreq/;\
 }
 
 # *download-tvbsim-results:
@@ -41,7 +41,7 @@ ssh                             := ssh $(port)
 *download-tvbsims:
 	@{ rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/ ~/Downloads/tngcluster/tvbforwardsim/;\
 }
-# rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata/id013_pg ~/Downloads/tngcluster/tvbforwardsim/;\
+# rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata/ ~/Downloads/tngcluster/tvbforwardsim/;\
 
 # rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp005 ~/Downloads/tngcluster/;\
 
