@@ -27,7 +27,7 @@ echo "Begin analysis." # print beginning statement
 # read -p "Enter num pz: " numpz
 # read -p "Enter ez x0 value: " x0ez
 # read -p "Enter pz x0 value: " x0pz
-# read -p "Enter distance: " dist
+read -p "Enter distance: " dist
 
 # set values and their defauls
 # movecontacts=${modelType:-1}
