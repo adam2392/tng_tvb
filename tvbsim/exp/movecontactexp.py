@@ -94,7 +94,7 @@ class MoveContactExp(object):
             # adding a 1 in the denominator to softmax the gain matrix
             softmax_inds = np.where(na < 1)[0]
             if len(softmax_inds) > 0:
-                print("na was less than one, so softmaxing here at 1.")
+                # print("na was less than one, so softmaxing here at 1.")
                 # epsilon = 1 - a
                 # na = np.sqrt(np.sum(a**2, axis=1))
                 gain_mtx_vert[sens_ind, softmax_inds] = self.areas[softmax_inds] / (1 + na[softmax_inds]**2)

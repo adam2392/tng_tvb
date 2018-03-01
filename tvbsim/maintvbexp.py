@@ -64,7 +64,8 @@ class MainTVBSim(TVBExp, MoveContactExp):
                                   0.0001, 0.0001, 0.])
         ####################### 3. Integrator for Models ##########################
         # define cov noise for the stochastic heun integrato
-        hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
+        hiss = noise.Additive(nsig=noise_cov)
+        # hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
         # hiss = noise.Multiplicative(nsig=noise_cov)
         if noiseon:
             heunint = integrators.HeunStochastic(dt=ts, noise=hiss)
@@ -125,12 +126,19 @@ class MainTVBSim(TVBExp, MoveContactExp):
         else:
             gainfile = None
 
+        # adding observation noise?
+        # ntau=0
+        # noise_cov=np.array([1.0])
+        # obsnoise = noise.Additive(nsig=noise_cov, ntau=ntau)
+        obsnoise = None
+        
         ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #############
         mon_tavg = monitors.TemporalAverage(period=period) # monitor model
 
         if gainfile is None:
             mon_SEEG = monitors.iEEG.from_file(period=period,
-                                           variables_of_interest=[1])
+                                           variables_of_interest=[1],
+                                           obsnoise=obsnoise)
                                            # sensors_fname=self.seegfile,
                                            # rm_f_name=regmapfile,
                                            # projection_fname=gainfile)
@@ -139,7 +147,8 @@ class MainTVBSim(TVBExp, MoveContactExp):
                                            variables_of_interest=[1],
                                            # sensors_fname=self.seegfile,
                                            # rm_f_name=regmapfile,
-                                           projection_fname=gainfile)
+                                           projection_fname=gainfile,
+                                           obsnoise=obsnoise)
         sim_monitors = [mon_tavg, mon_SEEG]
         # set to the object's seeg xyz and gain mat
         # if moved:
