@@ -28,5 +28,5 @@ echo "Metadatadir is: ${metadatadir}"
 echo "Outputdatadir is: ${outputdatadir}"
 echo "Distance to move is: ${dist}"
 
-python ./runtvbsim_shuffled.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
+python ./exp009/runtvbsim_shuffled.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
 exit
