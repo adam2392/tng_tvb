@@ -131,7 +131,7 @@ if __name__ == '__main__':
         ######### Epileptor Parameters ##########
         epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
         epiks = -10                  # Permittivity coupling, fast to slow time scale
-        epitt = 0.02                   # time scale of simulation
+        epitt = 0.05                   # time scale of simulation
         epitau = 10                   # Temporal scaling coefficient in fifth st var
         x0norm=-2.45 # x0c value = -2.05
         x0ez=-1.65
