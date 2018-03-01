@@ -81,7 +81,7 @@ class PostProcessor(object):
 
             # HARD CODED THRESHOLD ON THE RANGE OF THE Z VALUES in this region
             # ensures we don't try to find peaks if there are none
-            if np.ptp(buffzts[index,:]) > 0.25:
+            if np.ptp(buffzts[index,:]) > 0.3:
                 _onsettimes, _offsettimes = self._findonsetoffset(currentz, 
                                                                 lookahead=lookahead,
                                                                 delta=delta)
