@@ -116,7 +116,7 @@ dist=${dist} "
 	echo $sbatcomm $exvars runtvbjob.sbatch 
 	printf "Sbatch should run now\n"
 	
-	${sbatcomm} $exvars ./runtvbsim.sbatch
+	${sbatcomm} $exvars ./runtvbsim_exp008.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."
