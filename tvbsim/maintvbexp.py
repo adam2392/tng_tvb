@@ -130,15 +130,14 @@ class MainTVBSim(TVBExp, MoveContactExp):
         # ntau=0
         # noise_cov=np.array([1.0])
         # obsnoise = noise.Additive(nsig=noise_cov, ntau=ntau)
-        obsnoise = None
+        # obsnoise = None
         
         ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #############
         mon_tavg = monitors.TemporalAverage(period=period) # monitor model
 
         if gainfile is None:
             mon_SEEG = monitors.iEEG.from_file(period=period,
-                                           variables_of_interest=[1],
-                                           obsnoise=obsnoise)
+                                           variables_of_interest=[1])
                                            # sensors_fname=self.seegfile,
                                            # rm_f_name=regmapfile,
                                            # projection_fname=gainfile)
@@ -147,8 +146,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
                                            variables_of_interest=[1],
                                            # sensors_fname=self.seegfile,
                                            # rm_f_name=regmapfile,
-                                           projection_fname=gainfile,
-                                           obsnoise=obsnoise)
+                                           projection_fname=gainfile)
         sim_monitors = [mon_tavg, mon_SEEG]
         # set to the object's seeg xyz and gain mat
         # if moved:
