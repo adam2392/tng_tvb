@@ -113,11 +113,11 @@ if __name__ == '__main__':
     ######### Epileptor Parameters ##########
     epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
     epiks = -10                  # Permittivity coupling, fast to slow time scale
-    epitt = 0.06                   # time scale of simulation
+    epitt = 0.07                   # time scale of simulation
     epitau = 10                   # Temporal scaling coefficient in fifth st var
     x0norm=-2.45 # x0c value = -2.05
-    x0ez=-1.8
-    x0pz=-2.02
+    x0ez=-1.85
+    x0pz=-2.05
     # x0pz = None
 
     if maintvbexp.ezregion is None:
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     # simulation parameters
     _factor = 1
     _samplerate = 1000*_factor # Hz
-    sim_length = 80*_samplerate    
+    sim_length = 60*_samplerate    
     period = 1./_factor
 
     maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
