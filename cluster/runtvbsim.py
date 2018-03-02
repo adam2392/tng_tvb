@@ -94,7 +94,7 @@ if __name__ == '__main__':
     filename = os.path.join(outputdatadir, 
             patient+'_dist' + str(movedist) + '.npz')
 
-    np.random.seed(12345+movedist)
+    np.random.seed(12345+int(movedist*1000))
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
     con = connectivity.Connectivity.from_file(getmetafile("connectivity.zip"))
