@@ -94,6 +94,7 @@ if __name__ == '__main__':
     filename = os.path.join(outputdatadir, 
             patient+'_dist' + str(movedist) + '.npz')
 
+    np.random.seed(12345+movedist)
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
     con = connectivity.Connectivity.from_file(getmetafile("connectivity.zip"))
@@ -158,7 +159,7 @@ if __name__ == '__main__':
 
     # GET ONSET/OFFSET OF SEIZURE
     postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
-    settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=100, delta=0.2)# get the actual seizure times and offsets
+    settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=500, delta=0.2)# get the actual seizure times and offsets
     seizonsets, seizoffsets = postprocessor.getseiztimes(settimes)
 
     freqrange = [0.1, 499]

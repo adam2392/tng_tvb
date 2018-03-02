@@ -7,7 +7,9 @@ patients=(
 	# 'id001_ac 
 	# id002_cj
 	# id014_rb
-	'id008_gc id013_pg'
+	# 'id008_gc 
+
+	'id013_pg'
 	)
 
 # 1. Prompt user for input that runs the analysis
