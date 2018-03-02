@@ -13,45 +13,51 @@ class MainTVBSim(TVBExp, MoveContactExp):
 
     def setezregion(self, ezregions, rand=False):
         if np.asarray(ezregions).size == 1:
-            ezind = np.array(self._getindexofregion(ezregions))
+            ezregions = np.array(ezregions)[0]
+            ezind = np.array([self._getindexofregion(ezregions)])
             ezregion = np.array(ezregions)
+
         elif np.asarray(ezregions).size > 1:
             ezinds = []
             ezregs = []
             for ezreg in ezregions:
                 ezregs.append(ezreg)
                 ezinds.append(self._getindexofregion(ezreg))
+
             ezind = np.array(ezinds)
             ezregion = np.array(ezregs)
         else:
             ezind = []
             ezregion = None
             
-        if np.asarray(ezind).size == 1:
-            ezind = [ezind]
-
+        # if np.asarray(ezind).size == 1:
+        #     ezind = [ezind]
         self.ezind = ezind
         self.ezregion = ezregion
         if rand==True:
             self.ezind, self.ezregion = self.sample_randregions(1)
+
     def setpzregion(self, pzregions, rand=False):
         if np.asarray(pzregions).size == 1:
-            pzind = np.array(self._getindexofregion(pzregions))
+            pzregions = np.array(pzregions)[0]
+            pzind = np.array([self._getindexofregion(pzregions)])
             pzregion = np.array(pzregions)
+
         elif np.asarray(pzregions).size > 1:
             pzinds = []
             pzregs = []
             for pzreg in pzregions:
                 pzregs.append(pzreg)
                 pzinds.append(self._getindexofregion(pzreg))
+
             pzind = np.array(pzinds)
             pzregion = np.array(pzregs)
         else:
             pzind = []
             pzregion = None
 
-        if np.asarray(pzind).size == 1:
-            pzind = [pzind]
+        # if np.asarray(pzind).size == 1:
+        #     pzind = [pzind]
         self.pzind = pzind
         self.pzregion = pzregion
 

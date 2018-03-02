@@ -138,6 +138,8 @@ class TVBExp(object):
         '''
         This is a helper function to determine the indices of the ez and pz region
         '''
+        assert np.asarray(region).size == 1
+
         sorter = np.argsort(self.conn.region_labels)
         indice = sorter[np.searchsorted(self.conn.region_labels, region, sorter=sorter)].astype(int)
         return indice

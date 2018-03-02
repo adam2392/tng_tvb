@@ -60,7 +60,7 @@ def clinregions(patient):
     if 'id013' in patient:
         ezregions = ['ctx-rh-fusiform']
         pzregions = ['ctx-rh-inferiortemporal','Right-Hippocampus','Right-Amygdala', 
-              'ctx-rh-middletemporal','ctx-rh-entorhinal']
+                    'ctx-rh-middletemporal','ctx-rh-entorhinal']
     # 014
     if 'id014' in patient:
         ezregions = ['Left-Amygdala', 'Left-Hippocampus', 'ctx-lh-entorhinal', 'ctx-lh-fusiform',
