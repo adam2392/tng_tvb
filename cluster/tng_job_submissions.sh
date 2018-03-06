@@ -4,19 +4,19 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	'id001_ac 
-	id002_cj
-	id003_cm
-	id004_cv
-	id005_et
-	id006_fb
-	id008_gc
-	id009_il
-	id010_js
-	id011_ml
-	id012_pc
-	id013_pg
-	id014_rb'
+	# 'id001_ac 
+	# id002_cj
+	'id003_cm'
+	# id004_cv
+	# id005_et
+	# id006_fb
+	# id008_gc
+	# id009_il
+	# id010_js
+	# id011_ml
+	# id012_pc
+	# id013_pg
+	# id014_rb'
 # 'id003_cm id008_gc id014_rb'
 	)
 
