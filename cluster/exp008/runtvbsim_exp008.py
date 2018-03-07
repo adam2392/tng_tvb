@@ -109,7 +109,7 @@ if __name__ == '__main__':
                     patient+'_dist' + str(movedist) +   '_' + str(idx) + '.npz')
 
         # set ez/pz regions
-        maintvbexp.setezregion(ezregions=ezregion)
+        maintvbexp.setezregion(ezregions=[ezregion])
         maintvbexp.setpzregion(pzregions=[])
 
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
