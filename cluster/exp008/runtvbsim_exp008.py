@@ -101,6 +101,7 @@ if __name__ == '__main__':
     maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
 
     ezregions, pzregions = clinregions(patient)
+    print(ezregions, pzregions)
     allclinregions = ezregions + pzregions
     for idx, ezregion in enumerate(allclinregions):
         ## OUTPUTFILE NAME ##
