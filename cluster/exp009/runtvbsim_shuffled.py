@@ -119,9 +119,9 @@ if __name__ == '__main__':
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
                     patient+'_dist' + str(movedist) +   '_' + str(idx) + '.npz')
-
+        print('file to be saved is: ', filename)
         # set ez/pz regions
-        maintvbexp.setezregion(ezregions=ezregion)
+        maintvbexp.setezregion(ezregions=[ezregion])
         maintvbexp.setpzregion(pzregions=[])
 
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
