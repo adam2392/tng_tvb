@@ -27,7 +27,7 @@ ssh                             := ssh $(port)
 	@{ rsync -aP -z --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/ ~/Downloads/tngcluster/;\
 }
 # rsync -aP /Volumes/ADAM\ LI/pydata/output/tvbsim/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/ 
-# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp008 ~/Downloads/tngcluster/
+# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp009 ~/Downloads/tngcluster/
 
 *download-fft:
 	@{ rsync -aP adamli@cluster.thevirtualbrain.org:/home/adamli/data/outputfreq ~/Downloads/tngcluster/;\
