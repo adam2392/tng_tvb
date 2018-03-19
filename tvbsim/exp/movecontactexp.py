@@ -199,7 +199,9 @@ class MoveContactExp(object):
         seeg_contact = self.seeg_labels[seegind]
         # get all the indices for this electrode
         electrodeindices = self.getallcontacts(seeg_contact=seeg_contact)
-        assert len(electrodeindices) > 2
+        print(self.seeg_labels[electrodeindices])
+        print(self.seeg_labels)
+        # assert len(electrodeindices) > 2
 
         # get the euclidean distance that will be moved for this electrode
         x_dist = regionxyz[0] - closest_seegxyz[0]
