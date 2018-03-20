@@ -77,7 +77,7 @@ def clinregions(patient):
 def randshuffleweights(weights):
     weights = np.random.choice(weights.ravel(), size=weights.shape, replace=False)
     return weights
-    
+
 if __name__ == '__main__':
     # read in arguments
     patient = str(sys.argv[1]).lower()
@@ -201,7 +201,6 @@ if __name__ == '__main__':
                 'onsettimes':seizonsets,
                 'offsettimes':seizoffsets,
                 'patient':patient,
-                'randpat': randpat,
                 'samplerate': _samplerate,
                 'epiparams': maintvbexp.getepileptorparams(),
                 'gainmat': maintvbexp.gainmat

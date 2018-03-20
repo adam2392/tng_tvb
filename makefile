@@ -49,6 +49,15 @@ ssh                             := ssh $(port)
 *push-mvar:
 	@{ rsync -aP /Users/adam2392/Documents/pydata/output/mvar/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/mvar/;\
 }
+
+*push-data:
+	@{ rsync -aP /Users/adam2392/Downloads/realtng adamli@cluster.thevirtualbrain.org:/home/adamli/data/dnn/traindata_fft/;\
+}
+
+*push-fragility:
+	@{ rsync -aP /Volumes/ADAM\ LI/pydata/output/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/;\
+}
+
 # rsync -aP /Users/adam2392/Documents/tvb/_tvblibrary/tvb/simulator/models/epileptor.py adamli@cluster.thevirtualbrain.org:/home/adamli/tng_tvb/_tvblibrary/tvb/simulator/models/
 # rsync -aP /Users/adam2392/Documents/tvb/metadata/ adamli@cluster.thevirtualbrain.org:/home/adamli/metadata/;
 # rsync -aP /Volumes/ADAM\ LI/pydata/output/mvar/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/;
