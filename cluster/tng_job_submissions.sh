@@ -49,7 +49,7 @@ printf "About to run on patients (press enter to continue): $patients"
 read answer
 
 metadatadir='/home/adamli/data/metadata/'
-outputdatadir='/home/adamli/data/tvbforwardsim/exp008/' # and with allregions/
+outputdatadir='/home/adamli/data/tvbforwardsim/exp010/' # and with allregions/
 printf "\nThis is the data directories: \n"
 printf "$metadatadir \n"
 printf "$outputdatadir \n"
@@ -116,7 +116,7 @@ dist=${dist} "
 	echo $sbatcomm $exvars runtvbjob.sbatch 
 	printf "Sbatch should run now\n"
 	
-	${sbatcomm} $exvars ./exp008/runtvbsim_exp008.sbatch
+	${sbatcomm} $exvars ./exp010/runtvbsim_exp010.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."
