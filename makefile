@@ -27,10 +27,10 @@ ssh                             := ssh $(port)
 	@{ rsync -aP -z --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/ ~/Downloads/tngcluster/;\
 }
 # rsync -aP /Volumes/ADAM\ LI/pydata/output/tvbsim/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/ 
-# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp005 ~/Downloads/tngcluster/
+# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp009 ~/Downloads/tngcluster/
 
 *download-fft:
-	@{ rsync -aP adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/frequencyanalysis/ /Volumes/ADAM\ LI/pydata/output/frequencyanalysis/;\
+	@{ rsync -aP adamli@cluster.thevirtualbrain.org:/home/adamli/data/outputfreq ~/Downloads/tngcluster/;\
 }
 
 # *download-tvbsim-results:
@@ -39,16 +39,25 @@ ssh                             := ssh $(port)
 
 # download the raw tvb sim
 *download-tvbsims:
-	@{ rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/ ~/Downloads/tngcluster/tvbforwardsim/;\
+	@{ rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/exp009 ~/Downloads/tngcluster/tvbforwardsim/;\
 }
-# rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata/id013_pg ~/Downloads/tngcluster/tvbforwardsim/;\
+# rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata/ ~/Downloads/tngcluster/tvbforwardsim/;\
 
-# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp005 ~/Downloads/tngcluster/;\
+# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp008 ~/Downloads/tngcluster/;\
 
 
 *push-mvar:
 	@{ rsync -aP /Users/adam2392/Documents/pydata/output/mvar/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/mvar/;\
 }
+
+*push-data:
+	@{ rsync -aP /Users/adam2392/Downloads/realtng adamli@cluster.thevirtualbrain.org:/home/adamli/data/dnn/traindata_fft/;\
+}
+
+*push-fragility:
+	@{ rsync -aP /Volumes/ADAM\ LI/pydata/output/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/;\
+}
+
 # rsync -aP /Users/adam2392/Documents/tvb/_tvblibrary/tvb/simulator/models/epileptor.py adamli@cluster.thevirtualbrain.org:/home/adamli/tng_tvb/_tvblibrary/tvb/simulator/models/
 # rsync -aP /Users/adam2392/Documents/tvb/metadata/ adamli@cluster.thevirtualbrain.org:/home/adamli/metadata/;
 # rsync -aP /Volumes/ADAM\ LI/pydata/output/mvar/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/;

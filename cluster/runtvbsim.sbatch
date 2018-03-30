@@ -7,12 +7,15 @@
 #SBATCH --error=_out/%A.err
 
 # Author: Adam Li (ali39@jhu.edu).
-# Created on 2017-10-31. 
+# Created on 2018-02-12. 
 #---------------------------------------------------------------------
-# SLURM job script to run serial Python
-# on MARCC using GNU parallel
+# SLURM job script to run TVB Simulations
+# Parameter List
+# - meta data dir 			the directory containing all the structural
+#							data needed to run TVB sims
+# - output data dir 		the output directory to save the results of
+# 							the simulation
 #---------------------------------------------------------------------
-
 . /soft/miniconda3/activate
 source activate tvbforwardsim
 
@@ -20,17 +23,11 @@ source activate tvbforwardsim
 echo "Runninng sbatch tvb forward sim file..."
 echo ${SBATCH_JOB_NAME}
 echo ${SLURM_SUBMIT_DIR}
-echo ${patient}
-echo ${numez}
-echo ${numpz}
-echo ${metadatadir}
-echo ${outputdatadir}
+echo "Patient is: ${patient}"
+echo "Metadatadir is: ${metadatadir}"
+echo "Outputdatadir is: ${outputdatadir}"
+echo "Distance to move is: ${dist}"
 
-echo ${dist}
-echo ${iregion}
-
-python runtvbsim_v2.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
-# python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${dist} ${iregion}
-# python runclustersim_overregions.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${iregion}
-
+# python ./exp009/runtvbsim_shuffled.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
+python runtvbsim.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
 exit
