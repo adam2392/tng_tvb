@@ -1,5 +1,6 @@
-import numpy as np 
+import numpy as np
 # import colorednoise as cn
+
 
 def fftnoise(f):
     '''
@@ -23,6 +24,7 @@ def fftnoise(f):
     f[-1:-1-Np:-1] = np.conj(f[1:Np+1])
     return np.fft.ifft(f).real
 
+
 def band_limited_noise(min_freq, max_freq, samples, samplerate):
     '''
     @params:
@@ -34,9 +36,10 @@ def band_limited_noise(min_freq, max_freq, samples, samplerate):
     '''
     freqs = np.abs(np.fft.fftfreq(samples, 1/samplerate))
     f = np.zeros(samples)
-    idx = np.where(np.logical_and(freqs>=min_freq, freqs<=max_freq))[0]
+    idx = np.where(np.logical_and(freqs >= min_freq, freqs <= max_freq))[0]
     f[idx] = 1
     return fftnoise(f)
+
 
 class Noise(object):
     def __init__(self):
@@ -51,14 +54,18 @@ class Noise(object):
     #     return data
 
     ''' Abstract methods for all noise objects to implement '''
+
     def configure(self):
-        raise NotImplementedError('Noise object does not have configure method.')
+        raise NotImplementedError(
+            'Noise object does not have configure method.')
 
     def generate(self):
-        raise NotImplementedError('Noise object does not have generate method.')
+        raise NotImplementedError(
+            'Noise object does not have generate method.')
 
     def _summary(self):
         pass
+
 
 class LineNoise(Noise):
     def __init__(self, linefreq=60, bandwidth=4, numharmonics=3, samplerate=1000.):
@@ -73,7 +80,7 @@ class LineNoise(Noise):
     def generate(self, numsamps, perturbfreq=True):
         '''
         Generates noise for a vector and adds to it
-        
+
         @params:
         - numsamps      (int) the number of samples to generate
         '''
@@ -93,14 +100,14 @@ class LineNoise(Noise):
 
             # generate a random perturbation on the frequency band noise
             if perturbfreq:
-                randpert = np.random.normal(1,0.01)
+                randpert = np.random.normal(1, 0.01)
             else:
                 randpert = 1.
-            x_noise += band_limited_noise(lowfreq*randpert, highfreq*randpert, samples=numsamps, samplerate=samplerate)
+            x_noise += band_limited_noise(lowfreq*randpert, highfreq *
+                                          randpert, samples=numsamps, samplerate=samplerate)
             scaled_noise = np.float16(x_noise * multfactor)
 
         return scaled_noise
-        
+
     def _summary(self):
         pass
-

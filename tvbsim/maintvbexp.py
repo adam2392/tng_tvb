@@ -7,6 +7,7 @@ from exp.basetvbexp import TVBExp
 from exp.movecontactexp import MoveContactExp
 import warnings
 
+
 class MainTVBSim(TVBExp, MoveContactExp):
     def __init__(self, conn, condspeed=np.inf):
         TVBExp.__init__(self, conn=conn, condspeed=condspeed)
@@ -29,12 +30,12 @@ class MainTVBSim(TVBExp, MoveContactExp):
         else:
             ezind = []
             ezregion = None
-            
+
         # if np.asarray(ezind).size == 1:
         #     ezind = [ezind]
         self.ezind = ezind
         self.ezregion = ezregion
-        if rand==True:
+        if rand == True:
             self.ezind, self.ezregion = self.sample_randregions(1)
 
     def setpzregion(self, pzregions, rand=False):
@@ -61,12 +62,12 @@ class MainTVBSim(TVBExp, MoveContactExp):
         self.pzind = pzind
         self.pzregion = pzregion
 
-        if rand==True:
+        if rand == True:
             self.pzind, self.pzregion = self.sample_randregions(1)
 
     def initintegrator(self, ts=0.05, noise_cov=None, ntau=0, noiseon=True):
         if noise_cov is None:
-            noise_cov = np.array([0.001, 0.001, 0.,\
+            noise_cov = np.array([0.001, 0.001, 0.,
                                   0.0001, 0.0001, 0.])
         ####################### 3. Integrator for Models ##########################
         # define cov noise for the stochastic heun integrato
@@ -91,7 +92,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         '''
         ####################### 2. Neural Mass Model @ Nodes ######################
         epileptors = models.Epileptor(
-                        variables_of_interest=['z', 'x2-x1'])
+            variables_of_interest=['z', 'x2-x1'])
         if r is not None:
             epileptors.r = r
         if Ks is not None:
@@ -107,17 +108,21 @@ class MainTVBSim(TVBExp, MoveContactExp):
             try:
                 epileptors.x0[self.ezind] = x0ez
             except AttributeError:
-                sys.stderr.write("EZ index not set yet! Do you want to proceed with simulation?")
-                warnings.warn("EZ index not set yet! Do you want to proceed with simulation?")
+                sys.stderr.write(
+                    "EZ index not set yet! Do you want to proceed with simulation?")
+                warnings.warn(
+                    "EZ index not set yet! Do you want to proceed with simulation?")
         if x0pz is not None:
             try:
                 epileptors.x0[self.pzind] = x0pz
             except AttributeError:
-                sys.stderr.write("PZ index not set yet! Do you want to proceed with simulation?")
-                warnings.warn("pz index not set yet! Do you want to proceed with simulation?")
+                sys.stderr.write(
+                    "PZ index not set yet! Do you want to proceed with simulation?")
+                warnings.warn(
+                    "pz index not set yet! Do you want to proceed with simulation?")
         self.epileptors = epileptors
 
-    def setupsim(self,a=1.,period=1.,moved=False,initcond=None):
+    def setupsim(self, a=1., period=1., moved=False, initcond=None):
         ################## 4. Difference Coupling Between Nodes ###################
         coupl = coupling.Difference(a=a)
         # self.coupl = coupl
@@ -137,22 +142,22 @@ class MainTVBSim(TVBExp, MoveContactExp):
         # noise_cov=np.array([1.0])
         # obsnoise = noise.Additive(nsig=noise_cov, ntau=ntau)
         # obsnoise = None
-        
+
         ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #############
-        mon_tavg = monitors.TemporalAverage(period=period) # monitor model
+        mon_tavg = monitors.TemporalAverage(period=period)  # monitor model
 
         if gainfile is None:
             mon_SEEG = monitors.iEEG.from_file(period=period,
-                                           variables_of_interest=[1])
-                                           # sensors_fname=self.seegfile,
-                                           # rm_f_name=regmapfile,
-                                           # projection_fname=gainfile)
+                                               variables_of_interest=[1])
+            # sensors_fname=self.seegfile,
+            # rm_f_name=regmapfile,
+            # projection_fname=gainfile)
         else:
             mon_SEEG = monitors.iEEG.from_file(period=period,
-                                           variables_of_interest=[1],
-                                           # sensors_fname=self.seegfile,
-                                           # rm_f_name=regmapfile,
-                                           projection_fname=gainfile)
+                                               variables_of_interest=[1],
+                                               # sensors_fname=self.seegfile,
+                                               # rm_f_name=regmapfile,
+                                               projection_fname=gainfile)
         sim_monitors = [mon_tavg, mon_SEEG]
         # set to the object's seeg xyz and gain mat
         # if moved:
@@ -167,15 +172,16 @@ class MainTVBSim(TVBExp, MoveContactExp):
         self.monitors = sim_monitors
 
         # initialize simulator object
-        self.sim = simulator.Simulator(model = self.epileptors,
-                                  # initial_conditions = self.init_cond,
-                                  connectivity = self.conn,
-                                  coupling = coupl,
-                                  integrator = self.integrator,
-                                  monitors = self.monitors)
+        self.sim = simulator.Simulator(model=self.epileptors,
+                                       # initial_conditions = self.init_cond,
+                                       connectivity=self.conn,
+                                       coupling=coupl,
+                                       integrator=self.integrator,
+                                       monitors=self.monitors)
         configs = self.sim.configure()
         return configs
 
     def mainsim(self, sim_length=60000):
-        (times, epilepts), (_, seegts) = self.sim.run(simulation_length=sim_length)
+        (times, epilepts), (_, seegts) = self.sim.run(
+            simulation_length=sim_length)
         return times, epilepts, seegts

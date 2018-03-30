@@ -5,12 +5,14 @@ import scipy
 from sklearn.preprocessing import StandardScaler
 import warnings
 
+
 class PostProcessor(object):
     '''
     A class wrapper for postprocessor of the TVB simulations.
 
     We want to be able to trim the time series if needed.
     '''
+
     def __init__(self, samplerate, allszindices):
         self.samplerate = samplerate
         self.allindices = allszindices
@@ -41,7 +43,8 @@ class PostProcessor(object):
     # every other bifurcation after the first one is the offset
     def _findonsetoffset(self, signal, lookahead=500, delta=0.2/8):
         # get list of tuples for offset, onset respectively
-        maxpeaks, minpeaks = peakdetect.peakdetect(signal.squeeze(), lookahead=lookahead, delta=delta)
+        maxpeaks, minpeaks = peakdetect.peakdetect(
+            signal.squeeze(), lookahead=lookahead, delta=delta)
         # store the number detected
         numonsets = len(minpeaks)
         numoffsets = len(maxpeaks)
@@ -49,9 +52,9 @@ class PostProcessor(object):
         onsettimes = []
         offsettimes = []
         # only get the positions the peaks occur at
-        for i in range(0,numonsets):
+        for i in range(0, numonsets):
             onsettimes.append(minpeaks[i][0])
-        for i in range(0,numoffsets):
+        for i in range(0, numoffsets):
             offsettimes.append(maxpeaks[i][0])
 
         # pad the arrays to have nans if the array sizes are uneven
@@ -69,7 +72,8 @@ class PostProcessor(object):
         # assert zts.ndim == 2
         buffzts = zts
         # apply z normalization
-        zts = (zts - np.mean(zts, axis=-1, keepdims=True)) / np.std(zts, axis=-1, keepdims=True)
+        zts = (zts - np.mean(zts, axis=-1, keepdims=True)) / \
+            np.std(zts, axis=-1, keepdims=True)
 
         # create list of the tuple times to store
         settimes = []
@@ -81,10 +85,10 @@ class PostProcessor(object):
 
             # HARD CODED THRESHOLD ON THE RANGE OF THE Z VALUES in this region
             # ensures we don't try to find peaks if there are none
-            if np.ptp(buffzts[index,:]) > 0.3:
-                _onsettimes, _offsettimes = self._findonsetoffset(currentz, 
-                                                                lookahead=lookahead,
-                                                                delta=delta)
+            if np.ptp(buffzts[index, :]) > 0.3:
+                _onsettimes, _offsettimes = self._findonsetoffset(currentz,
+                                                                  lookahead=lookahead,
+                                                                  delta=delta)
                 settimes.append(list(zip(_onsettimes, _offsettimes)))
         # flatten out list structure if there is one
         settimes = [item for sublist in settimes for item in sublist]
@@ -92,11 +96,11 @@ class PostProcessor(object):
 
         # do an error check and reshape arrays if necessary
         if settimes.ndim == 1:
-            settimes = settimes.reshape(1,settimes.shape[0])
+            settimes = settimes.reshape(1, settimes.shape[0])
 
         # sort in place the settimes by onsets, since those will forsure have 1
         try:
-            settimes = settimes[settimes[:,0].argsort()]
+            settimes = settimes[settimes[:, 0].argsort()]
         except IndexError:
             warnings.warn('Probably no settimes detected for this patient.'
                           'Need to reanalyze z tiem series.')
@@ -110,15 +114,15 @@ class PostProcessor(object):
 
         # go through and get onset/offset times of ez indices
         for index in np.asarray(indices):
-            signal = zts[index,:].squeeze()
+            signal = zts[index, :].squeeze()
             signal = self.processz(signal)
-            
+
             # GET THE MAX/MIN peaks
-            _offsettimes, _onsettimes = self._findonsetoffset(signal, 
-                                                            lookahead=lookahead,
-                                                            delta=delta)
+            _offsettimes, _onsettimes = self._findonsetoffset(signal,
+                                                              lookahead=lookahead,
+                                                              delta=delta)
             settimes.append(list(zip(_onsettimes, _offsettimes)))
-        
+
         # flatten out list structure if there is one
         settimes = [item for sublist in settimes for item in sublist]
         settimes = np.asarray(settimes)
@@ -126,13 +130,14 @@ class PostProcessor(object):
         print(settimes)
         # do an error check and reshape arrays if necessary
         if settimes.ndim == 1:
-            settimes = settimes.reshape(1,settimes.shape[0])
+            settimes = settimes.reshape(1, settimes.shape[0])
 
         # sort in place the settimes by onsets, since those will forsure have 1
         try:
-            settimes = settimes[settimes[:,0].argsort()]
+            settimes = settimes[settimes[:, 0].argsort()]
         except IndexError:
-            warnings.warn('Probably no settimes detected for this patient. Need to reanalyze z tiem series.')
+            warnings.warn(
+                'Probably no settimes detected for this patient. Need to reanalyze z tiem series.')
             settimes = settimes
 
         return settimes
@@ -147,15 +152,16 @@ class PostProcessor(object):
         Wn = cut/nyq
 
         signal = np.diff(signal, n=1)
-        signal = StandardScaler().fit_transform(signal[:,np.newaxis])
+        signal = StandardScaler().fit_transform(signal[:, np.newaxis])
         # print(signal.shape)
         # APPLY LOW PASS FILTERING
-        b, a = scipy.signal.butter(N=order, Wn=cut/nyq, btype='low', analog=False)
+        b, a = scipy.signal.butter(
+            N=order, Wn=cut/nyq, btype='low', analog=False)
         # run filtfilt for zero phase distortion
         signal = scipy.signal.filtfilt(b, a, signal.squeeze())
-        
+
         # APPLY A THRESHOLDING
-        signal[abs(signal)<threshold] = 0
+        signal[abs(signal) < threshold] = 0
         return signal
 
     @staticmethod
@@ -166,18 +172,18 @@ class PostProcessor(object):
             return [0], [0]
 
         # sort in place the settimes by onsets, since those will forsure have 1
-        settimes = settimes[settimes[:,0].argsort()]
+        settimes = settimes[settimes[:, 0].argsort()]
 
         # get the onsets/offset pairs now
-        onsettimes = settimes[:,0]
-        offsettimes = settimes[:,1]
+        onsettimes = settimes[:, 0]
+        offsettimes = settimes[:, 1]
         seizonsets = []
         seizoffsets = []
-        
+
         print(onsettimes)
         print(offsettimes)
         # start loop after the first onset/offset pair
-        for i in range(0,len(onsettimes)):        
+        for i in range(0, len(onsettimes)):
             # get current onset/offset times
             curronset = onsettimes[i]
             curroffset = offsettimes[i]

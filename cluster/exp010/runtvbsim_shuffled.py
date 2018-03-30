@@ -202,6 +202,7 @@ if __name__ == '__main__':
                 'offsettimes':seizoffsets,
                 'patient':patient,
                 'samplerate': _samplerate,
+                'conweights': con.weights,
                 'epiparams': maintvbexp.getepileptorparams(),
                 'gainmat': maintvbexp.gainmat
             }

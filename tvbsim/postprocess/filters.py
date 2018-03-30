@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.signal import butter, filtfilt
-import warnings 
+import warnings
+
 
 class FilterLinearNoise(object):
     def __init__(self, samplerate=None):
@@ -16,13 +17,13 @@ class FilterLinearNoise(object):
 
     def __butthighpass(self, cut, order):
         # the Nyquist frequency
-        nyq = self.samplerate/2. 
+        nyq = self.samplerate/2.
         b, a = butter(N=order, Wn=cut, btype='highpass', analog=False)
         return b, a
 
     def __buttlowpass(self, cut, order):
         # the Nyquist frequency
-        nyq = self.samplerate/2. 
+        nyq = self.samplerate/2.
         b, a = butter(N=order, Wn=cut, btype='lowpass', analog=False)
         return b, a
 
@@ -34,17 +35,17 @@ class FilterLinearNoise(object):
         # INPUT ARGS: (defaults shown):
         #   raw_data = dat;           % data to be filtered (if data is a matrix, BUTTFILT filters across rows)
         #   freqrange = [58 62];      % filter range (depends on type)
-        #   filttype = 'stop';        % type of filter ('bandpass','low','high','stop') 
+        #   filttype = 'stop';        % type of filter ('bandpass','low','high','stop')
         #   order = 4;                % order of the butterworth filter
         #   filters = {B,A};          % a set of filters to use on data (created by a previous buttfilt call)
         # OUTPUT ARGS::
         #   data = the filtered data
         # the Nyquist frequency
-        nyq = self.samplerate/2. 
-        
+        nyq = self.samplerate/2.
+
         # create a butterworth filter with specified order, freqs, type
         b, a = butter(N=order, Wn=freqrange/nyq, btype=btype)
-        filters = np.array((b,a))
+        filters = np.array((b, a))
         # run filtfilt for zero phase distortion
         data = filtfilt(b, a, rawdata)
         return data, filters
@@ -52,7 +53,7 @@ class FilterLinearNoise(object):
     @classmethod
     def apply_lowpass(self, rawdata, cut, order=5):
         # the Nyquist frequency
-        nyq = self.samplerate/2. 
+        nyq = self.samplerate/2.
         b, a = butter(N=order, Wn=cut/nyq, btype='lowpass', analog=False)
 
         # run filtfilt for zero phase distortion
@@ -62,10 +63,10 @@ class FilterLinearNoise(object):
     def filter_rawdata(self, rawdata, freqrange, btype='bandpass', order=4):
         freqrange = np.asarray(freqrange)
 
-        rawdata, filters = self.__buttfilt(rawdata=rawdata, 
-                                        freqrange=freqrange, 
-                                        btype=btype, 
-                                        order=order)
+        rawdata, filters = self.__buttfilt(rawdata=rawdata,
+                                           freqrange=freqrange,
+                                           btype=btype,
+                                           order=order)
         return rawdata
 
     def notchlinenoise(self, rawdata, freq, filttype='notch', order=3):
@@ -83,29 +84,39 @@ class FilterLinearNoise(object):
         '''
         ######################### FILTERING ################################
         # define lambda function that creates an array of the frequency harmonic +/- 0.5 Hz
-        freqrange = lambda multfactor: np.array([freq*multfactor - 0.5, freq*multfactor + 0.5])
+        def freqrange(multfactor): return np.array(
+            [freq*multfactor - 0.5, freq*multfactor + 0.5])
 
         # perform notch filtering at line noise and its harmonics
         if filttype == 'notch':
-            rawdata, filters = self.__buttfilt(rawdata, freqrange(1), 'bandstop', order=order)
-            rawdata, _ = self.__buttfilt(rawdata, freqrange(2), 'bandstop', order=order)
+            rawdata, filters = self.__buttfilt(
+                rawdata, freqrange(1), 'bandstop', order=order)
+            rawdata, _ = self.__buttfilt(
+                rawdata, freqrange(2), 'bandstop', order=order)
 
             print("filtered at: ", freqrange(2))
             if self.samplerate > 250:
-                rawdata, _ = self.__buttfilt(rawdata, freqrange(3), 'bandstop', order=order)
-                rawdata, _ = self.__buttfilt(rawdata, freqrange(4), 'bandstop', order=order)
+                rawdata, _ = self.__buttfilt(
+                    rawdata, freqrange(3), 'bandstop', order=order)
+                rawdata, _ = self.__buttfilt(
+                    rawdata, freqrange(4), 'bandstop', order=order)
 
                 print("filtered at: ", freqrange(3))
                 print("filtered at: ", freqrange(4))
                 if self.samplerate > 500 and self.samplerate > freqrange(5)[0]:
-                    rawdata, _ = self.__buttfilt(rawdata, freqrange(5), 'bandstop', order=order)
-                    rawdata, _ = self.__buttfilt(rawdata, freqrange(6), 'bandstop', order=order)
-                    rawdata, _ = self.__buttfilt(rawdata, freqrange(7), 'bandstop', order=order)
-                    rawdata, _ = self.__buttfilt(rawdata, freqrange(8), 'bandstop', order=order)
+                    rawdata, _ = self.__buttfilt(
+                        rawdata, freqrange(5), 'bandstop', order=order)
+                    rawdata, _ = self.__buttfilt(
+                        rawdata, freqrange(6), 'bandstop', order=order)
+                    rawdata, _ = self.__buttfilt(
+                        rawdata, freqrange(7), 'bandstop', order=order)
+                    rawdata, _ = self.__buttfilt(
+                        rawdata, freqrange(8), 'bandstop', order=order)
                     print("filtered at: ", freqrange(8))
         else:
             warnings.warn("No filtering done on raw data! Are you sure?")
         return rawdata
+
 
 if __name__ == '__main__':
     linefreq = 60
@@ -114,7 +125,7 @@ if __name__ == '__main__':
     filtlinenoise = FilterLinearNoise(samplerate=samplerate)
 
     # example run through sample data
-    data = np.random.random(size=(5,5000))
+    data = np.random.random(size=(5, 5000))
     print(data.shape)
     # to use a bandpass filter
     rawfiltrange = [0.1, 500]

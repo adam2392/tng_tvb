@@ -23,7 +23,7 @@ def clinregions(patient):
         pzregions = ['Left-Putamen', 'ctx-lh-postcentral']
     if 'id004' in patient: 
         ''' '''
-        ezregions = ['ctx-lh-posteriorcingulate', 'ctx-lh-middlefrontal', 'ctx-lh-superiorfrontal']
+        ezregions = ['ctx-lh-posteriorcingulate', 'ctx-lh-caudalmiddlefrontal', 'ctx-lh-superiorfrontal']
         pzregions = ['ctx-lh-precentral', 'ctx-lh-postcentral']
     if 'id005' in patient: 
         ''' '''

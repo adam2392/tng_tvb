@@ -3,11 +3,13 @@ import re
 import mne
 import numpy as np
 
+
 class SeegRecording():
 
     def __init__(self, contacts, data, sampling_rate):
         # Sort the contacts first
-        contacts, indices = zip(*sorted((c, i) for i, c in enumerate(contacts)))
+        contacts, indices = zip(*sorted((c, i)
+                                        for i, c in enumerate(contacts)))
 
         self.contacts = contacts
         self.ncontacts = len(self.contacts)
@@ -19,7 +21,8 @@ class SeegRecording():
 
         self.sampling_rate = sampling_rate
         nsamples = self.data.shape[1]
-        self.t = np.linspace(0, (nsamples - 1)*(1./self.sampling_rate), nsamples)
+        self.t = np.linspace(
+            0, (nsamples - 1)*(1./self.sampling_rate), nsamples)
 
         self.electrodes = {}
         for i, (name, number) in enumerate(self.contacts):
@@ -28,7 +31,6 @@ class SeegRecording():
             self.electrodes[name].append(i)
 
         self.set_bipolar()
-
 
     @classmethod
     def from_ades(cls, filename):
@@ -40,21 +42,23 @@ class SeegRecording():
         nsamples = None
         seeg_idxs = []
 
-
         bad_channels = []
         bad_file = filename + ".bad"
         if os.path.isfile(bad_file):
             with open(bad_file, 'r') as fd:
-                bad_channels = [ch.strip() for ch in fd.readlines() if ch.strip() != ""]
+                bad_channels = [ch.strip()
+                                for ch in fd.readlines() if ch.strip() != ""]
 
         with open(filename, 'r') as fd:
-            fd.readline() # ADES header file
+            fd.readline()  # ADES header file
 
-            kw, sampling_rate = [s.strip() for s in fd.readline().strip().split('=')]
+            kw, sampling_rate = [s.strip()
+                                 for s in fd.readline().strip().split('=')]
             assert kw == 'samplingRate'
             sampling_rate = float(sampling_rate)
 
-            kw, nsamples = [s.strip() for s in fd.readline().strip().split('=')]
+            kw, nsamples = [s.strip()
+                            for s in fd.readline().strip().split('=')]
             assert kw == 'numberOfSamples'
             nsamples = int(nsamples)
 
@@ -65,12 +69,12 @@ class SeegRecording():
 
                 parts = [p.strip() for p in line.strip().split('=')]
                 if len(parts) > 1 and parts[1] == 'SEEG':
-                    name, idx = re.match("([A-Za-z]+[']*)([0-9]+)", parts[0]).groups()
+                    name, idx = re.match(
+                        "([A-Za-z]+[']*)([0-9]+)", parts[0]).groups()
                     idx = int(idx)
                     if parts[0] not in bad_channels:
                         contacts.append((name, idx))
                         seeg_idxs.append(channel_idx)
-
 
                 channel_idx += 1
 
@@ -87,7 +91,6 @@ class SeegRecording():
         data = data[seeg_idxs, :]
 
         return cls(contacts, data, sampling_rate)
-
 
     @classmethod
     def from_fif(cls, filename, drop_channels=None, rename_channels=None):
@@ -126,7 +129,6 @@ class SeegRecording():
                 seeg_idxs.append(i)
 
         return cls(contacts, raw.get_data()[seeg_idxs, :], raw.info['sfreq'])
-
 
     def set_bipolar(self):
         self.bipolar = []

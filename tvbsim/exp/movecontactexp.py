@@ -6,9 +6,11 @@ import scipy
 import math
 import warnings
 
+
 class MoveContactExp(object):
     def __init__(self):
         pass
+
     def simplest_gain_matrix(self):
         '''
         This is a function to recompute a new gain matrix based on xyz that moved
@@ -26,6 +28,7 @@ class MoveContactExp(object):
         ndr = np.sqrt((dr**2).sum(axis=-1))
         Vr = 1.0 / (4 * np.pi) / (1+ndr**2)
         return Vr
+
     def gain_matrix_dipole(self):
         """
 
@@ -55,7 +58,8 @@ class MoveContactExp(object):
         for sens_ind in range(nsens):
             a = sensors[sens_ind, :] - vertices
             na = np.sqrt(np.sum(a**2, axis=1))
-            gain_mtx_vert[sens_ind, :] = areas * (np.sum(orientations*a, axis=1)/na**3) / (4.0*np.pi*SIGMA)
+            gain_mtx_vert[sens_ind, :] = areas * \
+                (np.sum(orientations*a, axis=1)/na**3) / (4.0*np.pi*SIGMA)
 
         return gain_mtx_vert.dot(reg_map_mtx)
 
@@ -80,8 +84,8 @@ class MoveContactExp(object):
         nsens = self.seeg_xyz.shape[0]
         reg_map_mtx = np.zeros((nverts, nregions), dtype=int)
         for i, region in enumerate(self.regmap):
-           if region >= 0:
-               reg_map_mtx[i, region] = 1
+            if region >= 0:
+                reg_map_mtx[i, region] = 1
         gain_mtx_vert = np.zeros((nsens, nverts))
         for sens_ind in range(nsens):
             a = self.seeg_xyz[sens_ind, :] - self.vertices
@@ -90,16 +94,18 @@ class MoveContactExp(object):
             # original version
             gain_mtx_vert[sens_ind, :] = self.areas / (na**2)
 
-            ## To Do: Refactor to use a more physically accurate way to project source activity
+            # To Do: Refactor to use a more physically accurate way to project source activity
             # adding a 1 in the denominator to softmax the gain matrix
             softmax_inds = np.where(na < 1)[0]
             if len(softmax_inds) > 0:
                 # print("na was less than one, so softmaxing here at 1.")
                 # epsilon = 1 - a
                 # na = np.sqrt(np.sum(a**2, axis=1))
-                gain_mtx_vert[sens_ind, softmax_inds] = self.areas[softmax_inds] / (1 + na[softmax_inds]**2)
-                
+                gain_mtx_vert[sens_ind, softmax_inds] = self.areas[softmax_inds] / \
+                    (1 + na[softmax_inds]**2)
+
         return gain_mtx_vert.dot(reg_map_mtx)
+
     def getallcontacts(self, seeg_contact):
         '''
         Gets the entire electrode contacts' indices, so that we can modify the corresponding xyz
@@ -117,19 +123,22 @@ class MoveContactExp(object):
         # get indices depending on if it is a left/right hemisphere electrode
         if isleftside != -1:
             elec_label = seeg_contact.split("'")[0]
-            electrodeindices = [i for i,item in enumerate(self.seeg_labels) if elec_label+"'" in item]
+            electrodeindices = [i for i, item in enumerate(
+                self.seeg_labels) if elec_label+"'" in item]
         else:
             for idx, s in enumerate(seeg_contact):
                 if s.isdigit():
                     elec_label = seeg_contact[0:idx]
                     break
-            electrodeindices = [i for i,item in enumerate(contacts) if elec_label == item[0]]
+            electrodeindices = [i for i, item in enumerate(
+                contacts) if elec_label == item[0]]
         print('\nelec label is %s' % elec_label)
         return electrodeindices
+
     def _cart2sph(self, x, y, z):
         '''
         Transform Cartesian coordinates to spherical
-        
+
         Paramters:
         x           (float) X coordinate
         y           (float) Y coordinate
@@ -142,14 +151,16 @@ class MoveContactExp(object):
         elev = math.atan2(math.sqrt(x2_y2), z)            # Elevation / phi
         az = math.atan2(y, x)                          # Azimuth / theta
         return r, elev, az
+
     def _sph2cart(self, r, elev, az):
         x = r*math.sin(elev)*math.cos(az)
         y = r*math.sin(elev)*math.sin(az)
         z = r*math.cos(elev)
-        return x,y,z
+        return x, y, z
+
     def move_electrode(self, seegind, newloc):
         seeg_contact = self.seeg_labels[seegind]
-        contact_xyz = self.seeg_xyz[seegind,:].copy()
+        contact_xyz = self.seeg_xyz[seegind, :].copy()
         # get all the indices for this electrode
         electrodeindices = self.getallcontacts(seeg_contact=seeg_contact)
         assert len(electrodeindices) > 2
@@ -160,11 +171,12 @@ class MoveContactExp(object):
         z_dist = newloc[2] - contact_xyz[2]
         distancetomove = [x_dist, y_dist, z_dist]
         self.seeg_xyz[electrodeindices] = self.seeg_xyz[electrodeindices] + distancetomove
-    def findclosestcontact(self,regionind):
+
+    def findclosestcontact(self, regionind):
         '''
         This function finds the closest contact to an ezregion
         '''
-        # get the region's xyz coords we want to get 
+        # get the region's xyz coords we want to get
         regionxyz = self.conn.centres[regionind]
         # create a mask of the indices we already moved
         # elec_indices = np.arange(0, self.seeg_xyz.shape[0])
@@ -174,7 +186,7 @@ class MoveContactExp(object):
         # tree = scipy.spatial.KDTree(self.seeg_xyz[movedmask, :])
         tree = scipy.spatial.KDTree(self.seeg_xyz)
         near_seeg = tree.query(regionxyz)
-        
+
         # get the distance and the index at the min
         distance = near_seeg[0]
         seeg_index = near_seeg[1]
@@ -189,13 +201,14 @@ class MoveContactExp(object):
             warnings.warn("Need to pass in one region index at a time!")
 
         if distance == -1:
-            warnings.warn("Not moving electrodes, so this call does not do anything!")
+            warnings.warn(
+                "Not moving electrodes, so this call does not do anything!")
             return None, None
         # find the seeg index closest to this region and move it
         seegind, origdistance = self.findclosestcontact(regionind)
 
-        regionxyz = self.conn.centres[regionind,:]
-        closest_seegxyz = self.seeg_xyz[seegind,:].copy()
+        regionxyz = self.conn.centres[regionind, :]
+        closest_seegxyz = self.seeg_xyz[seegind, :].copy()
         seeg_contact = self.seeg_labels[seegind]
         # get all the indices for this electrode
         electrodeindices = self.getallcontacts(seeg_contact=seeg_contact)
@@ -211,13 +224,14 @@ class MoveContactExp(object):
 
         # modify the distance in sphereical coordinates
         r, elev, az = self._cart2sph(x_dist, y_dist, z_dist)
-        r = r - distance 
+        r = r - distance
         x_dist, y_dist, z_dist = self._sph2cart(r, elev, az)
         distancetomove = [x_dist, y_dist, z_dist]
-  
+
         # createa copy of the seeg_xyz df and modify the electrode
         new_seeg_xyz = self.seeg_xyz.copy()
-        new_seeg_xyz[electrodeindices] = new_seeg_xyz[electrodeindices] + distancetomove
+        new_seeg_xyz[electrodeindices] = new_seeg_xyz[electrodeindices] + \
+            distancetomove
 
         # modify the object's seeg xyz
         self.seeg_xyz[electrodeindices] = self.seeg_xyz[electrodeindices] + distancetomove
@@ -229,4 +243,3 @@ class MoveContactExp(object):
         if distance != -1:
             assert np.linalg.norm(distancetomove) - origdistance <= distance
         return new_seeg_xyz, electrodeindices
-

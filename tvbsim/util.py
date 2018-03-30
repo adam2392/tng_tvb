@@ -17,8 +17,10 @@ PostProcess helps analyze the simulated data and perform rejection of senseless 
 
 MoveContacts helps analyze the simulated data's structural input data like seeg_xyz and region_centers to determine how to move a certain seeg contact and it's corresponding electrode. In addition, it can determine the region/contact with the closest point, so that can be determined as an EZ region.
 '''
+
+
 def renamefiles(project_dir):
-    ####### Initialize files needed to 
+    # Initialize files needed to
     # convert seeg.xyz to seeg.txt file
     sensorsfile = os.path.join(project_dir, "seeg.xyz")
     newsensorsfile = os.path.join(project_dir, "seeg.txt")
@@ -37,12 +39,16 @@ def renamefiles(project_dir):
     except:
         print("Already renamed gain_inv-square.mat possibly!")
 
+
 def extractseegxyz(seegfile):
     '''
     This is just a wrapper function to retrieve the seeg coordinate data in a pd dataframe
     '''
-    seeg_pd = pd.read_csv(seegfile, names=['x','y','z'], delim_whitespace=True)
+    seeg_pd = pd.read_csv(
+        seegfile, names=['x', 'y', 'z'], delim_whitespace=True)
     return seeg_pd
+
+
 def extractcon(confile):
     '''
     This is a wrapper function to obtain the connectivity object from a file 
@@ -50,13 +56,16 @@ def extractcon(confile):
     con = connectivity.Connectivity.from_file(confile)
     return con
 
+
 def read_surf(directory, use_subcort):
     '''
     Pass in directory for where the entire metadata for this patient is
     '''
     # Shift to account for 0 - unknown region, not included later
-    reg_map_cort = np.genfromtxt((os.path.join(directory, "region_mapping_cort.txt")), dtype=int) - 1
-    reg_map_subc = np.genfromtxt((os.path.join(directory, "region_mapping_subcort.txt")), dtype=int) - 1
+    reg_map_cort = np.genfromtxt(
+        (os.path.join(directory, "region_mapping_cort.txt")), dtype=int) - 1
+    reg_map_subc = np.genfromtxt(
+        (os.path.join(directory, "region_mapping_subcort.txt")), dtype=int) - 1
 
     with zipfile.ZipFile(os.path.join(directory, "surface_cort.zip")) as zip:
         with zip.open('vertices.txt') as fhandle:
@@ -86,6 +95,8 @@ def read_surf(directory, use_subcort):
         regmap = np.concatenate((reg_map_cort, reg_map_subc))
 
         return (verts, normals, areas, regmap)
+
+
 def compute_triangle_areas(vertices, triangles):
     """Calculates the area of triangles making up a surface."""
     tri_u = vertices[triangles[:, 1], :] - vertices[triangles[:, 0], :]
@@ -94,6 +105,8 @@ def compute_triangle_areas(vertices, triangles):
     triangle_areas = np.sqrt(np.sum(tri_norm ** 2, axis=1)) / 2.0
     triangle_areas = triangle_areas[:, np.newaxis]
     return triangle_areas
+
+
 def compute_vertex_areas(vertices, triangles):
     triangle_areas = compute_triangle_areas(vertices, triangles)
     vertex_areas = np.zeros((vertices.shape[0]))
@@ -101,8 +114,10 @@ def compute_vertex_areas(vertices, triangles):
         for i in range(3):
             vertex_areas[vertices[i]] += 1./3. * triangle_areas[triang]
     return vertex_areas
+
+
 def gain_matrix_inv_square(vertices, areas, region_mapping,
-                       nregions, sensors):
+                           nregions, sensors):
     '''
     Computes a gain matrix using an inverse square fall off (like a mean field model)
     Parameters
@@ -123,8 +138,8 @@ def gain_matrix_inv_square(vertices, areas, region_mapping,
 
     reg_map_mtx = np.zeros((nverts, nregions), dtype=int)
     for i, region in enumerate(region_mapping):
-       if region >= 0:
-           reg_map_mtx[i, region] = 1
+        if region >= 0:
+            reg_map_mtx[i, region] = 1
 
     gain_mtx_vert = np.zeros((nsens, nverts))
     for sens_ind in range(nsens):
@@ -133,6 +148,7 @@ def gain_matrix_inv_square(vertices, areas, region_mapping,
         gain_mtx_vert[sens_ind, :] = areas / na**2
 
     return gain_mtx_vert.dot(reg_map_mtx)
+
 
 def findclosestregion(seegindex, p=2):
     '''
@@ -144,17 +160,20 @@ def findclosestregion(seegindex, p=2):
     # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
     tree = scipy.spatial.KDTree(self.reg_xyz)
     near_region = tree.query(contact_xyz, p=p)
-    
+
     distance = near_region[0]
     region_index = near_region[1]
     return region_index, distance
+
+
 def getregionsforcontacts(seeg_contact):
     contact_index = np.where(self.seeg_labels == seeg_contact)[0]
-    
+
     # determine the region index and distance to closest region
     region_index, distance = self.findclosestregion(contact_index)
-    
+
     return region_index, distance
+
 
 if __name__ == '__main__':
     patient = 'id001_ac'
@@ -179,9 +198,11 @@ if __name__ == '__main__':
     seeg_contact = np.array(seeg_xyz.iloc[near_seeg[1]].index, dtype='str')[0]
     electrodeindices = getallcontacts(seeg_labels, seeg_contact)
 
-    new_seeg_xyz = movecontact(seeg_xyz, region_centers, ezindice, seeg_contact)
+    new_seeg_xyz = movecontact(
+        seeg_xyz, region_centers, ezindice, seeg_contact)
 
-    gainmat = simplest_gain_matrix(new_seeg_xyz.as_matrix(), reg_xyz=region_centers)
+    gainmat = simplest_gain_matrix(
+        new_seeg_xyz.as_matrix(), reg_xyz=region_centers)
 
     # print gainmat.shape
     # print seeg_contact
