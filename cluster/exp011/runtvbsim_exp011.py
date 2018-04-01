@@ -37,7 +37,7 @@ if __name__ == '__main__':
     try:
         maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
     except:
-        print("Could not load surface data for this patient %s", patient)
+        print("Could not load surface data for this patient ", patient)
     ezregions, pzregions = clinregions(patient)
 
     # get a list of the outside surgical resection indices we want to test
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     allclinregions = ezregions + pzregions
 
     for idx in range(len(osrez_inds)):
-        ezinds = np.random.choice(osrez_inds, size=len(ezregions), replace=False)
+        ezinds = np.random.choice(osrez_inds, size=min(2, len(ezregions)), replace=False)
         ezregion = np.array(con.region_labels[ezinds])
 
         ## OUTPUTFILE NAME ##
