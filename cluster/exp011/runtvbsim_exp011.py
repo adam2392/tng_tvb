@@ -55,9 +55,9 @@ if __name__ == '__main__':
 
         # make sure we pass in a list to the ezregions
         if len(ezinds) == 1:
-            ezregion = [ezregion]
+            ezregion = [ezregion.ravel()]
         else:
-            ezregion = list(ezregion)
+            ezregion = list(ezregion.ravel())
 
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
