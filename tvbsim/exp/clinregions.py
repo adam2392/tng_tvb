@@ -19,7 +19,7 @@ def outsideclininds(patient):
         ezinds = []
     if 'id008' in patient:
         # in the frontal region
-        ezinds = [74,75, 80, 82, 87]
+        ezinds = [74,75, 80, 82, 77]
     if 'id009' in patient:
         ezinds = [1, 6, 7, 30, 35]
     if 'id010' in patient:
@@ -32,7 +32,7 @@ def outsideclininds(patient):
     # 013
     if 'id013' in patient:
         # in the frontal region with rostral middlefrontal
-        ezinds = [74,75, 80, 82, 87]
+        ezinds = [74,75, 80, 82, 77]
     # 014
     if 'id014' in patient:
         # both hemispheres in frontal region
