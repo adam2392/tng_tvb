@@ -54,10 +54,10 @@ if __name__ == '__main__':
         ezregion = np.array(con.region_labels[ezinds])
 
         # make sure we pass in a list to the ezregions
-        if len(ezinds) == 1:
-            ezregion = [ezregion.ravel()]
-        else:
-            ezregion = list(ezregion.ravel())
+        # if len(ezinds) == 1:
+        #     ezregion = [ezregion.ravel()]
+        # else:
+        ezregion = list(ezregion.ravel())
 
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
