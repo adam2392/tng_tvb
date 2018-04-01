@@ -131,7 +131,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
             self.initcond = initcond
 
         # either use gain file, or recompute it
-        usegainfile = False
+        usegainfile = True
         if usegainfile:
             gainfile = self.gainfile
         else:
@@ -165,7 +165,6 @@ class MainTVBSim(TVBExp, MoveContactExp):
 
         if gainfile is None:
             self.gainmat = self.gain_matrix_inv_square()
-
             # self.gainmat = self.simplest_gain_matrix()
             sim_monitors[1].gain = self.gainmat
 

@@ -39,7 +39,7 @@ def outsideclininds(patient):
         ezinds = [13, 25, 74, 60, 62]
     if 'id015' in patient:
         ezinds = [43, 54, 70, 72, 78, 82]
-    return ezregions, pzregions
+    return ezinds
 
 def clinregions(patient):
     ''' THE REAL CLINICALLY ANNOTATED AREAS '''
