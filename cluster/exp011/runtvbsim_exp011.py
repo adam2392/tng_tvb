@@ -7,7 +7,7 @@ from tvb.simulator.lab import *
 import os.path
 import numpy as np
 import pandas as pd
-from ..clinregions import clinregions, outsideclinregions
+from clinregions import clinregions, outsideclinregions
 
 if __name__ == '__main__':
     # read in arguments
