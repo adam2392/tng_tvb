@@ -67,8 +67,8 @@ if __name__ == '__main__':
         maintvbexp.setezregion(ezregions=ezregion)
         maintvbexp.setpzregion(pzregions=[])
 
-        print(maintvbexp.ezregions)
-        print(maintvbexp.pzregions)
+        print(maintvbexp.ezregion)
+        print(maintvbexp.pzregion)
         print(maintvbexp.ezind)
         print(maintvbexp.pzind)
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
