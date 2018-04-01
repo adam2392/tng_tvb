@@ -54,7 +54,7 @@ if __name__ == '__main__':
         ezregion = np.array(con.region_labels[ezinds])
 
         # make sure we pass in a list to the ezregions
-        if len(ezregion) == 1:
+        if len(ezinds) == 1:
             ezregion = [ezregion]
         else:
             ezregion = list(ezregion)
