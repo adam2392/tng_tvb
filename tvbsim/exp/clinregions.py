@@ -14,7 +14,7 @@ def outsideclininds(patient):
         ezinds = [7,12,24,28,35]
     if 'id005' in patient: 
         # 
-        ezinds = [3, 34, 1 7, 29]
+        ezinds = [3, 34, 17, 29]
     if 'id006' in patient: 
         ezinds = []
     if 'id008' in patient:
