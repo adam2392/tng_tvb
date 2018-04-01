@@ -34,8 +34,10 @@ if __name__ == '__main__':
     # load the necessary data files to run simulation
     maintvbexp.loadseegxyz(seegfile=seegfile)
     maintvbexp.loadgainmat(gainfile=gainfile)
-    maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
-
+    try:
+        maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
+    except:
+        print("Could not load surface data for this patient %s", patient)
     ezregions, pzregions = clinregions(patient)
 
     # get a list of the outside surgical resection indices we want to test
