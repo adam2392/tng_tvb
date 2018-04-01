@@ -7,7 +7,7 @@ from tvb.simulator.lab import *
 import os.path
 import numpy as np
 import pandas as pd
-from tvbsim.exp.clinregions import clinregions, outsideclinregions
+from tvbsim.exp.clinregions import clinregions, outsideclininds
 
 if __name__ == '__main__':
     # read in arguments
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     ezregions, pzregions = clinregions(patient)
 
     # get a list of the outside surgical resection indices we want to test
-    osrez_inds = outsideclinregions(patient)
+    osrez_inds = outsideclininds(patient)
     osrez_inds = [x - 1 for x in osrez_inds] # subtract 1 from index, since the plotting started at 1
 
 
