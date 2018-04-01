@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     for idx in range(len(osrez_inds)):
         ezinds = np.random.choice(osrez_inds, size=len(ezregions), replace=False)
-        ezregion = con.regions[ezinds]
+        ezregion = con.region_labels[ezinds]
 
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
