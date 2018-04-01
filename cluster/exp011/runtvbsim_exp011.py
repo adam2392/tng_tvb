@@ -51,14 +51,14 @@ if __name__ == '__main__':
 
     for idx in range(len(osrez_inds)):
         ezinds = np.random.choice(osrez_inds, size=len(ezregions), replace=False)
-        ezregion = con.region_labels[ezinds]
+        ezregion = np.array(con.region_labels[ezinds])
 
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
                     '{0}_dist{1}_{2}.npz'.format(patient, movedist, idx))
 
         # set ez/pz regions
-        maintvbexp.setezregion(ezregions=[ezregion])
+        maintvbexp.setezregion(ezregions=[ezregion.ravel()])
         maintvbexp.setpzregion(pzregions=[])
 
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
