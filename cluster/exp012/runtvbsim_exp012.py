@@ -16,6 +16,7 @@ if __name__ == '__main__':
     outputdatadir = str(sys.argv[3])
     movedist = float(sys.argv[4])
 
+    outputdatadir = os.path.join(outputdatadir, patient)
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
@@ -26,11 +27,6 @@ if __name__ == '__main__':
     seegfile = getmetafile('seeg.txt')
     gainfile = getmetafile('gain_inv-square.txt')
 
-    ## OUTPUTFILE NAME ##
-    filename = os.path.join(outputdatadir, 
-            patient+'_dist' + str(movedist) + '.npz')
-
-    np.random.seed(12345+int(movedist*1000))
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
     con = connectivity.Connectivity.from_file(getmetafile("connectivity.zip"))
@@ -38,14 +34,28 @@ if __name__ == '__main__':
     # load the necessary data files to run simulation
     maintvbexp.loadseegxyz(seegfile=seegfile)
     maintvbexp.loadgainmat(gainfile=gainfile)
-    maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
+    try:
+        maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
+    except:
+        print("Could not load surface data for this patient ", patient)
 
     ezregions, pzregions = clinregions(patient)
+    print(ezregions, pzregions)
     
+    ## OUTPUTFILE NAME ##
+    filename = os.path.join(outputdatadir,
+                '{0}_dist{1}.npz'.format(patient, movedist))
+
     # set ez/pz regions
     maintvbexp.setezregion(ezregions=ezregions)
     maintvbexp.setpzregion(pzregions=pzregions)
+
+    print(maintvbexp.ezregion)
+    print(maintvbexp.pzregion)
+    print(maintvbexp.ezind)
+    print(maintvbexp.pzind)
     allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
+    # allindices = allindices.ravel()
     # setup models and integrators
     ######### Epileptor Parameters ##########
     epileptor_r = 0.00037#/1.5   # Temporal scaling in the third state variable
@@ -53,8 +63,8 @@ if __name__ == '__main__':
     epitt = 0.05                   # time scale of simulation
     epitau = 10                   # Temporal scaling coefficient in fifth st var
     x0norm=-2.45 # x0c value = -2.05
-    x0ez=-1.85
-    x0pz=-2.05
+    x0ez=-1.65
+    x0pz=-2.0
     # x0pz = None
 
     if maintvbexp.ezregion is None:
@@ -70,7 +80,7 @@ if __name__ == '__main__':
     # simulation parameters
     _factor = 1
     _samplerate = 1000*_factor # Hz
-    sim_length = 60*_samplerate    
+    sim_length = 80*_samplerate    
     period = 1./_factor
 
     maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
@@ -83,20 +93,20 @@ if __name__ == '__main__':
     print(maintvbexp.seeg_labels[elecindicesmoved])
 
     ######################## run simulation ########################
-    configs = maintvbexp.setupsim(a=1., period=period, moved=False)
+    initcond = None
+    configs = maintvbexp.setupsim(a=1., period=period, moved=False, initcond=initcond)
     print(configs)
     times, epilepts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
     ######################## POST PROCESSING ########################
     secstoreject = 20
 
-    allindices = np.append(maintvbexp.ezind, maintvbexp.pzind, axis=0).astype(int)
     postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
     times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
 
     # GET ONSET/OFFSET OF SEIZURE
     postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
-    settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=500, delta=0.2)# get the actual seizure times and offsets
+    settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=100, delta=0.2)# get the actual seizure times and offsets
     seizonsets, seizoffsets = postprocessor.getseiztimes(settimes)
 
     freqrange = [0.1, 499]
@@ -114,8 +124,8 @@ if __name__ == '__main__':
             'regions_centers': maintvbexp.conn.centres,
             'chanlabels': maintvbexp.seeg_labels,
             'seeg_xyz': maintvbexp.seeg_xyz,
-            'ez': maintvbexp.ezregion,
-            'pz': maintvbexp.pzregion,
+            'ezregs': maintvbexp.ezregion,
+            'pzregs': maintvbexp.pzregion,
             'ezindices': maintvbexp.ezind,
             'pzindices': maintvbexp.pzind,
             'onsettimes':seizonsets,

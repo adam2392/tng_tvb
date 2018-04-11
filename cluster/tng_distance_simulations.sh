@@ -4,11 +4,21 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	# 'id001_ac 
-	# id002_cj
-	# id014_rb
-	'id008_gc id013_pg'
-	)
+	'id001_ac 
+	id002_cj
+	id003_cm
+	id004_cv
+	id005_et
+	id006_fb
+	id008_gc
+	id009_il
+	id010_js
+	id011_ml
+	id012_pc
+	id013_pg
+	id014_rb
+	id015_sf'
+)
 
 # 1. Prompt user for input that runs the analysis
 echo "Begin analysis." # print beginning statement
