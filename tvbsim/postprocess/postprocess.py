@@ -90,6 +90,8 @@ class PostProcessor(object):
                                                                   lookahead=lookahead,
                                                                   delta=delta)
                 settimes.append(list(zip(_onsettimes, _offsettimes)))
+            else:
+                print('Skipping this index %d' % index)
         # flatten out list structure if there is one
         settimes = [item for sublist in settimes for item in sublist]
         settimes = np.asarray(settimes).squeeze()
