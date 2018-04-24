@@ -43,7 +43,7 @@ ssh                             := ssh $(port)
 }
 # rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata/ ~/Downloads/tngcluster/tvbforwardsim/;\
 
-# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp008 ~/Downloads/tngcluster/;\
+# rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp011/seegpert/ ~/Downloads/tngcluster/;\
 
 
 *push-mvar:
