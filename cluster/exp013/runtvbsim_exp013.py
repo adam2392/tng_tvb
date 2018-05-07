@@ -42,7 +42,8 @@ if __name__ == '__main__':
     except:
         print("Could not load surface data for this patient ", patient)
 
-    ezinds = pd.read_csv(ezhypfile, delimiter='\n')
+    reginds = pd.read_csv(ezhypfile, delimiter='\n').as_matrix()
+    ezinds = np.where(reginds==1)[0]
     ezregions = con.region_labels[ezinds]
     pzregions = None
 
