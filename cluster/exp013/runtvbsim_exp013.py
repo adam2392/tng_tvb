@@ -7,7 +7,6 @@ from tvb.simulator.lab import *
 import os.path
 import numpy as np
 import pandas as pd
-from tvbsim.exp.clinregions import clinregions, outsideclininds
 
 if __name__ == '__main__':
     # read in arguments
@@ -28,6 +27,8 @@ if __name__ == '__main__':
     seegfile = os.path.join(seegmetadatadir, 'seeg.txt')
     gainfile = os.path.join(seegmetadatadir, 'gain_inv-square.txt')
 
+    ezhypfile = os.path.join(tvbmetadatadir, 'ez_hypothesis.txt')
+
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
     connfile = os.path.join(tvbmetadatadir, 'connectivity.zip')
@@ -41,7 +42,10 @@ if __name__ == '__main__':
     except:
         print("Could not load surface data for this patient ", patient)
 
-    ezregions, pzregions = clinregions(patient)
+    ezinds = pd.read_csv(ezhypfile, delimiter='\n')
+    ezregions = con.region_labels[ezinds]
+    pzregions = None
+
     print(ezregions, pzregions)
     
     ## OUTPUTFILE NAME ##
