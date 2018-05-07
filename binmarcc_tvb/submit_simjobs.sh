@@ -41,7 +41,8 @@ echo $numpz
 printf "About to run on patients (press enter to continue): $patients" 
 read answer
 
-metadatadir='/home-1/ali39@jhu.edu/data/fragility/tvbforwardsim/metadata/'
+# metadatadir='/home-1/ali39@jhu.edu/data/fragility/tvbforwardsim/metadata/'
+metadatadir='/home-1/ali39@jhu.edu/data/tngpipeline/'
 outputdatadir='/home-1/ali39@jhu.edu/data/fragility/tvbforwardsim/'
 printf "\nThis is the data directories: \n"
 printf "Metadatadir: $metadatadir \n"

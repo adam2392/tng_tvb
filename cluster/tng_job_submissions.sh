@@ -4,45 +4,36 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	'id001_ac 
-	id002_cj
-	id003_cm
-	id004_cv
-	id005_et
-	id006_fb
-	id008_gc
-	id009_il
-	id010_js
-	id011_ml
-	id012_pc
-	id013_pg
-	id014_rb
-	id015_sf'
+	# 'id001_ac 
+	# id002_cj
+	# id003_cm
+	# id004_cv
+	# id005_et
+	# id006_fb
+	# id008_gc
+	# id009_il
+	# id010_js
+	# id011_ml
+	# id012_pc
+	# id013_pg
+	# id014_rb
+	# id015_sf'
 # 'id003_cm id008_gc id014_rb'
+	'id001_bt
+	id002_sd
+	id003_mg id004_bj id005_ft
+	id006_mr id007_rd id008_dmc
+	id009_ba id010_cmn id011_gr
+	id013_lk id014_vc id015_gjl
+	id016_lm id017_mk id018_lo')
 	)
 
 # 1. Prompt user for input that runs the analysis
 echo "Begin analysis." # print beginning statement
-# read -p "Move contacts?: " movecontacts
-# read -p "Enter num ez: " numez
-# read -p "Enter num pz: " numpz
-# read -p "Enter ez x0 value: " x0ez
-# read -p "Enter pz x0 value: " x0pz
 read -p "Enter distance: " dist
 
 # set values and their defauls
-# movecontacts=${modelType:-1}
-# numez=${numez:-1}
-# numpz=${numpz:-1}
-# x0ez=${x0ez:--1.6}
-# x0pz=${x0pz:--2.0}
 dist=${dist:--1}
-
-# echo ${movecontacts}
-# echo ${numez}
-# echo ${numpz}
-# echo ${x0ez}
-# echo ${x0pz}
 echo ${dist}
 
 # Pause before running to check
@@ -50,7 +41,7 @@ printf "About to run on patients (press enter to continue): $patients"
 read answer
 
 metadatadir='/home/adamli/data/metadata/'
-outputdatadir='/home/adamli/data/tvbforwardsim/exp012/' # and with allregions/
+outputdatadir='/home/adamli/data/tvbforwardsim/exp013/' # and with allregions/
 printf "\nThis is the data directories: \n"
 printf "$metadatadir \n"
 printf "$outputdatadir \n"
@@ -70,15 +61,6 @@ NUM_CPUPERTASK=1
 
 ## job reqs
 walltime=6:00:0					# the walltime for each computation
-
-# create concatenated strings in unix to ensure proper passing of list of patients
-buff=''
-for patient in $patients; do
-	buff+=$patient
-	buff+=' '
-done
-echo $buff
-printf "\n"
 
 #### Create all logging directories if needed
 # _logs = the parallel logfile for resuming job at errors 
@@ -103,8 +85,6 @@ for patient in $patients; do
 metadatadir=${metadatadir},\
 outputdatadir=${outputdatadir},\
 dist=${dist} "
-# x0ez=${x0ez},\
-# x0pz=${x0pz},\
 
 	# build basic sbatch command with all params parametrized
 	sbatcomm="sbatch \
@@ -117,69 +97,8 @@ dist=${dist} "
 	echo $sbatcomm $exvars runtvbjob.sbatch 
 	printf "Sbatch should run now\n"
 	
-	${sbatcomm} $exvars ./exp012/runtvbsim_exp012.sbatch
+	${sbatcomm} $exvars ./exp013/runtvbsim_exp013.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."
 done
-
-# for x0ez in $(seq -1.6 -0.025 -1.8); do
-# 	echo $x0ez
-
-# 	# set jobname
-# 	jobname="${patient}_submit_${x0ez}_${x0pz}_tvbsim.log"
-	
-# 	# create export commands
-# 	exvars="--export=patient=${patient},\
-# x0ez=${x0ez},\
-# x0pz=${x0pz},\
-# metadatadir=${metadatadir},\
-# outputdatadir=${outputdatadir},\
-# dist=${dist} "
-
-# 	# build basic sbatch command with all params parametrized
-# 	sbatcomm="sbatch \
-# 	--time=${walltime} \
-# 	--nodes=${NUM_NODES} \
-# 	--cpus-per-task=${NUM_CPUPERTASK} \
-# 	--job-name=${jobname} "
-
-# 	# build a scavenger job, gpu job, or other job
-# 	echo $sbatcomm $exvars ./runtvbsim.sbatch
-# 	printf "Sbatch should run now\n"
-	
-# 	${sbatcomm} $exvars ./runtvbsim.sbatch
-
-# 	read -p "Continuing in 0.5 Seconds...." -t 0.5
-# 	echo "Continuing ...."
-# done
-
-
-# set jobname
-# x0ez=-2.3
-# x0pz=-2.3
-# jobname="${patient}_submit_${x0ez}_${x0pz}_tvbsim.log"
-
-# # create export commands
-# exvars="--export=patient=${patient},\
-# x0ez=${x0ez},\
-# x0pz=${x0pz},\
-# metadatadir=${metadatadir},\
-# outputdatadir=${outputdatadir},\
-# dist=${dist} "
-
-# # build basic sbatch command with all params parametrized
-# sbatcomm="sbatch \
-# --time=${walltime} \
-# --nodes=${NUM_NODES} \
-# --cpus-per-task=${NUM_CPUPERTASK} \
-# --job-name=${jobname} "
-
-# # build a scavenger job, gpu job, or other job
-# echo $sbatcomm $exvars ./runtvbsim.sbatch
-# printf "Sbatch should run now\n"
-
-# ${sbatcomm} $exvars ./runtvbsim.sbatch
-
-# read -p "Continuing in 0.5 Seconds...." -t 0.5
-# echo "Continuing ...."

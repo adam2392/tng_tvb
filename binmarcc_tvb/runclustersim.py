@@ -22,6 +22,7 @@ import tvbsim
 # import fragility.signalprocessing as sp
 
 from scipy.signal import butter, lfilter
+
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq

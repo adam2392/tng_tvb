@@ -116,3 +116,65 @@ sbatcomm="sbatch \
 		echo "Continuing ...."
 	done
 done
+
+
+# for x0ez in $(seq -1.6 -0.025 -1.8); do
+# 	echo $x0ez
+
+# 	# set jobname
+# 	jobname="${patient}_submit_${x0ez}_${x0pz}_tvbsim.log"
+	
+# 	# create export commands
+# 	exvars="--export=patient=${patient},\
+# x0ez=${x0ez},\
+# x0pz=${x0pz},\
+# metadatadir=${metadatadir},\
+# outputdatadir=${outputdatadir},\
+# dist=${dist} "
+
+# 	# build basic sbatch command with all params parametrized
+# 	sbatcomm="sbatch \
+# 	--time=${walltime} \
+# 	--nodes=${NUM_NODES} \
+# 	--cpus-per-task=${NUM_CPUPERTASK} \
+# 	--job-name=${jobname} "
+
+# 	# build a scavenger job, gpu job, or other job
+# 	echo $sbatcomm $exvars ./runtvbsim.sbatch
+# 	printf "Sbatch should run now\n"
+	
+# 	${sbatcomm} $exvars ./runtvbsim.sbatch
+
+# 	read -p "Continuing in 0.5 Seconds...." -t 0.5
+# 	echo "Continuing ...."
+# done
+
+
+# set jobname
+# x0ez=-2.3
+# x0pz=-2.3
+# jobname="${patient}_submit_${x0ez}_${x0pz}_tvbsim.log"
+
+# # create export commands
+# exvars="--export=patient=${patient},\
+# x0ez=${x0ez},\
+# x0pz=${x0pz},\
+# metadatadir=${metadatadir},\
+# outputdatadir=${outputdatadir},\
+# dist=${dist} "
+
+# # build basic sbatch command with all params parametrized
+# sbatcomm="sbatch \
+# --time=${walltime} \
+# --nodes=${NUM_NODES} \
+# --cpus-per-task=${NUM_CPUPERTASK} \
+# --job-name=${jobname} "
+
+# # build a scavenger job, gpu job, or other job
+# echo $sbatcomm $exvars ./runtvbsim.sbatch
+# printf "Sbatch should run now\n"
+
+# ${sbatcomm} $exvars ./runtvbsim.sbatch
+
+# read -p "Continuing in 0.5 Seconds...." -t 0.5
+# echo "Continuing ...."
