@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # simulation parameters
     _factor = 1
     _samplerate = 1000*_factor # Hz
-    sim_length = 80*_samplerate    
+    sim_length = 60*_samplerate    
     period = 1./_factor
 
     maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
@@ -111,6 +111,7 @@ if __name__ == '__main__':
     postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
     times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
 
+    print('finished simulating!')
     # GET ONSET/OFFSET OF SEIZURE
     # postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
     # settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=100, delta=0.2)# get the actual seizure times and offsets
@@ -118,7 +119,6 @@ if __name__ == '__main__':
     detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
     settimes = detector.getonsetsoffsets(epilepts, allindices)
     seizonsets, seizoffsets = detector.getseiztimes(settimes)
-
 
     freqrange = [0.1, 499]
     # linefreq = 60
