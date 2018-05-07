@@ -27,6 +27,8 @@ echo "Patient is: ${patient}"
 echo "Metadatadir is: ${metadatadir}"
 echo "Outputdatadir is: ${outputdatadir}"
 echo "Distance to move is: ${dist}"
+echo "x0ez is: ${x0ez}"
+echo "x0pz is: ${x0pz}"
 
 # python ./exp009/runtvbsim_shuffled.py ${patient} ${metadatadir} ${outputdatadir} ${dist}
 python runtvbsim.py ${patient} ${metadatadir} ${outputdatadir} ${dist}

@@ -19,12 +19,16 @@ if __name__ == '__main__':
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
-    metadatadir = os.path.join(metadatadir, patient)
-    tvbsim.util.renamefiles(metadatadir)
+    seegmetadatadir = os.path.join(metadatadir, patient, 'elec')
+    tvbmetadatadir = os.path.join(metadatadir, patient, 'tvb')
+    tvbsim.util.renamefiles(seegmetadatadir)
     # get the important files
     getmetafile = lambda filename: os.path.join(metadatadir, filename)
-    seegfile = getmetafile('seeg.txt')
-    gainfile = getmetafile('gain_inv-square.txt')
+
+    seegfile = os.path.join(seegmetadatadir, 'seeg.txt')
+    gainfile = os.path.join(seegmetadatadir, 'gain_inv-square.txt')
+
+    ezhypfile = os.path.join(tvbmetadatadir, 'ez_hypothesis.txt')
 
     ## OUTPUTFILE NAME ##
     filename = os.path.join(outputdatadir, 
@@ -33,15 +37,23 @@ if __name__ == '__main__':
     np.random.seed(12345+int(movedist*1000))
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
-    con = connectivity.Connectivity.from_file(getmetafile("connectivity.zip"))
+    connfile = os.path.join(tvbmetadatadir, 'connectivity.zip')
+    con = connectivity.Connectivity.from_file(connfile)
     maintvbexp = tvbsim.MainTVBSim(con, condspeed=np.inf)
     # load the necessary data files to run simulation
     maintvbexp.loadseegxyz(seegfile=seegfile)
     maintvbexp.loadgainmat(gainfile=gainfile)
     maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
 
-    ezregions, pzregions = clinregions(patient)
-    
+    # ezregions, pzregions = clinregions(patient)
+    reginds = pd.read_csv(ezhypfile, delimiter='\n').as_matrix()
+    ezinds = np.where(reginds==1)[0]
+    ezregions = con.region_labels[ezinds]
+    pzregions = []
+
+    print(ezregions, pzregions)
+
+
     # set ez/pz regions
     maintvbexp.setezregion(ezregions=ezregions)
     maintvbexp.setpzregion(pzregions=pzregions)
