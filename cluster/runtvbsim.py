@@ -43,7 +43,7 @@ if __name__ == '__main__':
     # load the necessary data files to run simulation
     maintvbexp.loadseegxyz(seegfile=seegfile)
     maintvbexp.loadgainmat(gainfile=gainfile)
-    maintvbexp.loadsurfdata(directory=metadatadir, use_subcort=False)
+    maintvbexp.loadsurfdata(directory=tvbmetadatadir, use_subcort=False)
 
     # ezregions, pzregions = clinregions(patient)
     reginds = pd.read_csv(ezhypfile, delimiter='\n').as_matrix()
