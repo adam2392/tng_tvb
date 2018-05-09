@@ -42,9 +42,13 @@ class DetectShift(object):
     def getonsetsoffsets(self, epits, allinds):
         highcut = 1
         fs = 1000
-        epits = butter_lowpass_filter(epits, highcut, fs, order=5)
 
+        # only look at the source signals with all indices
+        # NEED TO CHANGE LATER TO INCLUDE ALL INDICES SINCE SEIZURES CAN SPREAD
         seiz_epi = epits[allinds,:]
+
+        for ireg in range(seiz_epi.shape[0]):
+            seiz_epi[ireg,:] = butter_lowpass_filter(seiz_epi[ireg,:], highcut, fs, order=5)
 
         seizonsets = []
         seizoffsets = []
