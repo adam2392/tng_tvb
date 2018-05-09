@@ -112,6 +112,11 @@ if __name__ == '__main__':
     times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
 
     print('finished simulating!')
+    print(epits.shape)
+    print(seegts.shape)
+    print(times.shape)
+    print(zts.shape)
+    print(allindices)
     # GET ONSET/OFFSET OF SEIZURE
     # postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
     # settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=100, delta=0.2)# get the actual seizure times and offsets
