@@ -5,6 +5,33 @@ import scipy
 from sklearn.preprocessing import StandardScaler
 import warnings
 
+from scipy.signal import butter, lfilter
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band', analog=False)
+    return b, a
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = scipy.signal.filtfilt(b, a, data)
+    return y
+def butter_highpass(lowcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    b, a = butter(order, low, btype='highpass', analog=False)
+    return b, a
+def butter_highpass_filter(data, lowcut, fs, order=5):
+    b, a = butter_highpass(lowcut, fs, order=order)
+    y = scipy.signal.filtfilt(b, a, data)
+    return y
+def butter_lowpass_filter(data, highcut, fs, order=5):
+    nyq = 0.5*fs
+    highcut = highcut / nyq
+    b, a = butter(order, highcut, btype='lowpass', analog=False)
+    
+    y = scipy.signal.filtfilt(b, a, data)
+    return y
 
 class DetectShift(object):
     '''
@@ -13,6 +40,10 @@ class DetectShift(object):
     We want to be able to trim the time series if needed.
     '''
     def getonsetsoffsets(self, epits, allinds):
+        highcut = 1
+        fs = 1000
+        epits = butter_lowpass_filter(epits, highcut, fs, order=5)
+
         seiz_epi = epits[allinds,:]
 
         seizonsets = []
