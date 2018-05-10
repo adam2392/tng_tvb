@@ -48,7 +48,7 @@ class DetectShift(object):
         seiz_epi = epits[allinds,:]
 
         for ireg in range(seiz_epi.shape[0]):
-            seiz_epi[ireg,:] = butter_lowpass_filter(seiz_epi[ireg,:], highcut, fs, order=5)
+            seiz_epi[ireg,:] = butter_lowpass_filter(np.ravel(seiz_epi[ireg,:]), highcut, fs, order=5)
 
         seizonsets = []
         seizoffsets = []
