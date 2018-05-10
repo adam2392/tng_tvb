@@ -122,7 +122,7 @@ if __name__ == '__main__':
     # settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=100, delta=0.2)# get the actual seizure times and offsets
     # seizonsets, seizoffsets = postprocessor.getseiztimes(settimes)
     detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
-    settimes = detector.getonsetsoffsets(epilepts, allindices)
+    settimes = detector.getonsetsoffsets(epits, allindices)
     seizonsets, seizoffsets = detector.getseiztimes(settimes)
 
     freqrange = [0.1, 499]
