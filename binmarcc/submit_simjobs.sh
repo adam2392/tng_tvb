@@ -7,7 +7,6 @@
 #
 ##############################################################
 module unload git
-
 ml python
 ml parallel
 ml anaconda-python/2.7
@@ -32,7 +31,6 @@ numez=${numez:-2}
 numpz=${numpz:-0}
 
 # NEED TO RUN FOR EZ=0,1,2,3 and varying PZ all once
-
 # show 
 echo $numez
 echo $numpz
@@ -47,16 +45,6 @@ outputdatadir='/home-1/ali39@jhu.edu/data/fragility/tvbforwardsim/'
 printf "\nThis is the data directories: \n"
 printf "Metadatadir: $metadatadir \n"
 printf "Output datadir: $outputdatadir \n"
-printf "\n"
-
-
-# create concatenated strings in unix to ensure proper passing of list of patients
-buff=''
-for patient in $patients; do
-	buff+=$patient
-	buff+=' '
-done
-echo $buff
 printf "\n"
 
 #### Create all logging directories if needed
@@ -75,6 +63,8 @@ fi
 NUM_PROCSPERNODE=1  	# number of processors per node (1-24). Use 24 for GNU jobs.
 NUM_NODES=1				# number of nodes to request
 NUM_CPUPERTASK=1
+## job reqs
+walltime=2:00:0					# the walltime for each computationfi
 
 partition=shared 	# debug, shared, unlimited, parallel, gpu, lrgmem, scavenger
 # partition=debug
@@ -95,10 +85,6 @@ numpz=${numpz},\
 metadatadir=${metadatadir},\
 outputdatadir=${outputdatadir},\
 numprocs=${NUM_PROCSPERNODE} "
-
-	# build basic sbatch command with all params parametrized
-	## job reqs
-	walltime=2:00:0					# the walltime for each computationfi
 
 	# build basic sbatch command with all params parametrized
 	sbatcomm="sbatch \

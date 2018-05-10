@@ -51,7 +51,6 @@ if __name__ == '__main__':
     pzregions = []
 
     print(ezregions, pzregions)
-
     # set ez/pz regions
     maintvbexp.setezregion(ezregions=ezregions)
     maintvbexp.setpzregion(pzregions=pzregions)
