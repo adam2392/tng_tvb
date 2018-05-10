@@ -42,6 +42,12 @@ class PostProcessor(object):
     # assuming onset is the first bifurcation and then every other one is onsets
     # every other bifurcation after the first one is the offset
     def _findonsetoffset(self, signal, lookahead=500, delta=0.2/8):
+        '''
+        Function that uses the peakdetect algorithm with lookahead
+        to get the onsets and offsets
+
+        Returns two lists that can be empty if no onset/offsets are found
+        '''
         # get list of tuples for offset, onset respectively
         maxpeaks, minpeaks = peakdetect.peakdetect(
             signal.squeeze(), lookahead=lookahead, delta=delta)
@@ -63,12 +69,61 @@ class PostProcessor(object):
         elif numonsets < numoffsets:
             onsettimes.append(np.nan)
 
+        return onsettimes, offsettimes
         # convert to numpy arrays and return
         onsettimes = np.array(onsettimes)
         offsettimes = np.array(offsettimes)
         return onsettimes, offsettimes
 
-    def getonsetsoffsets(self, zts, indices, lookahead=500, delta=0.2/8):
+    def _normalize(self, zts):
+        # apply z normalization
+        zts = (zts - np.mean(zts, axis=-1, keepdims=True)) / \
+            np.std(zts, axis=-1, keepdims=True)
+        return zts
+
+    def _scale(self, zts):
+        pass
+
+    def getonsetsoffsets(self, epits, allinds):
+        seiz_epi = epits[allinds,:]
+
+        seizonsets = []
+        seizoffsets = []
+        for ind in range(len(allinds)):
+            curr_epi = seiz_epi[ind,:].squeeze()
+
+            # initialize pointer
+            pointer = 0
+            while pointer < len(curr_epi):
+                # look ahead - onset
+    #             minind = np.where(curr_epi[pointer:] < np.ceil(np.mean(np.min(seiz_epi, axis=1))))[0]
+                minind = np.where(curr_epi[pointer:] < -0.5)[0]
+
+                if len(minind) > 0:
+                    seizonsets.append(minind[0] + pointer)
+                    # update pointer
+                    pointer += minind[0]
+                    # look ahead - offset
+        #             maxind = np.where(curr_epi[pointer:] > np.ceil(np.mean(np.mean(seiz_epi,axis=1))))[0]
+                    maxind = np.where(curr_epi[pointer:] > 0)[0]
+
+                    if len(maxind) > 0:
+                        seizoffsets.append(maxind[0]+ pointer)
+                        # update pointer
+                        pointer += maxind[0]
+                    else:
+                        seizoffsets.append(np.nan)
+                        pointer = len(curr_epi)
+                else:
+                    pointer = len(curr_epi)
+
+        # get the settimes by putting together onsets/offset found
+        settimes = np.vstack((seizonsets, seizoffsets)).T
+        # sort in place the settimes by onsets, since those will forsure have 1
+        settimes = settimes[settimes[:, 0].argsort()]
+        return settimes
+
+    def _old_getonsetsoffsets(self, zts, indices, lookahead=500, delta=0.2/8):
         # assert zts.ndim == 2
         buffzts = zts
         # apply z normalization
@@ -90,6 +145,8 @@ class PostProcessor(object):
                                                                   lookahead=lookahead,
                                                                   delta=delta)
                 settimes.append(list(zip(_onsettimes, _offsettimes)))
+            else:
+                print('Skipping this index %d' % index)
         # flatten out list structure if there is one
         settimes = [item for sublist in settimes for item in sublist]
         settimes = np.asarray(settimes).squeeze()

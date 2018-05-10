@@ -42,11 +42,17 @@ In /cluster/ directory, you can modify the script to run simulations on your own
     
     ./tng_job_submissions.sh
 
-and specify some parameters, and it will run.
+and specify some parameters, and it will run. Or if you want to vary distances with respect to a certain implantation scheme:
+
+    ./tng_distance_submissions.sh
 
 ## Local Modules:
 1. peakdetect
 Used for peakdetection on the z time series to robustly automatically get onset/offset times for seizure.
 2. tvbsim
 Utility module for customizing tvb simulations. For example, can move contacts, can get the closest region-contact pairs for a given electrode layout. 
+3. binmarcc
+For running slurm jobs on MARCC cluster at JHU.
+4. bintng
+For running slurm jobs on the TNG cluster at INS.
 

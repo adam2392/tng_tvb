@@ -6,6 +6,7 @@ import warnings
 from .basevisual import BaseVisualModel
 import re
 
+from ..exp.basetvbexp import TVBExp
 
 class VisualBrain(BaseVisualModel):
     def __init__(self, figsize=(7, 7), title_font=[], axis_font=[], color_new=[]):
