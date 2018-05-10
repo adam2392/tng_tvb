@@ -7,7 +7,7 @@ from tvb.simulator.lab import *
 import os.path
 import numpy as np
 import pandas as pd
-from tvbsim.exp.clinregions import clinregions, outsideclininds
+# from tvbsim.exp.clinregions import clinregions, outsideclininds
 
 if __name__ == '__main__':
     # read in arguments
@@ -24,7 +24,6 @@ if __name__ == '__main__':
     tvbsim.util.renamefiles(seegmetadatadir)
     # get the important files
     getmetafile = lambda filename: os.path.join(metadatadir, filename)
-
     seegfile = os.path.join(seegmetadatadir, 'seeg.txt')
     gainfile = os.path.join(seegmetadatadir, 'gain_inv-square.txt')
 
@@ -52,7 +51,6 @@ if __name__ == '__main__':
     pzregions = []
 
     print(ezregions, pzregions)
-
 
     # set ez/pz regions
     maintvbexp.setezregion(ezregions=ezregions)
@@ -107,9 +105,13 @@ if __name__ == '__main__':
     times, epits, seegts, zts = postprocessor.postprocts(epilepts, seegts, times, secstoreject=secstoreject)
 
     # GET ONSET/OFFSET OF SEIZURE
-    postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
-    settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=500, delta=0.2)# get the actual seizure times and offsets
-    seizonsets, seizoffsets = postprocessor.getseiztimes(settimes)
+    # postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
+    # settimes = postprocessor.getonsetsoffsets(zts, allindices, lookahead=500, delta=0.2)# get the actual seizure times and offsets
+    # seizonsets, seizoffsets = postprocessor.getseiztimes(settimes)
+
+    detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
+    settimes = detector.getonsetsoffsets(epits, allindices)
+    seizonsets, seizoffsets = detector.getseiztimes(settimes)
 
     freqrange = [0.1, 499]
     # linefreq = 60
