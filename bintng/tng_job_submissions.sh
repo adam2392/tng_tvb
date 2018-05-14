@@ -25,7 +25,7 @@ patients=(
 	id006_mr id007_rd id008_dmc
 	id009_ba id010_cmn id011_gr
 	id013_lk id014_vc id015_gjl
-	id016_lm id017_mk id018_lo')
+	id016_lm id017_mk id018_lo id020_lma')
 
 # 1. Prompt user for input that runs the analysis
 echo "Begin analysis." # print beginning statement
@@ -40,7 +40,7 @@ printf "About to run on patients (press enter to continue): $patients"
 read answer
 
 metadatadir='/home/adamli/data/tngpipeline/'
-outputdatadir='/home/adamli/data/tvbforwardsim/exp013/' # and with allregions/
+outputdatadir='/home/adamli/data/tvbforwardsim/exp014/' # and with allregions/
 printf "\nThis is the data directories: \n"
 printf "$metadatadir \n"
 printf "$outputdatadir \n"
@@ -59,7 +59,7 @@ NUM_NODES=1				# number of nodes to request
 NUM_CPUPERTASK=1
 
 ## job reqs
-walltime=6:00:0					# the walltime for each computation
+walltime=12:00:0					# the walltime for each computation
 
 #### Create all logging directories if needed
 # _logs = the parallel logfile for resuming job at errors 
@@ -96,7 +96,7 @@ dist=${dist} "
 	echo $sbatcomm $exvars runtvbjob.sbatch 
 	printf "Sbatch should run now\n"
 	
-	${sbatcomm} $exvars ./exp013/runtvbsim_exp013.sbatch
+	${sbatcomm} $exvars ./exp014/runtvbsim_exp014.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."
