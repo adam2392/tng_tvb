@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scipy.spatial.distance import pdist
+from scipy.spatial.distance import pdist, squareform
 
 class Regions(object):
 	def __init__(self, regs, regs_xyz, epsilon):
@@ -15,6 +15,7 @@ class Regions(object):
 
 		# compute the pairwise distance matrix
 		distmat = pdist(self.regs_xyz, metric='euclidean')
+		distmat = squareform(distmat)
 		self.distmat = distmat
 
 	def generate_outsideset(self, set_of_regs):
@@ -27,7 +28,7 @@ class Regions(object):
 			ireg = np.where(self.regs == reg)[0][0]
 
 			# loop through all distances with the clinical set
-			dists_of_reg = self.distmat[np.multiply(ireg,ind_of_regs)]
+			dists_of_reg = self.distmat[ireg,ind_of_regs]
 			for dist in dists_of_reg:
 				if dist < self.epsilon:
 					outside_set.append(ireg)
