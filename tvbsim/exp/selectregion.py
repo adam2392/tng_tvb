@@ -24,7 +24,7 @@ class Regions(object):
 
 		# loop through all candidate regions
 		for reg in candidate_regs:
-			ireg = self.regs.index(reg)
+			ireg = np.where(self.regs == reg)[0][0]
 
 			# loop through all distances with the clinical set
 			dists_of_reg = self.distmat[ireg, ind_of_regs]
