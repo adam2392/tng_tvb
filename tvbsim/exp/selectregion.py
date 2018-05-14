@@ -18,7 +18,7 @@ class Regions(object):
 		self.distmat = distmat
 
 	def generate_outsideset(self, set_of_regs):
-		candidate_regs = list(set(self.regs_xyz) - set(seg_of_regs))
+		candidate_regs = list(set(list(self.regs_xyz)) - set(list(seg_of_regs)))
 		ind_of_regs = [i for i in range(len(self.regs)) if self.regs[i] in set_of_regs]
 		outside_set = []
 
