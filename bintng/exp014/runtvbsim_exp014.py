@@ -33,6 +33,10 @@ if __name__ == '__main__':
     connfile = os.path.join(tvbmetadatadir, 'connectivity.zip')
     if not os.path.exists(connfile):
         connfile = os.path.join(tvbmetadatadir, 'connectivity.dk.zip')
+    if not os.path.exists(gainfile):
+        gainfile = os.path.join(seegmetadatadir, 'gain_inv-square.dk.txt')
+    if not os.path.exists(ezhypfile):
+        ezhypfile = os.path.join(tvbmetadatadir, 'ez_hypothesis.dk.txt')
 
     con = connectivity.Connectivity.from_file(connfile)
     maintvbexp = tvbsim.MainTVBSim(con, condspeed=np.inf)
@@ -57,7 +61,7 @@ if __name__ == '__main__':
     outside_set = regionselector.generate_outsideset(ezregions)
     osr_list = regionselector.sample_outsideset(outside_set, numsamps)
 
-    print("Here are the original clinical regions and the osr list generated.")
+    sys.stdout.write("Here are the original clinical regions and the osr list generated.")
     print(ezregions)
     print(osr_list)
 
@@ -75,10 +79,10 @@ if __name__ == '__main__':
         maintvbexp.setezregion(ezregions=ezregions)
         maintvbexp.setpzregion(pzregions=pzregions)
 
-        print("The tvbexp ez region is: ", maintvbexp.ezregion)
-        print("The tvbexp pz region is: ", maintvbexp.pzregion)
-        print("The tvbexp ez indices is: ", maintvbexp.ezind)
-        print("The tvbexp pz indices is: ", maintvbexp.pzind)
+        sys.stdout.write("The tvbexp ez region is: %s" % maintvbexp.ezregion)
+        sys.stdout.write("The tvbexp pz region is: %s" % maintvbexp.pzregion)
+        sys.stdout.write("The tvbexp ez indices is: %s" % maintvbexp.ezind)
+        sys.stdout.write("The tvbexp pz indices is: %s " % maintvbexp.pzind)
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
 
         # setup models and integrators
