@@ -58,8 +58,8 @@ if __name__ == '__main__':
     print(ezregions)
     print(osr_list)
 
-    for i in range(len(ezregions)):
-        ezregions = osr_list[i*5:(i+1)*5]
+    for i in range(5):
+        ezregions = osr_list[i*len(ezregions):(i+1)*len(ezregions)]
         pzregions = []
 
         print(ezregions, pzregions)
