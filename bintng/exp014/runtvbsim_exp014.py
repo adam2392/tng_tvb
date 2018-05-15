@@ -31,6 +31,9 @@ if __name__ == '__main__':
     ###################### INITIALIZE TVB SIMULATOR ##################
     # initialize structural connectivity and main simulator object
     connfile = os.path.join(tvbmetadatadir, 'connectivity.zip')
+    if not os.path.exists(connfile):
+        connfile = os.path.join(tvbmetadatadir, 'connectivity.dk.zip')
+
     con = connectivity.Connectivity.from_file(connfile)
     maintvbexp = tvbsim.MainTVBSim(con, condspeed=np.inf)
     # load the necessary data files to run simulation
@@ -59,7 +62,7 @@ if __name__ == '__main__':
     print(osr_list)
 
     for i in range(5):
-        ezregions = osr_list[i*len(ezregions):(i+1)*len(ezregions)]
+        ezregions = osr_list[i*len(ezinds):(i+1)*len(ezinds)]
         pzregions = []
 
         print(ezregions, pzregions)
@@ -72,11 +75,10 @@ if __name__ == '__main__':
         maintvbexp.setezregion(ezregions=ezregions)
         maintvbexp.setpzregion(pzregions=pzregions)
 
-        print()
-        print(maintvbexp.ezregion)
-        print(maintvbexp.pzregion)
-        print(maintvbexp.ezind)
-        print(maintvbexp.pzind)
+        print("The tvbexp ez region is: ", maintvbexp.ezregion)
+        print("The tvbexp pz region is: ", maintvbexp.pzregion)
+        print("The tvbexp ez indices is: ", maintvbexp.ezind)
+        print("The tvbexp pz indices is: ", maintvbexp.pzind)
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
 
         # setup models and integrators
