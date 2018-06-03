@@ -26,7 +26,7 @@ class BaseLoader(object):
     chanxyz_labels = None
     contact_regs = None
 
-    def __init__(self, rawdatadir, config=None):
+    def __init__(self, rawdatadir, patient, config=None):
         self.config = config or Config()
         self.logger = initialize_logger(self.__class__.__name__, self.config.out.FOLDER_LOGS)
 

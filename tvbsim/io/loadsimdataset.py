@@ -14,7 +14,7 @@ class LoadSimDataset(BaseLoader):
     patient = None
 
     def __init__(self, rawdatadir, patient=None, config=None):
-        super(LoadSimDataset, self).__init__(rawdatadir=rawdatadir, config=config)
+        super(LoadSimDataset, self).__init__(rawdatadir=rawdatadir, patient=patient, config=config)
         self.patient = patient 
        
     def load_data(self, simdata):
