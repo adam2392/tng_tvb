@@ -1,5 +1,5 @@
-from fragility.base.constants.config import Config
-from fragility.base.utils.log_error import initialize_logger
+from tvbsim.base.constants.config import Config
+from tvbsim.base.utils.log_error import initialize_logger
 
 import numpy as np
 # import colorednoise as cn

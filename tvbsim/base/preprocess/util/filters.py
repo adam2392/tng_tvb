@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.signal import butter, filtfilt
 import warnings
-from fragility.base.constants.config import Config
-from fragility.base.utils.log_error import initialize_logger
+from tvbsim.base.constants.config import Config
+from tvbsim.base.utils.log_error import initialize_logger
 
 class FilterLinearNoise(object):
     def __init__(self, samplerate=None, config=None):
