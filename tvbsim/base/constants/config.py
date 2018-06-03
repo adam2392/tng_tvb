@@ -2,7 +2,7 @@
 
 import os
 import numpy as np
-import fragility
+import tvbsim
 from datetime import datetime
 
 class GenericConfig(object):
