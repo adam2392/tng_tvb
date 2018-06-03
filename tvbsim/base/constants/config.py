@@ -6,7 +6,7 @@ import tvbsim
 from datetime import datetime
 
 class GenericConfig(object):
-    _module_path = os.path.dirname(fragility.__file__)
+    _module_path = os.path.dirname(tvbsim.__file__)
 
 class InputConfig(object):
     _base_input = os.getcwd()
