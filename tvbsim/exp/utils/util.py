@@ -6,6 +6,6 @@ def randshuffleweights(weights):
     return weights
 
 def randshufflepats(patientlist, patient):
-	patientlist.remove(patient)
+    patientlist.remove(patient)
     randpat = random.choice(patientlist)
     return randpat
