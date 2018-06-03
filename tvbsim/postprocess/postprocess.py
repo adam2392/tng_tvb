@@ -17,16 +17,32 @@ class PostProcessor(object):
         self.samplerate = samplerate
         self.allindices = allszindices
 
-    def postprocts(self, epits, seegts, times, secstoreject=15):
+    def postprocts(self, statevars_ts, seegts, times, secstoreject=15):
         # reject certain 5 seconds of simulation
         sampstoreject = secstoreject * self.samplerate
 
         # get the time series processed and squeezed that we want to save
         new_times = times[sampstoreject:]
-        new_epits = epits[sampstoreject:, 1, :, :].squeeze().T
-        new_zts = epits[sampstoreject:, 0, :, :].squeeze().T
+        new_epits = statevars_ts[sampstoreject:, 1, :, :].squeeze().T
+        new_zts = statevars_ts[sampstoreject:, 0, :, :].squeeze().T
         new_seegts = seegts[sampstoreject:, :, :, :].squeeze().T
-        return new_times, new_epits, new_seegts, new_zts
+
+        # get the other state variables
+        x1 = statevars_ts[sampstoreject:, 2, :, :].squeeze().T
+        x2 = statevars_ts[sampstoreject:, 3, :, :].squeeze().T
+        y1 = statevars_ts[sampstoreject:, 4, :, :].squeeze().T
+        y2 = statevars_ts[sampstoreject:, 5, :, :].squeeze().T
+        g = statevars_ts[sampstoreject:, 6, :, :].squeeze().T
+        state_vars = {
+            'x1': x1,
+            'x2': x2,
+            'y1': y1,
+            'y2': y2,
+            'g': g
+        }
+        print('We should try returning the rest of the state variables for understanding the simulation better!')
+
+        return new_times, new_epits, new_seegts, new_zts, state_vars
 
     def postprocts_2(self, epits, seegts, zts, times, secstoreject=0):
         # reject certain 5 seconds of simulation

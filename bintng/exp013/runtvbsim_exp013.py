@@ -26,7 +26,6 @@ if __name__ == '__main__':
     getmetafile = lambda filename: os.path.join(metadatadir, filename)
     seegfile = os.path.join(seegmetadatadir, 'seeg.txt')
     gainfile = os.path.join(seegmetadatadir, 'gain_inv-square.txt')
-
     ezhypfile = os.path.join(tvbmetadatadir, 'ez_hypothesis.txt')
 
     ###################### INITIALIZE TVB SIMULATOR ##################

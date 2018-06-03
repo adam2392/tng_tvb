@@ -92,7 +92,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         '''
         ####################### 2. Neural Mass Model @ Nodes ######################
         epileptors = models.Epileptor(
-            variables_of_interest=['z', 'x2-x1'])
+            variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'])
         if r is not None:
             epileptors.r = r
         if Ks is not None:
