@@ -7,8 +7,8 @@ import numpy
 import zipfile
 import scipy.io
 import os
-from fragility.base.dataobjects.connectivity import Connectivity
-from fragility.base.utils.log_error import initialize_logger
+from tvbsim.base.dataobjects.connectivity import Connectivity
+from tvbsim.base.utils.log_error import initialize_logger
 
 '''
 
