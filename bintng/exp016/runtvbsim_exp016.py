@@ -60,7 +60,7 @@ def post_process_data(filename, times, state_vars_ts, seegts, postprocessor):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    break
+
     # extract passed in variable
     patient = args.patient
     outputdatadir = args.outputdatadir
@@ -75,20 +75,31 @@ if __name__ == '__main__':
 
     loader = LoadSimDataset(rawdatadir=metadatadir, patient=patient)
 
+    # get the ez/pz indices we want to use
+    clinezinds = loader.ezinds
+    clinezregions = list(conn.region_labels[clinezinds])
+    clinpzregions = []
+    allclinregions = clinezregions + clinpzregions
+
+    # region selector for out of clinical EZ simulations
+    numsamps = 5 * len(clinezregions)
+    epsilon = 60 # the mm radius for each region to exclude other regions
+    regionselector = tvbsim.exp.selectregion.Regions(conn.region_labels, conn.centres, epsilon)
+    outside_set = regionselector.generate_outsideset(ezregions)
+    osr_list = regionselector.sample_outsideset(outside_set, numsamps)
+
+    sys.stdout.write("All clinical regions are: {}".format(allclinregions))
+    print(osr_list)
+
     for i in range(5):
         ###################### INITIALIZE TVB SIMULATOR ##################
         if shuffleweights:
             # across patient shuffling of weights
-            # randpat = util.randshufflepats(all_patients, patient)   
-            # shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
-            # if not os.path.exists(shuffled_connfile):
-            #     shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
-            # conn = connectivity.Connectivity.from_file(shuffled_connfile)
-
-            # within patient shuffling of weights
-            conn = connectivity.Connectivity.from_file(loader.connfile)
-            randweights = util.randshuffleweights(conn.weights)
-            conn.weights = randweights
+            randpat = util.randshufflepats(all_patients, patient)   
+            shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
+            if not os.path.exists(shuffled_connfile):
+                shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
+            conn = connectivity.Connectivity.from_file(shuffled_connfile)
         else:
             conn = connectivity.Connectivity.from_file(loader.connfile)
 
@@ -102,14 +113,6 @@ if __name__ == '__main__':
         except:
             print("Could not load surface data for this patient ", patient)
 
-        # get the ez/pz indices we want to use
-        clinezinds = loader.ezinds
-        clinezregions = list(conn.region_labels[clinezinds])
-        clinpzregions = []
-        allclinregions = clinezregions + clinpzregions
-
-        sys.stdout.write("All clinical regions are: {}".format(allclinregions))
-
         # simulate 3 times with different connectivities
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
@@ -118,14 +121,17 @@ if __name__ == '__main__':
                     '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
 
         # set ez/pz regions
-        maintvbexp.setezregion(ezregions=clinezregions)
-        maintvbexp.setpzregion(pzregions=clinpzregions)
+        ezregions = osr_list[i*len(ezinds):(i+1)*len(ezinds)]
+        pzregions = []
+        print(ezregions, pzregions)
+
+        maintvbexp.setezregion(ezregions=ezregions)
+        maintvbexp.setpzregion(pzregions=pzregions)
 
         sys.stdout.write("The tvbexp ez region is: %s" % maintvbexp.ezregion)
         sys.stdout.write("The tvbexp pz region is: %s" % maintvbexp.pzregion)
         sys.stdout.write("The tvbexp ez indices is: %s" % maintvbexp.ezind)
         sys.stdout.write("The tvbexp pz indices is: %s " % maintvbexp.pzind)
-        
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
 
         # setup models and integrators
