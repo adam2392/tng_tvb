@@ -60,6 +60,7 @@ setup="./config/slurm/setup.sh"
 # two configuration for slurm type jobs
 array_config="./config/slurm/array_jobs.txt"
 short_config="./config/slurm/short_jobs.txt"
+long_config="./config/slurm/long_jobs.txt"
 
 echo "Running tvb sim ${expname}"
 for patient in $patients; do
@@ -76,7 +77,7 @@ dist=${dist},\
 shuffleweights=${shuffleweights} "
 
 	# build basic sbatch command with all params parametrized
-	sbatchcomm=$(cat $short_config)
+	sbatchcomm=$(cat $long_config)
 	sbatchcomm="$sbatchcomm --job-name=${jobname}"
 
 	# build a scavenger job, gpu job, or other job
