@@ -119,7 +119,7 @@ if __name__ == '__main__':
                     '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
 
         # set ez/pz regions
-        ezregions = osr_list[i*len(ezinds):(i+1)*len(ezinds)]
+        ezregions = osr_list[i*len(clinezinds):(i+1)*len(clinezinds)]
         pzregions = []
         print(ezregions, pzregions)
 
