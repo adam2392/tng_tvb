@@ -94,12 +94,10 @@ if __name__ == '__main__':
     for i in range(5):
         ###################### INITIALIZE TVB SIMULATOR ##################
         if shuffleweights:
-            # across patient shuffling of weights
-            randpat = util.randshufflepats(all_patients, patient)   
-            shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
-            if not os.path.exists(shuffled_connfile):
-                shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
-            conn = connectivity.Connectivity.from_file(shuffled_connfile)
+            # within patient shuffling of weights
+            conn = connectivity.Connectivity.from_file(loader.connfile)
+            randweights = util.randshuffleweights(conn.weights)
+            conn.weights = randweights
         else:
             conn = connectivity.Connectivity.from_file(loader.connfile)
 
@@ -121,7 +119,7 @@ if __name__ == '__main__':
                     '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
 
         # set ez/pz regions
-        ezregions = osr_list[i*len(ezinds):(i+1)*len(ezinds)]
+        ezregions = osr_list[i*len(clinezinds):(i+1)*len(clinezinds)]
         pzregions = []
         print(ezregions, pzregions)
 
@@ -189,7 +187,6 @@ if __name__ == '__main__':
                 'samplerate': _samplerate,
                 'clinez': clinezregions,
                 'clinpz': clinpzregions,
-                'shuffledpat': randpat,
             }
 
         ######################## run simulation ########################
