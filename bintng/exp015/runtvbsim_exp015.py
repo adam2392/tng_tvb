@@ -77,11 +77,21 @@ if __name__ == '__main__':
 
     for i in range(5):
         ###################### INITIALIZE TVB SIMULATOR ##################
-        randpat = util.randshufflepats(all_patients, patient)   
-        shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
-        if not os.path.exists(shuffled_connfile):
-            shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
-        conn = connectivity.Connectivity.from_file(shuffled_connfile)
+        if shuffleweights:
+            # across patient shuffling of weights
+            # randpat = util.randshufflepats(all_patients, patient)   
+            # shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
+            # if not os.path.exists(shuffled_connfile):
+            #     shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
+            # conn = connectivity.Connectivity.from_file(shuffled_connfile)
+
+            # within patient shuffling of weights
+            conn = connectivity.Connectivity.from_file(loader.connfile)
+            randweights = util.randshuffleweights(conn.weights)
+            conn.weights = randweights
+        else:
+            conn = connectivity.Connectivity.from_file(loader.connfile)
+
         maintvbexp = tvbsim.MainTVBSim(conn, condspeed=np.inf)
         
         # load the necessary data files to run simulation
