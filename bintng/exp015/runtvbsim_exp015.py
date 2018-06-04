@@ -75,32 +75,32 @@ if __name__ == '__main__':
 
     loader = LoadSimDataset(rawdatadir=metadatadir, patient=patient)
 
-    ###################### INITIALIZE TVB SIMULATOR ##################
-    randpat = util.randshufflepats(all_patients, patient)   
-    shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
-    if not os.path.exists(shuffled_connfile):
-        shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
-    conn = connectivity.Connectivity.from_file(shuffled_connfile)
-    maintvbexp = tvbsim.MainTVBSim(conn, condspeed=np.inf)
-    
-    # load the necessary data files to run simulation
-    maintvbexp.loadseegxyz(seegfile=loader.sensorsfile)
-    maintvbexp.loadgainmat(gainfile=loader.gainfile)
-    try:
-        maintvbexp.loadsurfdata(directory=loader.tvbdir, use_subcort=False)
-    except:
-        print("Could not load surface data for this patient ", patient)
-
-    # get the ez/pz indices we want to use
-    clinezinds = loader.ezinds
-    clinezregions = list(conn.region_labels[clinezinds])
-    clinpzregions = []
-    allclinregions = clinezregions + clinpzregions
-
-    sys.stdout.write("All clinical regions are: {}".format(allclinregions))
-
-    # simulate 3 times with different connectivities
     for i in range(5):
+        ###################### INITIALIZE TVB SIMULATOR ##################
+        randpat = util.randshufflepats(all_patients, patient)   
+        shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
+        if not os.path.exists(shuffled_connfile):
+            shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
+        conn = connectivity.Connectivity.from_file(shuffled_connfile)
+        maintvbexp = tvbsim.MainTVBSim(conn, condspeed=np.inf)
+        
+        # load the necessary data files to run simulation
+        maintvbexp.loadseegxyz(seegfile=loader.sensorsfile)
+        maintvbexp.loadgainmat(gainfile=loader.gainfile)
+        try:
+            maintvbexp.loadsurfdata(directory=loader.tvbdir, use_subcort=False)
+        except:
+            print("Could not load surface data for this patient ", patient)
+
+        # get the ez/pz indices we want to use
+        clinezinds = loader.ezinds
+        clinezregions = list(conn.region_labels[clinezinds])
+        clinpzregions = []
+        allclinregions = clinezregions + clinpzregions
+
+        sys.stdout.write("All clinical regions are: {}".format(allclinregions))
+
+        # simulate 3 times with different connectivities
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
                     '{0}_dist{1}_{2}.npz'.format(patient, movedist, i))
