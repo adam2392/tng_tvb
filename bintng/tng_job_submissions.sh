@@ -47,9 +47,9 @@ echo "Parameters read in: $dist $expname"
 echo "About to run on patients (press enter to continue): $patients" 
 read answer
 
-metadatadir='/home/adamli/data/tngpipeline/'
-outputdatadir='/home/adamli/data/tvbforwardsim/${expname}/' # and with allregions/
-echo "\nThis is the data directories: "
+metadatadir="/home/adamli/data/tngpipeline/"
+outputdatadir="/home/adamli/data/tvbforwardsim/${expname}/" # and with allregions/
+echo "This is the data directories: "
 echo "$metadatadir "
 echo "$outputdatadir "
 
