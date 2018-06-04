@@ -63,6 +63,7 @@ short_config="./config/slurm/short_jobs.txt"
 long_config="./config/slurm/long_jobs.txt"
 
 echo "Running tvb sim ${expname}"
+
 for patient in $patients; do
 	echo $patient
 
