@@ -77,14 +77,14 @@ if __name__ == '__main__':
 
     # get the ez/pz indices we want to use
     clinezinds = loader.ezinds
-    clinezregions = list(conn.region_labels[clinezinds])
+    clinezregions = list(loader.conn.region_labels[clinezinds])
     clinpzregions = []
     allclinregions = clinezregions + clinpzregions
 
     # region selector for out of clinical EZ simulations
     numsamps = 5 * len(clinezregions)
     epsilon = 60 # the mm radius for each region to exclude other regions
-    regionselector = tvbsim.exp.selectregion.Regions(conn.region_labels, conn.centres, epsilon)
+    regionselector = tvbsim.exp.selectregion.Regions(loader.conn.region_labels, loader.conn.centres, epsilon)
     outside_set = regionselector.generate_outsideset(ezregions)
     osr_list = regionselector.sample_outsideset(outside_set, numsamps)
 
