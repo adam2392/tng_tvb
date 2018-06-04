@@ -33,7 +33,11 @@ all_patients = [
     'id013_lk', 'id014_vc', 'id015_gjl',
     'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma']
 
-def post_process_data(loader, filename, times, epits, seegts, zts, state_vars):
+def post_process_data(filename, times, state_vars_ts, seegts, postprocessor):
+    ######################## POST PROCESSING ########################
+    secstoreject = 20
+    times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
+
     # loader.load_data(seegts)
     # loader.addlinenoise()
     # loader.filter_data()
@@ -47,12 +51,6 @@ def post_process_data(loader, filename, times, epits, seegts, zts, state_vars):
     print(state_vars.keys())
     print(allindices)
 
-    # GET ONSET/OFFSET OF SEIZURE
-    detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
-    settimes = detector.getonsetsoffsets(epits, allindices)
-    seizonsets, seizoffsets = detector.getseiztimes(settimes)
-    print("The detected onset/offsets are: {}".format(zip(seizonsets,seizoffsets)))
-        
     # save tseries
     np.savez_compressed(filename, epits=epits, 
                                 seegts=seegts,
@@ -171,8 +169,6 @@ if __name__ == '__main__':
                 'x0ez':x0ez,
                 'x0pz':x0pz,
                 'x0norm':x0norm,
-                'onsettimes':seizonsets,
-                'offsettimes':seizoffsets,
                 'patient': patient,
                 'samplerate': _samplerate,
                 'clinez': clinezregions,
@@ -185,14 +181,17 @@ if __name__ == '__main__':
         configs = maintvbexp.setupsim(a=1., period=period, moved=False, initcond=initcond)
         times, statevars_ts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
-        ######################## POST PROCESSING ########################
-        secstoreject = 20
-
         postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
-        times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
-
         # save all the raw simulated data
-        post_process_data(loader, filename, times, epits, seegts, zts, state_vars)
+        post_process_data(filename, times, statevars_ts, seegts, postprocessor)
 
+        # GET ONSET/OFFSET OF SEIZURE
+        detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
+        settimes = detector.getonsetsoffsets(epits, allindices)
+        seizonsets, seizoffsets = detector.getseiztimes(settimes)
+        print("The detected onset/offsets are: {}".format(zip(seizonsets,seizoffsets)))
+        
+        metadata['onsettimes'] = seizonsets
+        metadata['offsettimes'] = seizoffsets
         # save metadata
         loader.savejsondata(metadata, metafilename)
