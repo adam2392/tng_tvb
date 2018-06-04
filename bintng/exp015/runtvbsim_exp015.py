@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     # get the ez/pz indices we want to use
     clinezinds = loader.ezinds
-    clinezregions = con.region_labels[clinezinds]
+    clinezregions = conn.region_labels[clinezinds]
     clinpzregions = []
     allclinregions = clinezregions + clinpzregions
 
