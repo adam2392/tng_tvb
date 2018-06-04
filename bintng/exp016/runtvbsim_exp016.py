@@ -57,7 +57,8 @@ def post_process_data(filename, times, state_vars_ts, seegts, postprocessor):
                                 times=times, 
                                 zts=zts, 
                                 state_vars=state_vars)
-
+    return epits 
+    
 if __name__ == '__main__':
     args = parser.parse_args()
 
@@ -189,7 +190,7 @@ if __name__ == '__main__':
                 'samplerate': _samplerate,
                 'clinez': clinezregions,
                 'clinpz': clinpzregions,
-                'shuffledpat': randpat,
+                'shuffledpat': randpat
             }
 
         ######################## run simulation ########################
@@ -199,7 +200,7 @@ if __name__ == '__main__':
 
         postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
         # save all the raw simulated data
-        post_process_data(filename, times, statevars_ts, seegts, postprocessor)
+        epits = post_process_data(filename, times, statevars_ts, seegts, postprocessor)
 
         # GET ONSET/OFFSET OF SEIZURE
         detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
