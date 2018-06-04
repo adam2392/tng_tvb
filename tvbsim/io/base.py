@@ -61,8 +61,8 @@ class BaseLoader(object):
     def _renamefiles(self):
         sensorsfile = os.path.join(self.elecdir, 'seeg.xyz')
         newsensorsfile = os.path.join(self.elecdir, 'seeg.txt')
-        gainfile = os.path.join(self.elecdir, 'gain-inv-square.mat')
-        newgainfile = os.path.join(self.elecdir, 'gain-inv-square.txt')
+        gainfile = os.path.join(self.elecdir, 'gain_inv-square.mat')
+        newgainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
         try:
             os.rename(sensorsfile, newsensorsfile)
         except:
@@ -73,9 +73,9 @@ class BaseLoader(object):
             self.logger.debug("\nAlready renamed gain.mat possibly!\n")
      
         self.sensorsfile = newsensorsfile
-        self.gainfile = os.path.join(self.elecdir, 'gain-inv-square.txt')
+        self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
         if not os.path.exists(self.sensorsfile):
-            self.gainfile = os.path.join(self.elecdir, 'gain-inv-square.dk.txt')
+            self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.dk.txt')
 
     def _loadseegxyz(self):
         seeg_pd = utils.loadseegxyz(self.sensorsfile)
