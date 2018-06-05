@@ -52,7 +52,7 @@ class BaseVisualModel(object):
             tsrange = (np.max(data, 1) - np.min(data, 1))
         else:
             tsrange = (overallmax - np.min(data, 1))
-        ts = data/tsrange[:, np.newaxis]
+        ts = data / tsrange[:, np.newaxis]
         return ts
 
     def _randselectindices(self, indices, numtoselect=6):

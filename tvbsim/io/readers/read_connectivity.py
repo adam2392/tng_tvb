@@ -22,11 +22,14 @@ connectivity data and load it so that you can get access to
 
 '''
 
+
 class LoadConn(object):
     logger = initialize_logger(__name__)
 
     def readconnectivity(self, source_file):
-        self.logger.info("Starting to read a Connectivity from: %s" % source_file)
+        self.logger.info(
+            "Starting to read a Connectivity from: %s" %
+            source_file)
 
         source_full_path = self.try_get_absolute_path(
             "tvb_data.connectivity", source_file)
@@ -57,11 +60,15 @@ class LoadConn(object):
                 "average_orientations")
             result['cortical'] = reader.read_optional_array_from_file(
                 "cortical", dtype=numpy.bool)
-            result['hemispheres'] = reader.read_optional_array_from_file("hemispheres", dtype=numpy.bool)
+            result['hemispheres'] = reader.read_optional_array_from_file(
+                "hemispheres", dtype=numpy.bool)
             result['areas'] = reader.read_optional_array_from_file("areas")
-            result['tract_lengths'] = reader.read_array_from_file("tract_lengths")
-        
-        self.logger.info("Successfully read connectvity from: %s" % source_file)
+            result['tract_lengths'] = reader.read_array_from_file(
+                "tract_lengths")
+
+        self.logger.info(
+            "Successfully read connectvity from: %s" %
+            source_file)
 
         conn = self.convert_to_obj(source_file, result)
         return conn
@@ -70,15 +77,22 @@ class LoadConn(object):
         weights = result['weights']
         region_centres = result['centres']
         region_labels = result['region_labels']
-        orientations =result['orientations'] 
-        hemispheres = result['hemispheres'] 
-        areas = result['areas'] 
+        orientations = result['orientations']
+        hemispheres = result['hemispheres']
+        areas = result['areas']
         tract_lengths = result['tract_lengths']
 
-        conn = Connectivity(path, weights, tract_lengths, region_labels, region_centres, hemispheres, orientations)
+        conn = Connectivity(
+            path,
+            weights,
+            tract_lengths,
+            region_labels,
+            region_centres,
+            hemispheres,
+            orientations)
         return conn
 
-    def try_get_absolute_path(self,relative_module, file_suffix):
+    def try_get_absolute_path(self, relative_module, file_suffix):
         """
         :param relative_module: python module to be imported. When import of this fails, we will return the file_suffix
         :param file_suffix: In case this is already an absolute path, return it immediately,

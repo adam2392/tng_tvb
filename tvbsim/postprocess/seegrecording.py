@@ -22,7 +22,7 @@ class SeegRecording():
         self.sampling_rate = sampling_rate
         nsamples = self.data.shape[1]
         self.t = np.linspace(
-            0, (nsamples - 1)*(1./self.sampling_rate), nsamples)
+            0, (nsamples - 1) * (1. / self.sampling_rate), nsamples)
 
         self.electrodes = {}
         for i, (name, number) in enumerate(self.contacts):
@@ -81,11 +81,11 @@ class SeegRecording():
         data = np.fromfile(data_file, dtype='f4')
         ncontacts = data.size // nsamples
 
-        if data.size != nsamples*ncontacts:
+        if data.size != nsamples * ncontacts:
             print("!! data.size != nsamples*ncontacts")
             print("!! %d != %d %d" % (data.size, nsamples, ncontacts))
             print("!! Ignoring nsamples")
-            nsamples = int(data.size/ncontacts)
+            nsamples = int(data.size / ncontacts)
 
         data = data.reshape((nsamples, ncontacts)).T
         data = data[seeg_idxs, :]

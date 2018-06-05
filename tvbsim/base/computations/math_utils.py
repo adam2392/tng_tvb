@@ -1,8 +1,10 @@
-import numpy as np 
+import numpy as np
 from tvbsim.base.constants.config import CalculusConfig, FiguresConfig
 import math
 
-def normalize_weights(weights, percentile=CalculusConfig.WEIGHTS_NORM_PERCENT, remove_diagonal=True, ceil=1.0):
+
+def normalize_weights(
+        weights, percentile=CalculusConfig.WEIGHTS_NORM_PERCENT, remove_diagonal=True, ceil=1.0):
     # Create the normalized connectivity weights:
     if len(weights) > 0:
         normalized_w = np.array(weights)
@@ -11,7 +13,11 @@ def normalize_weights(weights, percentile=CalculusConfig.WEIGHTS_NORM_PERCENT, r
             n_regions = normalized_w.shape[0]
             normalized_w *= 1 - np.eye(n_regions)
         # Normalize with the 95th percentile
-        normalized_w = np.array(normalized_w / np.percentile(normalized_w, percentile))
+        normalized_w = np.array(
+            normalized_w /
+            np.percentile(
+                normalized_w,
+                percentile))
         if ceil:
             if ceil is True:
                 ceil = 1.0
@@ -20,8 +26,10 @@ def normalize_weights(weights, percentile=CalculusConfig.WEIGHTS_NORM_PERCENT, r
     else:
         return np.array([])
 
+
 def compute_in_degree(weights):
     return np.expand_dims(np.sum(weights, axis=1), 1).T
+
 
 def compute_gain_matrix(locations1, locations2, normalize=95, ceil=1.0):
     n1 = locations1.shape[0]
@@ -29,7 +37,8 @@ def compute_gain_matrix(locations1, locations2, normalize=95, ceil=1.0):
     projection = np.zeros((n1, n2))
     dist = np.zeros((n1, n2))
     for i1, i2 in product(range(n1), range(n2)):
-        dist[i1, i2] = np.abs(np.sum((locations1[i1, :] - locations2[i2, :]) ** 2))
+        dist[i1, i2] = np.abs(
+            np.sum((locations1[i1, :] - locations2[i2, :]) ** 2))
         projection[i1, i2] = 1 / dist[i1, i2]
     if normalize:
         projection /= np.percentile(projection, normalize)
@@ -38,7 +47,7 @@ def compute_gain_matrix(locations1, locations2, normalize=95, ceil=1.0):
             ceil = 1.0
         projection[projection > ceil] = ceil
     return projection
-    
+
 
 def cart2sph(x, y, z):
     '''
@@ -57,6 +66,7 @@ def cart2sph(x, y, z):
     az = math.atan2(y, x)                          # Azimuth
     return r, elev, az
 
+
 def pol2cart(theta, rho):
     '''
     Transform polar coordinates to Cartesian
@@ -68,6 +78,7 @@ def pol2cart(theta, rho):
     :return: X, Y
     '''
     return rho * math.cos(theta), rho * math.sin(theta)
+
 
 def azim_proj(pos):
     '''

@@ -4,6 +4,7 @@ import warnings
 from tvbsim.base.constants.config import Config
 from tvbsim.base.utils.log_error import initialize_logger
 
+
 class FilterLinearNoise(object):
     def __init__(self, samplerate=None, config=None):
         '''
@@ -12,15 +13,17 @@ class FilterLinearNoise(object):
         samplerate      (int) the sampling rate in Hz
         '''
         self.config = config or Config()
-        self.logger = initialize_logger(self.__class__.__name__, self.config.out.FOLDER_LOGS)
- 
+        self.logger = initialize_logger(
+            self.__class__.__name__,
+            self.config.out.FOLDER_LOGS)
+
         self.samplerate = samplerate
         # the Nyquist frequency
         self.nyq = samplerate / 2.
         if not samplerate:
             warnings.warn("User needs to pass in sample rate in Hz!")
             self.logger.error("Sample rate needs to be set!")
-    
+
     def __butthighpass(self, cut, order):
         b, a = butter(N=order, Wn=cut / self.nyq,
                       btype='highpass', analog=False)
@@ -86,10 +89,12 @@ class FilterLinearNoise(object):
         while self.samplerate > freqrange(i)[1] * 2.:
             freqlow = freqrange(i)[0]
             freqhigh = freqrange(i)[1]
-            self.logger.info("trying to filter at: %s, %s" % (freqlow,freqhigh))
+            self.logger.info(
+                "trying to filter at: %s, %s" %
+                (freqlow, freqhigh))
             rawdata, _ = self.__buttfilt(
                 rawdata, freqrange(i), 'bandstop', order=order)
-            self.logger.info("filtered at: %s, %s" % (freqlow,freqhigh))
+            self.logger.info("filtered at: %s, %s" % (freqlow, freqhigh))
             i += 1
         return rawdata
 

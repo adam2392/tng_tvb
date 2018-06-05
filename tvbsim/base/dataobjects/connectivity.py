@@ -4,6 +4,7 @@ import numpy as np
 from tvbsim.base.utils.data_structures_utils import reg_dict, formal_repr, sort_dict, labels_to_inds
 from tvbsim.base.computations.math_utils import normalize_weights
 
+
 class ConnectivityH5Field(object):
     WEIGHTS = "weights"
     TRACTS = "tract_lengths"
@@ -11,6 +12,7 @@ class ConnectivityH5Field(object):
     REGION_LABELS = "region_labels"
     ORIENTATIONS = "orientations"
     HEMISPHERES = "hemispheres"
+
 
 class Connectivity(object):
     file_path = None
@@ -29,7 +31,8 @@ class Connectivity(object):
         self.file_path = file_path
         self.weights = weights
         if len(normalized_weights) == 0:
-            normalized_weights = normalize_weights(weights, remove_diagonal=True, ceil=1.0)
+            normalized_weights = normalize_weights(
+                weights, remove_diagonal=True, ceil=1.0)
         self.normalized_weights = normalized_weights
         self.tract_lengths = tract_lengths
         self.region_labels = labels

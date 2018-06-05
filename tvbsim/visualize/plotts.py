@@ -39,7 +39,8 @@ class VisualTs(BaseVisualModel):
 
         return self.fig, self.ax
 
-    def plotts(self, ysubset=False, xsubset=False, normalize=True, titlestr=None):
+    def plotts(self, ysubset=False, xsubset=False,
+               normalize=True, titlestr=None):
         numchans, numsamps = self.data.shape
 
         # get the channels to plot indices
@@ -64,7 +65,8 @@ class VisualTs(BaseVisualModel):
 
         # get the epi ts to plot and the corresponding time indices
         datatoplot = self.data[ylabs_toplot, timebegin:timeend]
-        # Normalize the time series in the time axis to have nice plots also high pass filter
+        # Normalize the time series in the time axis to have nice plots also
+        # high pass filter
         if normalize:
             overallmax = np.max(datatoplot.ravel())
             overallmax = False

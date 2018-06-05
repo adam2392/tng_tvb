@@ -11,21 +11,24 @@ from datetime import date, datetime
 
 logger = initialize_logger(__name__)
 
+
 class NumpyEncoder(json.JSONEncoder):
     """ Special json encoder for numpy types """
+
     def default(self, obj):
         if isinstance(obj, (np.int_, np.intc, np.intp, np.int8,
-            np.int16, np.int32, np.int64, np.uint8,
-            np.uint16, np.uint32, np.uint64)):
+                            np.int16, np.int32, np.int64, np.uint8,
+                            np.uint16, np.uint32, np.uint64)):
             return int(obj)
-        elif isinstance(obj, (np.float_, np.float16, np.float32, 
-            np.float64)):
+        elif isinstance(obj, (np.float_, np.float16, np.float32,
+                              np.float64)):
             return float(obj)
-        elif isinstance(obj,(np.ndarray,)): #### This is the fix
+        elif isinstance(obj, (np.ndarray,)):  # This is the fix
             return obj.tolist()
         elif isinstance(obj, (datetime, date)):
             return obj.isoformat()
         return json.JSONEncoder.default(self, obj)
+
 
 def vector2scalar(x):
     if not (isinstance(x, np.ndarray)):
@@ -223,7 +226,7 @@ def ensure_list(arg):
                 arg = [arg]
             else:
                 arg = list(arg)
-        except:  # if not iterable
+        except BaseException:  # if not iterable
             arg = [arg]
     return arg
 
@@ -247,7 +250,7 @@ def set_list_item_by_reference_safely(ind, item, lst):
 def get_list_or_tuple_item_safely(obj, key):
     try:
         return obj[int(key)]
-    except:
+    except BaseException:
         return None
 
 
@@ -262,12 +265,12 @@ def linear_index_to_coordinate_tuples(linear_index, shape):
 def extract_dict_stringkeys(d, keys, modefun="find", two_way_search=False,
                             break_after=CalculusConfig.MAX_INT_VALUE, remove=False):
     if isequal_string(modefun, "equal"):
-        modefun = lambda x, y: isequal_string(x, y)
+        def modefun(x, y): return isequal_string(x, y)
     else:
         if two_way_search:
-            modefun = lambda x, y: (x.find(y) >= 0) or (y.find(x) >= 0)
+            def modefun(x, y): return (x.find(y) >= 0) or (y.find(x) >= 0)
         else:
-            modefun = lambda x, y: x.find(y) >= 0
+            def modefun(x, y): return x.find(y) >= 0
     if remove:
         out_dict = deepcopy(d)
     else:
@@ -290,7 +293,8 @@ def extract_dict_stringkeys(d, keys, modefun="find", two_way_search=False,
 
 def get_val_key_for_first_keymatch_in_dict(name, pkeys, **kwargs):
     pkeys += ["_".join([name, pkey]) for pkey in pkeys]
-    temp = extract_dict_stringkeys(kwargs, pkeys, modefun="equal", break_after=1)
+    temp = extract_dict_stringkeys(
+        kwargs, pkeys, modefun="equal", break_after=1)
     if len(temp) > 0:
         return temp.values()[0], temp.keys()[0].split("_")[-1]
     else:
@@ -309,7 +313,8 @@ def labels_to_inds(labels, lbls):
 def generate_region_labels(n_regions, labels=[], str=". ", numbering=True):
     if len(labels) == n_regions:
         if numbering:
-            return np.array([str.join(["%d", "%s"]) % tuple(l) for l in zip(range(n_regions), labels)])
+            return np.array([str.join(["%d", "%s"]) % tuple(l)
+                             for l in zip(range(n_regions), labels)])
         else:
             return labels
     else:
@@ -337,7 +342,8 @@ def monopolar_to_bipolar(labels, indices=None, data=None):
         return bipolar_lbls, bipolar_inds
 
 
-# This function is meant to confirm that two objects assumingly of the same type are equal, i.e., identical
+# This function is meant to confirm that two objects assumingly of the
+# same type are equal, i.e., identical
 def assert_equal_objects(obj1, obj2, attributes_dict=None, logger=None):
     def print_not_equal_message(attr, field1, field2, logger):
         # logger.error("\n\nValueError: Original and read object field "+ attr + " not equal!")
@@ -347,27 +353,35 @@ def assert_equal_objects(obj1, obj2, attributes_dict=None, logger=None):
                        "\nRead object field:\n" + str(field2), logger)
 
     if isinstance(obj1, dict):
-        get_field1 = lambda obj, key: obj[key]
+        def get_field1(obj, key): return obj[key]
         if not (isinstance(attributes_dict, dict)):
             attributes_dict = dict()
             for key in obj1.keys():
                 attributes_dict.update({key: key})
     elif isinstance(obj1, (list, tuple)):
-        get_field1 = lambda obj, key: get_list_or_tuple_item_safely(obj, key)
+        def get_field1(
+            obj,
+            key): return get_list_or_tuple_item_safely(
+            obj,
+            key)
         indices = range(len(obj1))
         attributes_dict = dict(zip([str(ind) for ind in indices], indices))
     else:
-        get_field1 = lambda obj, attribute: getattr(obj, attribute)
+        def get_field1(obj, attribute): return getattr(obj, attribute)
         if not (isinstance(attributes_dict, dict)):
             attributes_dict = dict()
             for key in obj1.__dict__.keys():
                 attributes_dict.update({key: key})
     if isinstance(obj2, dict):
-        get_field2 = lambda obj, key: obj.get(key, None)
+        def get_field2(obj, key): return obj.get(key, None)
     elif isinstance(obj2, (list, tuple)):
-        get_field2 = lambda obj, key: get_list_or_tuple_item_safely(obj, key)
+        def get_field2(
+            obj,
+            key): return get_list_or_tuple_item_safely(
+            obj,
+            key)
     else:
-        get_field2 = lambda obj, attribute: getattr(obj, attribute, None)
+        def get_field2(obj, attribute): return getattr(obj, attribute, None)
 
     equal = True
     for attribute in attributes_dict:
@@ -380,32 +394,38 @@ def assert_equal_objects(obj1, obj2, attributes_dict=None, logger=None):
             if isinstance(field1, str) or isinstance(field1, list) or isinstance(field1, dict) \
                     or (isinstance(field1, np.ndarray) and field1.dtype.kind in 'OSU'):
                 if np.any(field1 != field2):
-                    print_not_equal_message(attributes_dict[attribute], field1, field2, logger)
+                    print_not_equal_message(
+                        attributes_dict[attribute], field1, field2, logger)
                     equal = False
             # For numeric numpy arrays:
             elif isinstance(field1, np.ndarray) and not field1.dtype.kind in 'OSU':
-                # TODO: handle better accuracy differences, empty matrices and complex numbers...
+                # TODO: handle better accuracy differences, empty matrices and
+                # complex numbers...
                 if field1.shape != field2.shape:
-                    print_not_equal_message(attributes_dict[attribute], field1, field2, logger)
+                    print_not_equal_message(
+                        attributes_dict[attribute], field1, field2, logger)
                     equal = False
                 elif np.any(np.float32(field1) - np.float32(field2) > 0):
-                    print_not_equal_message(attributes_dict[attribute], field1, field2, logger)
+                    print_not_equal_message(
+                        attributes_dict[attribute], field1, field2, logger)
                     equal = False
             # For numeric scalar types
             elif isinstance(field1, (int, float, long, complex, np.number)):
                 if np.float32(field1) - np.float32(field2) > 0:
-                    print_not_equal_message(attributes_dict[attribute], field1, field2, logger)
+                    print_not_equal_message(
+                        attributes_dict[attribute], field1, field2, logger)
                     equal = False
             else:
                 equal = assert_equal_objects(field1, field2, logger=logger)
-        except:
+        except BaseException:
             try:
                 logger.warning("Comparing str(objects) for field "
                                + attributes_dict[attribute] + " because there was an error!", logger)
                 if np.any(str(field1) != str(field2)):
-                    print_not_equal_message(attributes_dict[attribute], field1, field2, logger)
+                    print_not_equal_message(
+                        attributes_dict[attribute], field1, field2, logger)
                     equal = False
-            except:
+            except BaseException:
                 raise_value_error("ValueError: Something went wrong when trying to compare "
                                   + attributes_dict[attribute] + " !", logger)
 
@@ -434,7 +454,7 @@ def linspace_broadcast(start, stop, num_steps, maxdims=3):
     while x is None and dims < maxdims:
         try:
             x = (x_star[:, None] * (stop - start) + start)
-        except:
+        except BaseException:
             x_star = x_star[:, np.newaxis]
             dims = dims + 1
     return x
@@ -474,7 +494,7 @@ def assert_arrays(params, shape=None, transpose=False):
         else:
             try:
                 import sympy
-            except:
+            except BaseException:
                 raise_import_error("sympy import failed")
             if isinstance(params[ip], tuple(sympy.core.all_classes)):
                 params[ip] = np.array(params[ip])
@@ -485,10 +505,12 @@ def assert_arrays(params, shape=None, transpose=False):
             # Only one size > 1 is acceptable
             if params[ip].size != size:
                 if size > 1 and params[ip].size > 1:
-                    raise_value_error("Inputs are of at least two distinct sizes > 1")
+                    raise_value_error(
+                        "Inputs are of at least two distinct sizes > 1")
                 elif params[ip].size > size:
                     size = params[ip].size
-            # Construct a kind of histogram of all different shapes of the inputs:
+            # Construct a kind of histogram of all different shapes of the
+            # inputs:
             ind = np.array([(x == params[ip].shape) for x in shapes])
             if np.any(ind):
                 ind = np.where(ind)[0]
@@ -499,7 +521,8 @@ def assert_arrays(params, shape=None, transpose=False):
                 n_shapes.append(1)
         else:
             if params[ip].size > size:
-                raise_value_error("At least one input is of a greater size than the one given!")
+                raise_value_error(
+                    "At least one input is of a greater size than the one given!")
 
     if shape is None:
         # Keep only shapes of the correct size
@@ -527,7 +550,7 @@ def assert_arrays(params, shape=None, transpose=False):
                     params[ip] = np.tile(params[ip], shape)
                 else:
                     params[ip] = np.reshape(params[ip], shape)
-        except:
+        except BaseException:
             # TODO: maybe make this an explicit message
             logger.info("\n\nwhat the fuck??")
 
@@ -571,16 +594,25 @@ def make_int(x, precision="64"):
             return np.int(x)
 
 
-def copy_object_attributes(obj1, obj2, attr1, attr2=None, deep_copy=False, check_none=False):
+def copy_object_attributes(
+        obj1, obj2, attr1, attr2=None, deep_copy=False, check_none=False):
     attr1 = ensure_list(attr1)
     if attr2 is None:
         attr2 = attr1
     else:
         attr2 = ensure_list(attr2)
     if deep_copy:
-        fcopy = lambda a1, a2: setattr(obj2, a2, deepcopy(getattr(obj1, a1)))
+        def fcopy(
+            a1,
+            a2): return setattr(
+            obj2,
+            a2,
+            deepcopy(
+                getattr(
+                    obj1,
+                    a1)))
     else:
-        fcopy = lambda a1, a2: setattr(obj2, a2, getattr(obj1, a1))
+        def fcopy(a1, a2): return setattr(obj2, a2, getattr(obj1, a1))
     if check_none:
         for a1, a2 in zip(attr1, attr2):
             if getattr(obj2, a2) is None:

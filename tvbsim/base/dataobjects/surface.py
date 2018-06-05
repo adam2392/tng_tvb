@@ -3,10 +3,12 @@
 import numpy as np
 from tvbsim.base.utils.data_structures_utils import formal_repr, sort_dict
 
+
 class SurfaceH5Field(object):
     VERTICES = "vertices"
     TRIANGLES = "triangles"
     VERTEX_NORMALS = "vertex_normals"
+
 
 class Surface(object):
     vertices = np.array([])
@@ -14,10 +16,10 @@ class Surface(object):
     vertex_normals = np.array([])
     triangle_normals = np.array([])
 
-    def __init__(self, vertices, triangles, 
-                surface_subtype="CORTICAL", 
-                vertex_normals=np.array([]),
-                triangle_normals=np.array([])):
+    def __init__(self, vertices, triangles,
+                 surface_subtype="CORTICAL",
+                 vertex_normals=np.array([]),
+                 triangle_normals=np.array([])):
         self.vertices = vertices
         self.triangles = triangles
         self.vertex_normals = vertex_normals

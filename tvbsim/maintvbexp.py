@@ -69,7 +69,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         if noise_cov is None:
             noise_cov = np.array([0.001, 0.001, 0.,
                                   0.0001, 0.0001, 0.])
-        ####################### 3. Integrator for Models ##########################
+        ####################### 3. Integrator for Models ######################
         # define cov noise for the stochastic heun integrato
         hiss = noise.Additive(nsig=noise_cov)
         # hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
@@ -80,7 +80,8 @@ class MainTVBSim(TVBExp, MoveContactExp):
             heunint = integrators.HeunDeterministic(dt=ts)
         self.integrator = heunint
 
-    def initepileptor(self, x0norm, x0ez=None, x0pz=None, r=None, Ks=None, tt=None, tau=None):
+    def initepileptor(self, x0norm, x0ez=None, x0pz=None,
+                      r=None, Ks=None, tt=None, tau=None):
         '''
         State variables for the Epileptor model:
         Repeated here for redundancy:
@@ -90,7 +91,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         x2 = fourth
         y2 = fifth
         '''
-        ####################### 2. Neural Mass Model @ Nodes ######################
+        ####################### 2. Neural Mass Model @ Nodes ##################
         epileptors = models.Epileptor(
             variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'])
         if r is not None:
@@ -103,7 +104,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
             epileptors.tau = tau
 
         # this comes after setting all parameters
-        epileptors.x0 = x0norm*np.ones(len(self.conn.region_labels))
+        epileptors.x0 = x0norm * np.ones(len(self.conn.region_labels))
         if x0ez is not None:
             try:
                 epileptors.x0[self.ezind] = x0ez
@@ -123,7 +124,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         self.epileptors = epileptors
 
     def setupsim(self, a=1., period=1., moved=False, initcond=None):
-        ################## 4. Difference Coupling Between Nodes ###################
+        ################## 4. Difference Coupling Between Nodes ###############
         coupl = coupling.Difference(a=a)
         # self.coupl = coupl
 
@@ -143,7 +144,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         # obsnoise = noise.Additive(nsig=noise_cov, ntau=ntau)
         # obsnoise = None
 
-        ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #############
+        ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #########
         mon_tavg = monitors.TemporalAverage(period=period)  # monitor model
 
         if gainfile is None:

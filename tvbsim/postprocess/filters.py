@@ -17,13 +17,13 @@ class FilterLinearNoise(object):
 
     def __butthighpass(self, cut, order):
         # the Nyquist frequency
-        nyq = self.samplerate/2.
+        nyq = self.samplerate / 2.
         b, a = butter(N=order, Wn=cut, btype='highpass', analog=False)
         return b, a
 
     def __buttlowpass(self, cut, order):
         # the Nyquist frequency
-        nyq = self.samplerate/2.
+        nyq = self.samplerate / 2.
         b, a = butter(N=order, Wn=cut, btype='lowpass', analog=False)
         return b, a
 
@@ -41,10 +41,10 @@ class FilterLinearNoise(object):
         # OUTPUT ARGS::
         #   data = the filtered data
         # the Nyquist frequency
-        nyq = self.samplerate/2.
+        nyq = self.samplerate / 2.
 
         # create a butterworth filter with specified order, freqs, type
-        b, a = butter(N=order, Wn=freqrange/nyq, btype=btype)
+        b, a = butter(N=order, Wn=freqrange / nyq, btype=btype)
         filters = np.array((b, a))
         # run filtfilt for zero phase distortion
         data = filtfilt(b, a, rawdata)
@@ -53,8 +53,8 @@ class FilterLinearNoise(object):
     @classmethod
     def apply_lowpass(self, rawdata, cut, order=5):
         # the Nyquist frequency
-        nyq = self.samplerate/2.
-        b, a = butter(N=order, Wn=cut/nyq, btype='lowpass', analog=False)
+        nyq = self.samplerate / 2.
+        b, a = butter(N=order, Wn=cut / nyq, btype='lowpass', analog=False)
 
         # run filtfilt for zero phase distortion
         data = filtfilt(b, a, rawdata)
@@ -83,9 +83,10 @@ class FilterLinearNoise(object):
         order = 4;                % order of the butterworth filter
         '''
         ######################### FILTERING ################################
-        # define lambda function that creates an array of the frequency harmonic +/- 0.5 Hz
+        # define lambda function that creates an array of the frequency
+        # harmonic +/- 0.5 Hz
         def freqrange(multfactor): return np.array(
-            [freq*multfactor - 0.5, freq*multfactor + 0.5])
+            [freq * multfactor - 0.5, freq * multfactor + 0.5])
 
         # perform notch filtering at line noise and its harmonics
         if filttype == 'notch':

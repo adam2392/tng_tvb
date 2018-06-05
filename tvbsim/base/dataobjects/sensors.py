@@ -1,22 +1,26 @@
-import numpy as np 
+import numpy as np
 from enum import Enum
 
 from tvbsim.base.utils.data_structures_utils import reg_dict, formal_repr, sort_dict, \
-                                                                                    labels_to_inds, monopolar_to_bipolar
+    labels_to_inds, monopolar_to_bipolar
 from tvbsim.base.computations.math_utils import compute_gain_matrix
 from tvbsim.base.utils.data_structures_utils import split_string_text_numbers
 
 # SDE model inversion constants
+
+
 class SensorTypes(Enum):
     TYPE_EEG = 'EEG'
     TYPE_SEEG = "SEEG"
     TYPE_ECOG = "ECOG"
+
 
 class SensorsH5Field(object):
     GAIN_MATRIX = "gain_matrix"
     LABELS = "labels"
     LOCATIONS = "locations"
     NEEDLES = "needles"
+
 
 class Sensors(object):
     TYPE_EEG = SensorTypes.TYPE_EEG.value
@@ -26,20 +30,21 @@ class Sensors(object):
     number_of_sensors = None
     labels = np.array([])       # label of each sensor
     locations = np.array([])    # xyz location of each sensor
-    needles = np.array([]) 
-    orientations = np.array([]) # orientation of the sensor
-    gain_matrix = np.array([])  # gain matrix with respect to parcellated regions
+    needles = np.array([])
+    orientations = np.array([])  # orientation of the sensor
+    # gain matrix with respect to parcellated regions
+    gain_matrix = np.array([])
     s_type = TYPE_SEEG          # what is the sensor type
-    
-    def __init__(self, labels, locations, 
-                gain_matrix=np.array([]),
-                needles=np.array([]), 
-                orientations=np.array([]), 
-                s_type=TYPE_SEEG):
+
+    def __init__(self, labels, locations,
+                 gain_matrix=np.array([]),
+                 needles=np.array([]),
+                 orientations=np.array([]),
+                 s_type=TYPE_SEEG):
         self.labels = labels
-        self.locations = locations 
+        self.locations = locations
         self.gain_matrix = gain_matrix
-        self.channel_labels = np.array([]) # channel label
+        self.channel_labels = np.array([])  # channel label
         self.orientations = orientations
         self.needles = needles
         self.s_type = s_type
@@ -56,7 +61,6 @@ class Sensors(object):
     @property
     def number_of_sensors(self):
         return self.locations.shape[0]
-
 
     def __repr__(self):
         d = {"1. sensors' type": self.s_type,
@@ -99,7 +103,8 @@ class Sensors(object):
 
         Can use inverse-square, or dipole model.
         """
-        return compute_gain_matrix(self.locations, connectivity.centres, normalize=95, ceil=1.0)
+        return compute_gain_matrix(
+            self.locations, connectivity.centres, normalize=95, ceil=1.0)
 
     def get_inds_labels_from_needles(self):
         channel_inds = []
@@ -144,14 +149,15 @@ class Sensors(object):
             bipolar_sensors_lbls = []
             bipolar_sensors_inds = []
             for elec_ind in elecs:
-                curr_inds, curr_lbls = self.get_bipolar_sensors(sensors_inds=self.elec_inds[elec_ind])
+                curr_inds, curr_lbls = self.get_bipolar_sensors(
+                    sensors_inds=self.elec_inds[elec_ind])
                 bipolar_sensors_inds.append(curr_inds)
                 bipolar_sensors_lbls.append(curr_lbls)
-        except:
+        except BaseException:
             elecs_inds = self.get_elecs_inds_by_elecs_labels(elecs)
-            bipolar_sensors_inds, bipolar_sensors_lbls = self.get_bipolar_elecs(elecs_inds)
+            bipolar_sensors_inds, bipolar_sensors_lbls = self.get_bipolar_elecs(
+                elecs_inds)
         return bipolar_sensors_inds, bipolar_sensors_lbls
-
 
     # TODO: verify this try and change message
     # def sensor_label_to_index(self, labels):
@@ -165,6 +171,3 @@ class Sensors(object):
     #         return indexes[0]
     #     else:
     #         return indexes
-
-
-

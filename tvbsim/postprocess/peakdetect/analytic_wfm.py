@@ -45,7 +45,7 @@ def ACV_A1(T, Hz=50):
     """
     ampl = 1000
     T = np.asarray(T, dtype=np.float64)
-    return ampl * sqrt(2) * np.sin(2*pi*Hz * T)
+    return ampl * sqrt(2) * np.sin(2 * pi * Hz * T)
 
 
 def ACV_A2(T, Hz=50):
@@ -59,7 +59,7 @@ def ACV_A2(T, Hz=50):
     ampl = 1000
     offset = 500
     T = np.asarray(T, dtype=np.float64)
-    return ampl * sqrt(2) * np.sin(2*pi*Hz * T) + offset
+    return ampl * sqrt(2) * np.sin(2 * pi * Hz * T) + offset
 
 
 def ACV_A3(T, Hz=50):
@@ -72,8 +72,8 @@ def ACV_A3(T, Hz=50):
     """
     ampl = 1000
     T = np.asarray(T, dtype=np.float64)
-    main_wave = np.sin(2*pi*Hz * T)
-    harmonic_wave = 0.05 * np.sin(2*pi*Hz * T * 4 + pi * 2 / 3)
+    main_wave = np.sin(2 * pi * Hz * T)
+    harmonic_wave = 0.05 * np.sin(2 * pi * Hz * T * 4 + pi * 2 / 3)
     return ampl * sqrt(2) * (main_wave + harmonic_wave)
 
 
@@ -87,8 +87,8 @@ def ACV_A4(T, Hz=50):
     """
     ampl = 1000
     T = np.asarray(T, dtype=np.float64)
-    main_wave = np.sin(2*pi*Hz * T)
-    harmonic_wave = 0.07 * np.sin(2*pi*Hz * T * 5 + pi * 22 / 18)
+    main_wave = np.sin(2 * pi * Hz * T)
+    harmonic_wave = 0.07 * np.sin(2 * pi * Hz * T * 5 + pi * 22 / 18)
     return ampl * sqrt(2) * (main_wave + harmonic_wave)
 
 
@@ -102,11 +102,11 @@ def ACV_A5(T, Hz=50):
     """
     ampl = 1000
     T = np.asarray(T, dtype=np.float64)
-    wave_1 = np.sin(2*pi*Hz * T)
-    wave_2 = 0.05 * np.sin(2*pi*Hz * T * 3 - pi)
-    wave_3 = 0.05 * np.sin(2*pi*Hz * T * 5)
-    wave_4 = 0.02 * np.sin(2*pi*Hz * T * 7 - pi)
-    wave_5 = 0.01 * np.sin(2*pi*Hz * T * 9)
+    wave_1 = np.sin(2 * pi * Hz * T)
+    wave_2 = 0.05 * np.sin(2 * pi * Hz * T * 3 - pi)
+    wave_3 = 0.05 * np.sin(2 * pi * Hz * T * 5)
+    wave_4 = 0.02 * np.sin(2 * pi * Hz * T * 7 - pi)
+    wave_5 = 0.01 * np.sin(2 * pi * Hz * T * 9)
     return ampl * sqrt(2) * (wave_1 + wave_2 + wave_3 + wave_4 + wave_5)
 
 
@@ -120,11 +120,11 @@ def ACV_A6(T, Hz=50):
     """
     ampl = 1000
     T = np.asarray(T, dtype=np.float64)
-    wave_1 = np.sin(2*pi*Hz * T)
-    wave_2 = 0.02 * np.sin(2*pi*Hz * T * 3 - pi)
-    wave_3 = 0.02 * np.sin(2*pi*Hz * T * 5)
-    wave_4 = 0.0015 * np.sin(2*pi*Hz * T * 7 - pi)
-    wave_5 = 0.009 * np.sin(2*pi*Hz * T * 9)
+    wave_1 = np.sin(2 * pi * Hz * T)
+    wave_2 = 0.02 * np.sin(2 * pi * Hz * T * 3 - pi)
+    wave_3 = 0.02 * np.sin(2 * pi * Hz * T * 5)
+    wave_4 = 0.0015 * np.sin(2 * pi * Hz * T * 7 - pi)
+    wave_5 = 0.009 * np.sin(2 * pi * Hz * T * 9)
     return ampl * sqrt(2) * (wave_1 + wave_2 + wave_3 + wave_4 + wave_5)
 
 
@@ -143,9 +143,9 @@ def ACV_A7(T, Hz=50):
     ampl = 1000
     Hz = 50
     T = np.asarray(T, dtype=np.float64)
-    wave_main = np.sin(2*pi*Hz * T)
-    step_func = (0.9 * T / 5 * H(5-T) + H(T-5) *
-                 H(10-T) * (0.9 + 0.1 * (T-5) / 5))
+    wave_main = np.sin(2 * pi * Hz * T)
+    step_func = (0.9 * T / 5 * H(5 - T) + H(T - 5) *
+                 H(10 - T) * (0.9 + 0.1 * (T - 5) / 5))
     return ampl * sqrt(2) * wave_main * step_func
 
 
@@ -165,38 +165,39 @@ def ACV_A8(T, Hz=50):
     Hz = 50
     T = np.asarray(T, dtype=np.float64)
     wave_main = np.sin(T)
-    step_func = T / (10 * pi) * H(10 - T / (2*pi*Hz))
+    step_func = T / (10 * pi) * H(10 - T / (2 * pi * Hz))
     return ampl * sqrt(2) * wave_main * step_func
 
 
-_ACV_A1_L = lambda T, Hz = 50: 1000 * sqrt(2) * np.sin(2*pi*Hz * T)
+_ACV_A1_L = lambda T, Hz = 50: 1000 * sqrt(2) * np.sin(2 * pi * Hz * T)
 #
-_ACV_A2_L = lambda T, Hz = 50: 1000 * sqrt(2) * np.sin(2*pi*Hz * T) + 500
+_ACV_A2_L = lambda T, Hz = 50: 1000 * sqrt(2) * np.sin(2 * pi * Hz * T) + 500
 #
-_ACV_A3_L = lambda T, Hz = 50: 1000 * sqrt(2) * (np.sin(2*pi*Hz * T) +
-                                                 0.05 * np.sin(2*pi*Hz * T * 4 + pi * 2 / 3))
+_ACV_A3_L = lambda T, Hz = 50: 1000 * sqrt(2) * (np.sin(2 * pi * Hz * T) +
+                                                 0.05 * np.sin(2 * pi * Hz * T * 4 + pi * 2 / 3))
 #
-_ACV_A4_L = lambda T, Hz = 50: (1000 * sqrt(2) * (np.sin(2*pi*Hz * T) +
-                                                  0.07 * np.sin(2*pi*Hz * T * 5 + pi * 22 / 18)))
+_ACV_A4_L = lambda T, Hz = 50: (1000 * sqrt(2) * (np.sin(2 * pi * Hz * T) +
+                                                  0.07 * np.sin(2 * pi * Hz * T * 5 + pi * 22 / 18)))
 
 # Realistic triangle
-_ACV_A5_L = lambda T, Hz = 50: (1000 * sqrt(2) * (np.sin(2*pi*Hz * T) +
-                                                  0.05 * np.sin(2*pi*Hz * T * 3 - pi) +
-                                                  0.05 * np.sin(2*pi*Hz * T * 5) +
-                                                  0.02 * np.sin(2*pi*Hz * T * 7 - pi) +
-                                                  0.01 * np.sin(2*pi*Hz * T * 9)))
+_ACV_A5_L = lambda T, Hz = 50: (1000 * sqrt(2) * (np.sin(2 * pi * Hz * T) +
+                                                  0.05 * np.sin(2 * pi * Hz * T * 3 - pi) +
+                                                  0.05 * np.sin(2 * pi * Hz * T * 5) +
+                                                  0.02 * np.sin(2 * pi * Hz * T * 7 - pi) +
+                                                  0.01 * np.sin(2 * pi * Hz * T * 9)))
 #
-_ACV_A6_L = lambda T, Hz = 50: (1000 * sqrt(2) * (np.sin(2*pi*Hz * T) +
-                                                  0.02 * np.sin(2*pi*Hz * T * 3 - pi) +
-                                                  0.02 * np.sin(2*pi*Hz * T * 5) +
-                                                  0.0015 * np.sin(2*pi*Hz * T * 7 - pi) +
-                                                  0.009 * np.sin(2*pi*Hz * T * 9)))
+_ACV_A6_L = lambda T, Hz = 50: (1000 * sqrt(2) * (np.sin(2 * pi * Hz * T) +
+                                                  0.02 * np.sin(2 * pi * Hz * T * 3 - pi) +
+                                                  0.02 * np.sin(2 * pi * Hz * T * 5) +
+                                                  0.0015 * np.sin(2 * pi * Hz * T * 7 - pi) +
+                                                  0.009 * np.sin(2 * pi * Hz * T * 9)))
 
-# A7 & A8 convert so that a input of 16*pi corresponds to a input 0.25 in the current version
+# A7 & A8 convert so that a input of 16*pi corresponds to a input 0.25 in
+# the current version
 
 
 def _ACV_A7_OLD(T): return [1000 * sqrt(2) * np.sin(100 * pi * t) *
-                            (0.9 * t / 5 * H_num(5-t) + H_num(t-5) * H_num(10-t) * (0.9 + 0.1 * (t-5) / 5)) for t in T]
+                            (0.9 * t / 5 * H_num(5 - t) + H_num(t - 5) * H_num(10 - t) * (0.9 + 0.1 * (t - 5) / 5)) for t in T]
 
 
 def _ACV_A8_OLD(T): return [1000 * sqrt(2) * np.sin(t) *

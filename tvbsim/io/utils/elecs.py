@@ -2,18 +2,21 @@ import io
 import re
 import numpy as np
 
+
 class NamedPoints(object):
     def __init__(self, fl):
-        data = np.genfromtxt(fl, dtype=None)#, encoding='utf-8')
+        data = np.genfromtxt(fl, dtype=None)  # , encoding='utf-8')
         self.xyz = np.array([[l[1], l[2], l[3]] for l in data])
         # self.names = [l[0] for l in data]
         self.names = [l[0].decode('ascii') for l in data]
         self.name_to_xyz = dict(zip(self.names, self.xyz))
 
+
 class Contacts(NamedPoints):
     contact_single_regex = re.compile("^([A-Za-z]+[']?)([0-9]+)$")
     contact_pair_regex_1 = re.compile("^([A-Za-z]+[']?)([0-9]+)-([0-9]+)$")
-    contact_pair_regex_2 = re.compile("^([A-Za-z]+[']?)([0-9]+)-([A-Za-z]+[']?)([0-9]+)$")
+    contact_pair_regex_2 = re.compile(
+        "^([A-Za-z]+[']?)([0-9]+)-([A-Za-z]+[']?)([0-9]+)$")
 
     def __init__(self, filename):
         super(Contacts, self).__init__(filename)
@@ -66,7 +69,8 @@ class Contacts(NamedPoints):
             assert abs(int(match.group(2)) - int(match.group(3))) == 1
             contact1 = match.group(1) + match.group(2)
             contact2 = match.group(1) + match.group(3)
-            return (self.name_to_xyz[contact1] + self.name_to_xyz[contact2])/2.
+            return (self.name_to_xyz[contact1] +
+                    self.name_to_xyz[contact2]) / 2.
 
         match = self.contact_pair_regex_2.match(name)
         if match is not None:
@@ -74,6 +78,9 @@ class Contacts(NamedPoints):
             assert abs(int(match.group(2)) - int(match.group(4))) == 1
             contact1 = match.group(1) + match.group(2)
             contact2 = match.group(3) + match.group(4)
-            return (self.name_to_xyz[contact1] + self.name_to_xyz[contact2])/2.
+            return (self.name_to_xyz[contact1] +
+                    self.name_to_xyz[contact2]) / 2.
 
-        raise ValueError("Given name '%s' does not follow any expected pattern." % name)
+        raise ValueError(
+            "Given name '%s' does not follow any expected pattern." %
+            name)

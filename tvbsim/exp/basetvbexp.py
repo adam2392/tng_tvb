@@ -15,7 +15,7 @@ class TVBExp(object):
         self.conn = conn
         self.conn.speed = condspeed
         self.conn.cortical[:] = True
-        self.conn.weights = conn.weights/np.max(conn.weights)
+        self.conn.weights = conn.weights / np.max(conn.weights)
         self.init_cond = None
 
     def getepileptorparams(self):
@@ -115,7 +115,7 @@ class TVBExp(object):
         vertex_areas = np.zeros((vertices.shape[0]))
         for triang, vertices in enumerate(triangles):
             for i in range(3):
-                vertex_areas[vertices[i]] += 1./3. * triangle_areas[triang]
+                vertex_areas[vertices[i]] += 1. / 3. * triangle_areas[triang]
         return vertex_areas
 
     def __get_equilibrium(self, model, init):

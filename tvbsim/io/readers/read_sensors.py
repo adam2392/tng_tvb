@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 import zipfile
 import scipy.io
 import os
@@ -20,6 +20,7 @@ connectivity data and load it so that you can get access to
 - weights between regions (derived from dMRI)
 - and much more...
 '''
+
 
 class LoadSensors(object):
     logger = initialize_logger(__name__)
@@ -61,4 +62,3 @@ class LoadSensors(object):
         self.gainfile = gainfile
         self.gainmat = gain_pd.as_matrix()
         return self.gainmat
-    

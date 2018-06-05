@@ -11,7 +11,7 @@ from shutil import copyfile
 
 '''
 Module: Util
-Description: These functions and objects are used to assist in setting up any sort of simulation environment. 
+Description: These functions and objects are used to assist in setting up any sort of simulation environment.
 
 PostProcess helps analyze the simulated data and perform rejection of senseless data and to analyze the z time series and determine an onset/offset period.
 
@@ -27,7 +27,7 @@ def renamefiles(project_dir):
     try:
         # copyfile(sensorsfile, newsensorsfile)
         os.rename(sensorsfile, newsensorsfile)
-    except:
+    except BaseException:
         print("Already renamed seeg.xyz possibly!")
 
     # convert gain_inv-square.mat file into gain_inv-square.txt file
@@ -36,7 +36,7 @@ def renamefiles(project_dir):
     try:
         # copyfile(gainmatfile, newgainmatfile)
         os.rename(gainmatfile, newgainmatfile)
-    except:
+    except BaseException:
         print("Already renamed gain_inv-square.mat possibly!")
 
 
@@ -51,7 +51,7 @@ def extractseegxyz(seegfile):
 
 def extractcon(confile):
     '''
-    This is a wrapper function to obtain the connectivity object from a file 
+    This is a wrapper function to obtain the connectivity object from a file
     '''
     con = connectivity.Connectivity.from_file(confile)
     return con
@@ -112,7 +112,7 @@ def compute_vertex_areas(vertices, triangles):
     vertex_areas = np.zeros((vertices.shape[0]))
     for triang, vertices in enumerate(triangles):
         for i in range(3):
-            vertex_areas[vertices[i]] += 1./3. * triangle_areas[triang]
+            vertex_areas[vertices[i]] += 1. / 3. * triangle_areas[triang]
     return vertex_areas
 
 
@@ -157,7 +157,8 @@ def findclosestregion(seegindex, p=2):
     # get the ez region's xyz coords
     contact_xyz = self.seeg_xyz[seegindex]
 
-    # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
+    # create a spatial KD tree -> find closest SEEG contact to region in
+    # Euclidean
     tree = scipy.spatial.KDTree(self.reg_xyz)
     near_region = tree.query(contact_xyz, p=p)
 

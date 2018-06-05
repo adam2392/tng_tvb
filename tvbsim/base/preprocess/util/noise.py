@@ -4,6 +4,7 @@ from tvbsim.base.utils.log_error import initialize_logger
 import numpy as np
 # import colorednoise as cn
 
+
 def fftnoise(f):
     '''
     Generates noise at the frequencies f.
@@ -46,7 +47,9 @@ def band_limited_noise(min_freq, max_freq, samples, samplerate):
 class Noise(object):
     def __init__(self, config=None):
         self.config = config or Config()
-        self.logger = initialize_logger(self.__class__.__name__, self.config.out.FOLDER_LOGS)
+        self.logger = initialize_logger(
+            self.__class__.__name__,
+            self.config.out.FOLDER_LOGS)
 
     # @staticmethod
     # def addcolorednoise(data, beta=2):
@@ -100,7 +103,7 @@ class LineNoise(Noise):
         x_noise = np.zeros(numsamps)
 
         # self.logger.info('Generating noise for %d harmonics' % self.numharmonics)
-        
+
         # loop through each harmonic and generate the randomized noise
         for iharm in range(self.numharmonics):
             lowfreq = linefreq - self.bandwidth // 2

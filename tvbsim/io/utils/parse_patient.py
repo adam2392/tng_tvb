@@ -13,20 +13,22 @@ import pandas as pd
 from .elecs import Contacts
 from . import nifti
 
+
 def get_sec(time):
-    if type(time) == float:
+    if isinstance(time, float):
         # Already in seconds
         return time
-    elif type(time) == datetime.time:
+    elif isinstance(time, datetime.time):
         return datetime.timedelta(hours=time.hour,
-                                 minutes=time.minute,
-                                 seconds=time.second,
-                                 microseconds=time.microsecond).total_seconds()
-    elif type(time) == str:
+                                  minutes=time.minute,
+                                  seconds=time.second,
+                                  microseconds=time.microsecond).total_seconds()
+    elif isinstance(time, str):
         h, m, s = time.split(':')
-        return int(h)*3600 + int(m)*60 + float(s)
+        return int(h) * 3600 + int(m) * 60 + float(s)
     else:
         raise ValueError("Unexpected time type: %s" % type(time))
+
 
 def add_same_occurence_index(df, column):
     df['_%s_repeated' % column] = False
@@ -41,6 +43,7 @@ def add_same_occurence_index(df, column):
             for i, (index, row) in enumerate(subdf.iterrows()):
                 df.loc[index, '_%s_repeated' % column] = True
                 df.loc[index, '_%s_index' % column] = i + 1
+
 
 def expand_channels(ch_list):
     ch_list = [a.replace("’", "'") for a in ch_list]
@@ -60,20 +63,25 @@ def expand_channels(ch_list):
         match = re.match("^([A-Za-z]+[']*)([0-9]+)-([0-9]+)$", string)
         if match:
             name, fst_idx, last_idx = match.groups()
-            new_list.extend([name + str(i) for i in range(int(fst_idx), int(last_idx) + 1)])
+            new_list.extend([name + str(i)
+                             for i in range(int(fst_idx), int(last_idx) + 1)])
             continue
 
         # A'1-A10
-        match = re.match("^([A-Za-z]+[']*)([0-9]+)-([A-Za-z]+[']*)([0-9]+)$", string)
+        match = re.match(
+            "^([A-Za-z]+[']*)([0-9]+)-([A-Za-z]+[']*)([0-9]+)$",
+            string)
         if match:
             name1, fst_idx, name2, last_idx = match.groups()
             if name1 == name2:
-                new_list.extend([name1 + str(i) for i in range(int(fst_idx), int(last_idx) + 1)])
+                new_list.extend([name1 + str(i)
+                                 for i in range(int(fst_idx), int(last_idx) + 1)])
                 continue
 
         print("expand_channels: Cannot parse this: %s" % string)
 
     return new_list
+
 
 def get_ez_from_regions(xlsx_file, region_names):
     """Return list of indices of EZ regions given in the patient spreadsheet"""
@@ -86,7 +94,8 @@ def get_ez_from_regions(xlsx_file, region_names):
     df = pd.read_excel(xlsx_file, sheet_name="EZ hypothesis and EI", header=1)
 
     ez_names = []
-    for names_ind, ez_ind in [(LH_NAMES_IND, LH_EZ_IND), (RH_NAMES_IND, RH_EZ_IND)]:
+    for names_ind, ez_ind in [
+            (LH_NAMES_IND, LH_EZ_IND), (RH_NAMES_IND, RH_EZ_IND)]:
         names_col = df.iloc[:, names_ind]
         mask = names_col.notnull()
         names = names_col[mask]
@@ -117,14 +126,16 @@ def get_ez_from_contacts(xlsx_file, contacts_file, label_volume_file):
     ez_inds = []
     for contact in ez_contacts:
         coords = contacts.get_coords(contact)
-        region_ind = nifti.point_to_brain_region(coords, label_vol, tol=3.0) - 1   # Minus one to account for the shift
+        region_ind = nifti.point_to_brain_region(
+            coords, label_vol, tol=3.0) - 1   # Minus one to account for the shift
         if region_ind != -1:
             ez_inds.append(region_ind)
 
     return ez_inds
 
 
-def save_ez_hypothesis(xlsx_file, tvb_zipfile, contacts_file, label_volume_file, output_file):
+def save_ez_hypothesis(xlsx_file, tvb_zipfile,
+                       contacts_file, label_volume_file, output_file):
     """Extract the EZ hypothesis from the xlsx file and save it to plain text file"""
 
     with zipfile.ZipFile(tvb_zipfile) as zf:
@@ -134,14 +145,14 @@ def save_ez_hypothesis(xlsx_file, tvb_zipfile, contacts_file, label_volume_file,
     nreg = len(region_names)
 
     ez_inds_from_regions = get_ez_from_regions(xlsx_file, region_names)
-    ez_inds_from_contacts = get_ez_from_contacts(xlsx_file, contacts_file, label_volume_file)
+    ez_inds_from_contacts = get_ez_from_contacts(
+        xlsx_file, contacts_file, label_volume_file)
     ez_inds = list(set(ez_inds_from_regions + ez_inds_from_contacts))
 
     ez_hyp = np.zeros(nreg, dtype=int)
     ez_hyp[ez_inds] = 1
 
     np.savetxt(output_file, ez_hyp, fmt='%i')
-
 
 
 if __name__ == '__main__':

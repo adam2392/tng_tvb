@@ -258,7 +258,7 @@ class _Test_peakdetect_template(unittest.TestCase):
                         msg=self.msg_y.format("minima", y_min_close))
 
     def test_peak_ACV1(self):
-        peak_pos = 1000*np.sqrt(2)  # 1414.2135623730951
+        peak_pos = 1000 * np.sqrt(2)  # 1414.2135623730951
         peak_neg = -peak_pos
         expected_max = [
             (0.005, peak_pos),
@@ -284,8 +284,8 @@ class _Test_peakdetect_template(unittest.TestCase):
                                  )
 
     def test_peak_ACV2(self):
-        peak_pos = 1000*np.sqrt(2) + 500  # 1414.2135623730951 + 500
-        peak_neg = (-1000*np.sqrt(2)) + 500  # -914.2135623730951
+        peak_pos = 1000 * np.sqrt(2) + 500  # 1414.2135623730951 + 500
+        peak_neg = (-1000 * np.sqrt(2)) + 500  # -914.2135623730951
         expected_max = [
             (0.005, peak_pos),
             (0.025, peak_pos),
@@ -316,7 +316,7 @@ class _Test_peakdetect_template(unittest.TestCase):
         WolframAlpha solution
 
         max{y = sin(100 pi x)+0.05 sin(400 pi x+(2 pi)/3)}~~
-        sin(6.28319 n+1.51306)-0.05 sin(25.1327 n+5.00505) 
+        sin(6.28319 n+1.51306)-0.05 sin(25.1327 n+5.00505)
         at x~~0.00481623+0.02 n for integer n
 
         min{y = sin(100 pi x)+0.05 sin(400 pi x+(2 pi)/3)}~~
@@ -329,8 +329,8 @@ class _Test_peakdetect_template(unittest.TestCase):
 
         root 0 = 1/(50 * pi) * (pi*0 - 0.68846026579266880983)
         The exact solution according to WolframAlpha - I haven't the foggiest
-        (tan^(-1)(root of 
-            {#1^2-3&, 11 #2^8-8 #1 #2^7-8 #2^6+56 #1 #2^5+70 #2^4-56 #1 #2^3-48 #2^2+8 #1 #2-9&}(x) 
+        (tan^(-1)(root of
+            {#1^2-3&, 11 #2^8-8 #1 #2^7-8 #2^6+56 #1 #2^5+70 #2^4-56 #1 #2^3-48 #2^2+8 #1 #2-9&}(x)
             near x = -0.822751)+pi n) / (50 * pi)
 
 
@@ -338,7 +338,7 @@ class _Test_peakdetect_template(unittest.TestCase):
 
         period = 0.02
         """
-        base = 1000*np.sqrt(2)
+        base = 1000 * np.sqrt(2)
 
         # def peak_pos(n):
         #    return base * (np.sin(6.28319 * n + 1.51306)
@@ -348,25 +348,35 @@ class _Test_peakdetect_template(unittest.TestCase):
         #        - np.sin(1.37692 - 6.28319 * n))
 
         def peak_pos(n):
-            return base * (np.sin(2*np.pi * n + 1.51306)
-                           - 0.05*np.sin(8*np.pi * n + 5.00505))
+            return base * (np.sin(2 * np.pi * n + 1.51306)
+                           - 0.05 * np.sin(8 * np.pi * n + 5.00505))
 
         def peak_neg(n):
-            return base * (0.05 * np.sin(6.55488 - 8*np.pi * n)
-                           - np.sin(1.37692 - 2*np.pi * n))
+            return base * (0.05 * np.sin(6.55488 - 8 * np.pi * n)
+                           - np.sin(1.37692 - 2 * np.pi * n))
         t_max = [
-            0.75653155241276430710/(50*np.pi)+0.00,  # 0.004816229446859069
-            0.75653155241276430710/(50*np.pi)+0.02,  # 0.024816229446859069
-            0.75653155241276430710/(50*np.pi)+0.04,  # 0.044816229446859069
-            0.75653155241276430710/(50*np.pi)+0.06,  # 0.064816229446859069
-            0.75653155241276430710/(50*np.pi)+0.08  # 0.084816229446859069
+            0.75653155241276430710 / (50 * np.pi) +
+            0.00,  # 0.004816229446859069
+            0.75653155241276430710 / (50 * np.pi) + \
+            0.02,  # 0.024816229446859069
+            0.75653155241276430710 / (50 * np.pi) + \
+            0.04,  # 0.044816229446859069
+            0.75653155241276430710 / (50 * np.pi) + \
+            0.06,  # 0.064816229446859069
+            0.75653155241276430710 / (50 * np.pi) + \
+            0.08  # 0.084816229446859069
         ]
         t_min = [
-            -0.68846026579266880983/(50*np.pi)+0.02,  # 0.015617125823069466
-            -0.68846026579266880983/(50*np.pi)+0.04,  # 0.035617125823069466
-            -0.68846026579266880983/(50*np.pi)+0.06,  # 0.055617125823069466
-            -0.68846026579266880983/(50*np.pi)+0.08,  # 0.075617125823069466
-            -0.68846026579266880983/(50*np.pi)+0.10  # 0.095617125823069466
+            -0.68846026579266880983 /
+            (50 * np.pi) + 0.02,  # 0.015617125823069466
+            -0.68846026579266880983 / \
+            (50 * np.pi) + 0.04,  # 0.035617125823069466
+            -0.68846026579266880983 / \
+            (50 * np.pi) + 0.06,  # 0.055617125823069466
+            -0.68846026579266880983 / \
+            (50 * np.pi) + 0.08,  # 0.075617125823069466
+            -0.68846026579266880983 / \
+            (50 * np.pi) + 0.10  # 0.095617125823069466
         ]
 
         expected_max = [
@@ -453,8 +463,8 @@ class _Test_peakdetect_template(unittest.TestCase):
                 [0.094999999949999997, -1598.0613254815967]
                 ]
         """
-        peak_pos = 1130*np.sqrt(2)  # 1598.0613254815976
-        peak_neg = -1130*np.sqrt(2)  # -1598.0613254815967
+        peak_pos = 1130 * np.sqrt(2)  # 1598.0613254815976
+        peak_neg = -1130 * np.sqrt(2)  # -1598.0613254815967
         expected_max = [
             (0.005, peak_pos),
             (0.025, peak_pos),
@@ -501,8 +511,8 @@ class _Test_peakdetect_template(unittest.TestCase):
                 [0.094999999949999997, -1485.6313472729362]
                 ]
         """
-        peak_pos = 1050.5*np.sqrt(2)  # 1485.6313472729364
-        peak_neg = -1050.5*np.sqrt(2)  # 1485.6313472729255
+        peak_pos = 1050.5 * np.sqrt(2)  # 1485.6313472729364
+        peak_neg = -1050.5 * np.sqrt(2)  # 1485.6313472729255
         expected_max = [
             (0.005, peak_pos),
             (0.025, peak_pos),

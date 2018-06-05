@@ -3,6 +3,7 @@ import re
 import mne
 import numpy as np
 
+
 class SeegRecording():
     def __init__(self, contacts, data, sampling_rate):
         '''

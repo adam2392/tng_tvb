@@ -2,6 +2,7 @@ import numpy as np
 import zipfile
 import os
 
+
 class LoadSurface():
     def loadsurfdata(self, directory, use_subcort=False):
         '''
@@ -33,7 +34,8 @@ class LoadSurface():
         else:
             regmapfile = os.path.join(directory, "region_mapping_subcort.txt")
             if not os.path.exists(regmapfile):
-                regmapfile = os.path.join(directory, "region_mapping_subcort.dk.txt")
+                regmapfile = os.path.join(
+                    directory, "region_mapping_subcort.dk.txt")
 
             reg_map_subc = np.genfromtxt(regmapfile, dtype=int) - 1
             with zipfile.ZipFile(os.path.join(directory, "surface_subcort.zip")) as zip:

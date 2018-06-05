@@ -6,32 +6,43 @@ from sklearn.preprocessing import StandardScaler
 import warnings
 
 from scipy.signal import butter, lfilter
+
+
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
     b, a = butter(order, [low, high], btype='band', analog=False)
     return b, a
+
+
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     y = scipy.signal.filtfilt(b, a, data)
     return y
+
+
 def butter_highpass(lowcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq
     b, a = butter(order, low, btype='highpass', analog=False)
     return b, a
+
+
 def butter_highpass_filter(data, lowcut, fs, order=5):
     b, a = butter_highpass(lowcut, fs, order=order)
     y = scipy.signal.filtfilt(b, a, data)
     return y
+
+
 def butter_lowpass_filter(data, highcut, fs, order=5):
-    nyq = 0.5*fs
+    nyq = 0.5 * fs
     highcut = highcut / nyq
     b, a = butter(order, highcut, btype='lowpass', analog=False)
-    
+
     y = scipy.signal.filtfilt(b, a, data)
     return y
+
 
 class DetectShift(object):
     '''
@@ -39,27 +50,29 @@ class DetectShift(object):
 
     We want to be able to trim the time series if needed.
     '''
+
     def getonsetsoffsets(self, epits, allinds):
         highcut = 1
         fs = 1000
 
         # only look at the source signals with all indices
         # NEED TO CHANGE LATER TO INCLUDE ALL INDICES SINCE SEIZURES CAN SPREAD
-        seiz_epi = epits[allinds,:]
+        seiz_epi = epits[allinds, :]
 
         for ireg in range(seiz_epi.shape[0]):
-            seiz_epi[ireg,:] = butter_lowpass_filter(np.ravel(seiz_epi[ireg,:]), highcut, fs, order=5)
+            seiz_epi[ireg, :] = butter_lowpass_filter(
+                np.ravel(seiz_epi[ireg, :]), highcut, fs, order=5)
 
         seizonsets = []
         seizoffsets = []
         for ind in range(len(allinds)):
-            curr_epi = seiz_epi[ind,:].squeeze()
+            curr_epi = seiz_epi[ind, :].squeeze()
 
             # initialize pointer
             pointer = 0
             while pointer < len(curr_epi):
                 # look ahead - onset
-    #             minind = np.where(curr_epi[pointer:] < np.ceil(np.mean(np.min(seiz_epi, axis=1))))[0]
+                #             minind = np.where(curr_epi[pointer:] < np.ceil(np.mean(np.min(seiz_epi, axis=1))))[0]
                 minind = np.where(curr_epi[pointer:] < -0.5)[0]
 
                 if len(minind) > 0:
@@ -71,7 +84,7 @@ class DetectShift(object):
                     maxind = np.where(curr_epi[pointer:] > 0)[0]
 
                     if len(maxind) > 0:
-                        seizoffsets.append(maxind[0]+ pointer)
+                        seizoffsets.append(maxind[0] + pointer)
                         # update pointer
                         pointer += maxind[0]
                     else:

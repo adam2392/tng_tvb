@@ -57,7 +57,7 @@ class PostProcessor(object):
 
     # assuming onset is the first bifurcation and then every other one is onsets
     # every other bifurcation after the first one is the offset
-    def _findonsetoffset(self, signal, lookahead=500, delta=0.2/8):
+    def _findonsetoffset(self, signal, lookahead=500, delta=0.2 / 8):
         '''
         Function that uses the peakdetect algorithm with lookahead
         to get the onsets and offsets
@@ -101,18 +101,18 @@ class PostProcessor(object):
         pass
 
     def getonsetsoffsets(self, epits, allinds):
-        seiz_epi = epits[allinds,:]
+        seiz_epi = epits[allinds, :]
 
         seizonsets = []
         seizoffsets = []
         for ind in range(len(allinds)):
-            curr_epi = seiz_epi[ind,:].squeeze()
+            curr_epi = seiz_epi[ind, :].squeeze()
 
             # initialize pointer
             pointer = 0
             while pointer < len(curr_epi):
                 # look ahead - onset
-    #             minind = np.where(curr_epi[pointer:] < np.ceil(np.mean(np.min(seiz_epi, axis=1))))[0]
+                #             minind = np.where(curr_epi[pointer:] < np.ceil(np.mean(np.min(seiz_epi, axis=1))))[0]
                 minind = np.where(curr_epi[pointer:] < -0.5)[0]
 
                 if len(minind) > 0:
@@ -124,7 +124,7 @@ class PostProcessor(object):
                     maxind = np.where(curr_epi[pointer:] > 0)[0]
 
                     if len(maxind) > 0:
-                        seizoffsets.append(maxind[0]+ pointer)
+                        seizoffsets.append(maxind[0] + pointer)
                         # update pointer
                         pointer += maxind[0]
                     else:
@@ -139,7 +139,8 @@ class PostProcessor(object):
         settimes = settimes[settimes[:, 0].argsort()]
         return settimes
 
-    def _old_getonsetsoffsets(self, zts, indices, lookahead=500, delta=0.2/8):
+    def _old_getonsetsoffsets(
+            self, zts, indices, lookahead=500, delta=0.2 / 8):
         # assert zts.ndim == 2
         buffzts = zts
         # apply z normalization
@@ -152,7 +153,7 @@ class PostProcessor(object):
         for index in np.asarray(indices):
             currentz = zts[index, :].squeeze()
             minsig = np.min(currentz.ravel())
-            currentz[abs(currentz) < abs(currentz*0.9)] = 0
+            currentz[abs(currentz) < abs(currentz * 0.9)] = 0
 
             # HARD CODED THRESHOLD ON THE RANGE OF THE Z VALUES in this region
             # ensures we don't try to find peaks if there are none
@@ -181,7 +182,7 @@ class PostProcessor(object):
 
         return settimes
 
-    def getonsetsoffsets_new(self, zts, indices, lookahead=500, delta=0.2/8):
+    def getonsetsoffsets_new(self, zts, indices, lookahead=500, delta=0.2 / 8):
         # create lambda function for checking the indices
         settimes = []
 
@@ -216,20 +217,21 @@ class PostProcessor(object):
         return settimes
 
     def processz(self, signal):
-        # this is a threshold on the differenced z signal - set based on range of z
+        # this is a threshold on the differenced z signal - set based on range
+        # of z
         threshold = 1
         # low pass filtering parameters
-        nyq = self.samplerate/2.
+        nyq = self.samplerate / 2.
         order = 5
         cut = 1
-        Wn = cut/nyq
+        Wn = cut / nyq
 
         signal = np.diff(signal, n=1)
         signal = StandardScaler().fit_transform(signal[:, np.newaxis])
         # print(signal.shape)
         # APPLY LOW PASS FILTERING
         b, a = scipy.signal.butter(
-            N=order, Wn=cut/nyq, btype='low', analog=False)
+            N=order, Wn=cut / nyq, btype='low', analog=False)
         # run filtfilt for zero phase distortion
         signal = scipy.signal.filtfilt(b, a, signal.squeeze())
 

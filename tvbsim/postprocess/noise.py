@@ -10,7 +10,7 @@ def fftnoise(f):
     - f         (np.ndarray) an array of frequencies
 
     @output:
-    the inverse fft to get the new signal with phase shifts 
+    the inverse fft to get the new signal with phase shifts
     '''
     f = np.array(f, dtype='complex')
     Np = (len(f) - 1) // 2
@@ -20,8 +20,8 @@ def fftnoise(f):
     phases = np.cos(phases) + 1j * np.sin(phases)
 
     # multiply by phases
-    f[1:Np+1] *= phases
-    f[-1:-1-Np:-1] = np.conj(f[1:Np+1])
+    f[1:Np + 1] *= phases
+    f[-1:-1 - Np:-1] = np.conj(f[1:Np + 1])
     return np.fft.ifft(f).real
 
 
@@ -34,7 +34,7 @@ def band_limited_noise(min_freq, max_freq, samples, samplerate):
     @output:
     the noise at frequencies between min_freq and max_freq
     '''
-    freqs = np.abs(np.fft.fftfreq(samples, 1/samplerate))
+    freqs = np.abs(np.fft.fftfreq(samples, 1 / samplerate))
     f = np.zeros(samples)
     idx = np.where(np.logical_and(freqs >= min_freq, freqs <= max_freq))[0]
     f[idx] = 1
@@ -68,7 +68,8 @@ class Noise(object):
 
 
 class LineNoise(Noise):
-    def __init__(self, linefreq=60, bandwidth=4, numharmonics=3, samplerate=1000.):
+    def __init__(self, linefreq=60, bandwidth=4,
+                 numharmonics=3, samplerate=1000.):
         self.linefreq = linefreq
         self.bandwidth = bandwidth
         self.numharmonics = numharmonics
@@ -103,7 +104,7 @@ class LineNoise(Noise):
                 randpert = np.random.normal(1, 0.01)
             else:
                 randpert = 1.
-            x_noise += band_limited_noise(lowfreq*randpert, highfreq *
+            x_noise += band_limited_noise(lowfreq * randpert, highfreq *
                                           randpert, samples=numsamps, samplerate=samplerate)
             scaled_noise = np.float16(x_noise * multfactor)
 

@@ -2,6 +2,7 @@ import itertools
 import nibabel as nib
 import numpy as np
 
+
 def add_min_max(volume):
     """Ugly hack to deal with the MRtrix bug (?) that causes MRview to crop min/max values"""
 
@@ -26,10 +27,11 @@ def gen_volume_points(values, positions, ref_volume, ref_aff, dist=0):
     new_volume = np.zeros(ref_volume.shape)
     new_volume[:, :] = np.nan
 
-    kx, ky, kz = np.mgrid[-dist:dist+1, -dist:dist+1, -dist:dist+1]
+    kx, ky, kz = np.mgrid[-dist:dist + 1, -dist:dist + 1, -dist:dist + 1]
 
     for val, pos in zip(values, positions):
-        ix, iy, iz = np.linalg.solve(ref_aff, np.append(pos, 1.0))[0:3].astype(int)
+        ix, iy, iz = np.linalg.solve(ref_aff, np.append(pos, 1.0))[
+            0:3].astype(int)
         #new_volume[inds[0], inds[1], inds[2]] = val
         new_volume[ix + kx, iy + ky, iz + kz] = val
 
@@ -45,11 +47,13 @@ def save_nifti_regions(values, label_volume_file, out_file):
     nib.save(new_nii, out_file)
 
 
-def save_nifti_points(values, names, position_file, ref_volume_file, out_file, skip_missing=False, dist=0):
+def save_nifti_points(values, names, position_file,
+                      ref_volume_file, out_file, skip_missing=False, dist=0):
     ref_nii = nib.load(ref_volume_file)
 
     contact_names = list(np.genfromtxt(position_file, dtype=str, usecols=(0,)))
-    contact_positions = np.genfromtxt(position_file, dtype=float, usecols=(1, 2, 3))
+    contact_positions = np.genfromtxt(
+        position_file, dtype=float, usecols=(1, 2, 3))
 
     positions = np.zeros((len(values), 3))
     for i, name in enumerate(names):
@@ -70,10 +74,14 @@ def save_nifti_points(values, names, position_file, ref_volume_file, out_file, s
             raise ValueError("Missing contact position(s) for: %s." % ", ".join([
                 name for name, missing in zip(names, missing_mask) if missing]))
 
+        # np.array(names)[missing_mask]))
 
-        #np.array(names)[missing_mask]))
-
-    new_volume = gen_volume_points(values, positions, ref_nii.get_data(), ref_nii.affine, dist=dist)
+    new_volume = gen_volume_points(
+        values,
+        positions,
+        ref_nii.get_data(),
+        ref_nii.affine,
+        dist=dist)
     add_min_max(new_volume)
 
     new_nii = nib.Nifti1Image(new_volume, ref_nii.affine)
@@ -83,6 +91,7 @@ def save_nifti_points(values, names, position_file, ref_volume_file, out_file, s
 # ----------- Brain region <-> point mapping ------------------- #
 
 coord_sequences = []
+
 
 def gen_coord_sequence(affine_transform):
     ncells = 20
@@ -124,7 +133,10 @@ def point_to_brain_region(point, label_volume, outside_index=0, tol=0.0):
 
     seq = get_coord_sequence(label_volume.affine)
 
-    coords0 = np.linalg.solve(label_volume.affine, np.append(point, 1.0))[0:3].astype(int)
+    coords0 = np.linalg.solve(
+        label_volume.affine, np.append(
+            point, 1.0))[
+        0:3].astype(int)
     data = label_volume.get_data()
 
     for i, (coords_delta, dist) in enumerate(zip(seq['coords'], seq['dists'])):
@@ -134,7 +146,7 @@ def point_to_brain_region(point, label_volume, outside_index=0, tol=0.0):
         coords1 = coords0 + coords_delta
         if (coords1[0] < 0 or coords1[0] >= data.shape[0] or
             coords1[1] < 0 or coords1[1] >= data.shape[1] or
-            coords1[2] < 0 or coords1[2] >= data.shape[2]):
+                coords1[2] < 0 or coords1[2] >= data.shape[2]):
             continue
 
         if data[tuple(coords1)] != outside_index:

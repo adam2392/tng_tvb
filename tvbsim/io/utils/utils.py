@@ -16,6 +16,7 @@ import nibabel as nib
 from . import nifti
 from .elecs import Contacts
 
+
 def loadseegxyz(sensorsfile):
     '''
     This is just a wrapper function to retrieve the seeg coordinate data in a pd dataframe
@@ -37,11 +38,13 @@ def mapcontacts_toregs(contacts_file, label_volume_file):
     contact_regs = []
     for contact in contacts.names:
         coords = contacts.get_coords(contact)
-        region_ind = nifti.point_to_brain_region(coords, label_vol, tol=3.0) - 1   # Minus one to account for the shift
+        region_ind = nifti.point_to_brain_region(
+            coords, label_vol, tol=3.0) - 1   # Minus one to account for the shift
         contact_regs.append(region_ind)
 
     contact_regs = np.array(contact_regs)
     return contact_regs
+
 
 def splitpatient(patient):
     stringtest = patient.find('seiz')
@@ -65,6 +68,7 @@ def splitpatient(patient):
         seiz_id = re.sub('_', '', seiz_id)
 
     return pat_id, seiz_id
+
 
 def returnindices(pat_id, seiz_id=None):
     included_indices, onsetelecs, clinresult = returnnihindices(
@@ -98,33 +102,33 @@ def returntngindices(pat_id, seiz_id):
                                      69, 70, 71, 72, 73, 74, 75, 76, 78, 79])
     elif pat_id == 'id002cj':
         # included_indices = np.array(np.arange(0,184))
-        included_indices = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 
+        included_indices = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8,
                                      15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
                                      30, 31, 32, 33, 34, 35, 36, 37, 38,
-                                     45, 46, 47, 48, 49, 50, 51, 52, 53, 
+                                     45, 46, 47, 48, 49, 50, 51, 52, 53,
                                      60, 61, 62, 63, 64, 65, 66, 67, 70, 71, 72, 73, 74, 75, 76, 85, 86, 87, 88, 89,
                                      90, 91, 92, 93, 100, 101, 102, 103, 104, 105,
                                      106, 107, 108, 115, 116, 117, 118, 119,
                                      120, 121, 122, 123, 129, 130, 131, 132, 133,
                                      134, 135, 136, 137,
-                                    # np.arange(143, 156)
+                                     # np.arange(143, 156)
                                      143, 144, 145, 146, 147,
                                      148, 149, 150, 151, 157, 158, 159, 160, 161,
                                      162, 163, 164, 165, 171, 172, 173, 174, 175,
                                      176, 177, 178, 179, 180, 181, 182])
     elif pat_id == 'id003cm':
-        included_indices = np.concatenate((np.arange(0,13), np.arange(25,37),
-                                np.arange(40,50), np.arange(55,69), np.arange(70,79)))
+        included_indices = np.concatenate((np.arange(0, 13), np.arange(25, 37),
+                                           np.arange(40, 50), np.arange(55, 69), np.arange(70, 79)))
     elif pat_id == 'id004cv':
         # removed OC'10, SC'5, CC'14/15
-        included_indices = np.concatenate((np.arange(0,23), np.arange(25,39),
-                                np.arange(40,59), np.arange(60,110)))
+        included_indices = np.concatenate((np.arange(0, 23), np.arange(25, 39),
+                                           np.arange(40, 59), np.arange(60, 110)))
     elif pat_id == 'id005et':
-        included_indices = np.concatenate((np.arange(0,39), np.arange(39,47),
-                                np.arange(52,62), np.arange(62,87)))
+        included_indices = np.concatenate((np.arange(0, 39), np.arange(39, 47),
+                                           np.arange(52, 62), np.arange(62, 87)))
     elif pat_id == 'id006fb':
-        included_indices = np.concatenate((np.arange(10,19), np.arange(40,50),
-                                np.arange(115,123)))
+        included_indices = np.concatenate((np.arange(10, 19), np.arange(40, 50),
+                                           np.arange(115, 123)))
     elif pat_id == 'id008gc':
         included_indices = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17,
                                      18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40,
@@ -132,22 +136,29 @@ def returntngindices(pat_id, seiz_id):
                                      71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 92, 93,
                                      94, 95, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 110, 111])
     elif pat_id == 'id009il':
-        included_indices = np.concatenate((np.arange(0,10), np.arange(10,152)))
+        included_indices = np.concatenate(
+            (np.arange(0, 10), np.arange(10, 152)))
     elif pat_id == 'id010js':
-        included_indices = np.concatenate((np.arange(0,14),
-                                np.arange(15,29), np.arange(30,42), np.arange(43,52),
-                                np.arange(53,65), np.arange(66,75), np.arange(76,80),
-                                np.arange(81,85), np.arange(86,94), np.arange(95,98), 
-                                np.arange(99,111),
-                                np.arange(112,124)))
+        included_indices = np.concatenate((np.arange(0, 14),
+                                           np.arange(
+            15, 29), np.arange(
+            30, 42), np.arange(
+            43, 52),
+            np.arange(53, 65), np.arange(66, 75), np.arange(76, 80),
+            np.arange(81, 85), np.arange(86, 94), np.arange(95, 98),
+            np.arange(99, 111),
+            np.arange(112, 124)))
     elif pat_id == 'id011ml':
-        included_indices = np.concatenate((np.arange(0,18), np.arange(21,68), 
-                        np.arange(69,82), np.arange(82,125)))
+        included_indices = np.concatenate((np.arange(0, 18), np.arange(21, 68),
+                                           np.arange(69, 82), np.arange(82, 125)))
     elif pat_id == 'id012pc':
-        included_indices = np.concatenate((np.arange(0,4), np.arange(9,17),
-                        np.arange(18,28), np.arange(31,41), np.arange(44,56),
-                        np.arange(57,69), np.arange(70,82), np.arange(83,96),
-                        np.arange(97,153)))
+        included_indices = np.concatenate((np.arange(0, 4), np.arange(9, 17),
+                                           np.arange(
+            18, 28), np.arange(
+            31, 41), np.arange(
+            44, 56),
+            np.arange(57, 69), np.arange(70, 82), np.arange(83, 96),
+            np.arange(97, 153)))
     elif pat_id == 'id013pg':
         included_indices = np.array([2, 3, 4, 5, 15, 18, 19, 20, 21, 23, 24,
                                      25, 30, 31, 32, 33, 34, 35, 36, 37, 38, 50, 51, 52, 53, 54, 55, 56,
@@ -167,8 +178,8 @@ def returntngindices(pat_id, seiz_id):
                                      160, 161, 162, 163, 164])
 
     elif pat_id == 'id015sf':
-        included_indices = np.concatenate((np.arange(0,37), np.arange(38,77),
-                            np.arange(78,121)))
+        included_indices = np.concatenate((np.arange(0, 37), np.arange(38, 77),
+                                           np.arange(78, 121)))
 
     return included_indices, onsetelecs, clinresult
 

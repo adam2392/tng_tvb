@@ -1,6 +1,6 @@
 import os
-import numpy as np 
-import pandas as pd 
+import numpy as np
+import pandas as pd
 import mne
 import json
 
@@ -10,29 +10,37 @@ from tvbsim.base.preprocess.util.noise import LineNoise
 from tvbsim.base.utils.data_structures_utils import NumpyEncoder
 from datetime import date
 
+
 class LoadSimDataset(BaseLoader):
     patient = None
 
     def __init__(self, rawdatadir, patient=None, config=None):
-        super(LoadSimDataset, self).__init__(rawdatadir=rawdatadir, patient=patient, config=config)
-        self.patient = patient 
-       
+        super(
+            LoadSimDataset,
+            self).__init__(
+            rawdatadir=rawdatadir,
+            patient=patient,
+            config=config)
+        self.patient = patient
+
     def load_data(self, simdata):
-        self.data = simdata 
+        self.data = simdata
 
     def addlinenoise(self, rawdata):
         self.linefreq = 60
         bandwidth = 4
         numharmonics = 4
         # initialize line noise object
-        noise = LineNoise(self.linefreq, 
-                            bandwidth, 
-                            numharmonics, 
-                            self.samplerate)
+        noise = LineNoise(self.linefreq,
+                          bandwidth,
+                          numharmonics,
+                          self.samplerate)
 
         numsamps = self.rawdata.shape[1]
 
-        self.logger.debug("Adding line noise at {} hz with {} harmonics".format(self.linefreq, numharmonics))
+        self.logger.debug(
+            "Adding line noise at {} hz with {} harmonics".format(
+                self.linefreq, numharmonics))
         # create a copy and add noise to it
         test = self.rawdata.copy()
         for i in range(rawdata.shape[0]):
@@ -41,25 +49,25 @@ class LoadSimDataset(BaseLoader):
 
     def filter_data(self):
         # the bandpass range to pass initial filtering
-        freqrange =  [0.5, self.samplerate//2 - 1]
+        freqrange = [0.5, self.samplerate // 2 - 1]
         # the notch filter to apply at line freqs
         linefreq = int(self.linefreq)           # LINE NOISE OF HZ
         assert linefreq == 50 or linefreq == 60
         self.logger.debug("Line freq is: %s" % linefreq)
         # initialize the line freq and its harmonics
-        freqs = np.arange(linefreq,251,linefreq)
-        freqs = np.delete(freqs, np.where(freqs>self.samplerate//2)[0])
+        freqs = np.arange(linefreq, 251, linefreq)
+        freqs = np.delete(freqs, np.where(freqs > self.samplerate // 2)[0])
 
         self.rawdata = mne.filter.filter_data(self.rawdata,
-                                        sfreq=self.samplerate,
-                                        l_freq=freqrange[0],
-                                        h_freq=freqrange[1],
-                                        # pad='reflect',
-                                        verbose=False)
+                                              sfreq=self.samplerate,
+                                              l_freq=freqrange[0],
+                                              h_freq=freqrange[1],
+                                              # pad='reflect',
+                                              verbose=False)
         self.rawdata = mne.filter.notch_filter(self.rawdata,
-                                        Fs=self.samplerate,
-                                        freqs=freqs,
-                                        verbose=False)
+                                               Fs=self.samplerate,
+                                               freqs=freqs,
+                                               verbose=False)
 
     def savejsondata(self, metadata, metafilename):
         # save the timepoints, included channels used, parameters
@@ -87,7 +95,7 @@ class LoadSimDataset(BaseLoader):
         metadata['onsetind'] = self.onset_ind
         metadata['offsetind'] = self.offset_ind
         metadata['allchans'] = self.allchans
-        metadata['rawfilename'] = self.datafile 
+        metadata['rawfilename'] = self.datafile
         metadata['patient'] = self.patient
 
         # Set data from external text, connectivity, elec files
@@ -102,7 +110,7 @@ class LoadSimDataset(BaseLoader):
         metadata['sim_pz_reg'] = self.metadata['pzregs']
         metadata['sim_x0_norm'] = self.metadata['x0norm']
         metadata['sim_x0_ez'] = self.metadata['x0ez']
-        metadata['sim_x0_pz'] = self.metadata['x0pz']   
+        metadata['sim_x0_pz'] = self.metadata['x0pz']
 
         # needs to be gotten from sync_data()
         # metadata['goodchans'] = dataloader.goodchans

@@ -26,7 +26,7 @@ class MoveContactExp(object):
                 Dividing by 0!")
 
         ndr = np.sqrt((dr**2).sum(axis=-1))
-        Vr = 1.0 / (4 * np.pi) / (1+ndr**2)
+        Vr = 1.0 / (4 * np.pi) / (1 + ndr**2)
         return Vr
 
     def gain_matrix_dipole(self):
@@ -59,7 +59,7 @@ class MoveContactExp(object):
             a = sensors[sens_ind, :] - vertices
             na = np.sqrt(np.sum(a**2, axis=1))
             gain_mtx_vert[sens_ind, :] = areas * \
-                (np.sum(orientations*a, axis=1)/na**3) / (4.0*np.pi*SIGMA)
+                (np.sum(orientations * a, axis=1) / na**3) / (4.0 * np.pi * SIGMA)
 
         return gain_mtx_vert.dot(reg_map_mtx)
 
@@ -124,7 +124,7 @@ class MoveContactExp(object):
         if isleftside != -1:
             elec_label = seeg_contact.split("'")[0]
             electrodeindices = [i for i, item in enumerate(
-                self.seeg_labels) if elec_label+"'" in item]
+                self.seeg_labels) if elec_label + "'" in item]
         else:
             for idx, s in enumerate(seeg_contact):
                 if s.isdigit():
@@ -153,9 +153,9 @@ class MoveContactExp(object):
         return r, elev, az
 
     def _sph2cart(self, r, elev, az):
-        x = r*math.sin(elev)*math.cos(az)
-        y = r*math.sin(elev)*math.sin(az)
-        z = r*math.cos(elev)
+        x = r * math.sin(elev) * math.cos(az)
+        y = r * math.sin(elev) * math.sin(az)
+        z = r * math.cos(elev)
         return x, y, z
 
     def move_electrode(self, seegind, newloc):
