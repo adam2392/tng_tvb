@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     # define the parameter sweeping by changing iext
     iext_param_sweep = np.arange(2.0,4.0,0.1)
-    for iext in iext_param_sweep:
+    for i, iext in enumerate(iext_param_sweep):
         print("Using iext1 value of {}".format(iext))
         ###################### INITIALIZE TVB SIMULATOR ##################
         conn = connectivity.Connectivity.from_file(loader.connfile)
