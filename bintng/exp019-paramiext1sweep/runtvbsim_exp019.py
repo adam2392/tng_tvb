@@ -108,7 +108,7 @@ if __name__ == '__main__':
                     '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
 
         # set ez/pz regions
-        ezregions = osr_list[i*len(clinezinds):(i+1)*len(clinezinds)]
+        ezregions = clinezregions
         pzregions = []
         print(ezregions, pzregions)
 
@@ -201,3 +201,17 @@ if __name__ == '__main__':
         metadata['offsettimes'] = seizoffsets
         # save metadata
         loader.savejsondata(metadata, metafilename)
+
+        '''                 PLOTTING OF DATA                        '''
+        # DEFINE FIGURE DIR FOR THIS SIM
+
+        # PLOT RAW TS
+
+        # PLOT THE PHASE PLOTS
+
+        # PLOT Z TIME SERIES
+
+        # PLOT EPILEPTOR SOURCE SIGNALS
+
+
+
