@@ -81,7 +81,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         self.integrator = heunint
 
     def initepileptor(self, x0norm, x0ez=None, x0pz=None,
-                      r=None, Ks=None, tt=None, tau=None):
+                      **kwargs):
         '''
         State variables for the Epileptor model:
         Repeated here for redundancy:
@@ -93,15 +93,15 @@ class MainTVBSim(TVBExp, MoveContactExp):
         '''
         ####################### 2. Neural Mass Model @ Nodes ##################
         epileptors = models.Epileptor(
-            variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'])
-        if r is not None:
-            epileptors.r = r
-        if Ks is not None:
-            epileptors.Ks = Ks
-        if tt is not None:
-            epileptors.tt = tt
-        if tau is not None:
-            epileptors.tau = tau
+            variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], **kwargs)
+        # if r is not None:
+        #     epileptors.r = r
+        # if Ks is not None:
+        #     epileptors.Ks = Ks
+        # if tt is not None:
+        #     epileptors.tt = tt
+        # if tau is not None:
+        #     epileptors.tau = tau
 
         # this comes after setting all parameters
         epileptors.x0 = x0norm * np.ones(len(self.conn.region_labels))
@@ -150,9 +150,6 @@ class MainTVBSim(TVBExp, MoveContactExp):
         if gainfile is None:
             mon_SEEG = monitors.iEEG.from_file(period=period,
                                                variables_of_interest=[1])
-            # sensors_fname=self.seegfile,
-            # rm_f_name=regmapfile,
-            # projection_fname=gainfile)
         else:
             mon_SEEG = monitors.iEEG.from_file(period=period,
                                                variables_of_interest=[1],

@@ -19,13 +19,13 @@ patients=(
 	# id014_rb
 	# id015_sf'
 # 'id003_cm id008_gc id014_rb'
-	'id001_bt
-	id002_sd
-	id003_mg id004_bj id005_ft
-	id006_mr id007_rd id008_dmc
-	id009_ba id010_cmn id011_gr
-	id013_lk id014_vc id015_gjl
-	id016_lm id017_mk id018_lo')
+	'id001_bt')
+	# id002_sd
+	# id003_mg id004_bj id005_ft
+	# id006_mr id007_rd id008_dmc
+	# id009_ba id010_cmn id011_gr
+	# id013_lk id014_vc id015_gjl
+	# id016_lm id017_mk id018_lo')
 	# id020_lma')
 
 # 1. Prompt user for input that runs the analysis
@@ -35,7 +35,7 @@ read -p "Enter expname: " expname
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp015}
+expname=${expname:-exp019-paramiext1sweep}
 shuffleweights=${shuffleweights:-1}
 echo ${dist}
 echo ${expname}

@@ -37,7 +37,7 @@ ssh                             := ssh $(port)
 *download-tvbsims:
 	@{ rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/ ~/Downloads/tngcluster/tvbforwardsim/;\
 }
-# rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata/ ~/Downloads/tngcluster/tvbforwardsim/;\
+# rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata ~/Downloads/tngcluster/tvbforwardsim/;\
 # rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp012 ~/Downloads/tngcluster/;\
 
 *push-mvar:
