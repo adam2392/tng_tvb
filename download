@@ -19,12 +19,21 @@ patients=('id001_bt  id003_mg  id005_ft  id007_rd   id009_ba
 # 	# 'id021_jc 
 # 	'id022_te id023_br')
 
+# for patient in $patients; do
+# 	echo $patient
+# 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/seeg ~/Downloads/tngpipeline/${patient};\
+# 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/tvb ~/Downloads/tngpipeline/${patient};\
+# 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/elec ~/Downloads/tngpipeline/${patient};\
+# 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/dwi/label_in_T1*.gz ~/Downloads/tngpipeline/${patient}/dwi;\
+# 	# rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/0-Raw/${patient}/patient.xlsx ~/Downloads/tngpipeline/${patient}/;\
+# 	# make download-update patient=$patient
+# done
+
 for patient in $patients; do
 	echo $patient
-	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/seeg ~/Downloads/tngpipeline/${patient};\
-	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/tvb ~/Downloads/tngpipeline/${patient};\
-	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/elec ~/Downloads/tngpipeline/${patient};\
-	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/dwi/label_in_T1*.gz ~/Downloads/tngpipeline/${patient}/dwi;\
-	# rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/0-Raw/${patient}/patient.xlsx ~/Downloads/tngpipeline/${patient}/;\
-	# make download-update patient=$patient
+	rsync -aPz adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/seeg ~/data/tngpipeline/${patient};\
+	rsync -aPz adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/tvb ~/data/tngpipeline/${patient};\
+	rsync -aPz adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/elec ~/data/tngpipeline/${patient};\
+	rsync -aPz adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/dwi/label_in_T1*.gz ~/data/tngpipeline/${patient}/dwi;\
+	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/0-Raw/${patient}/patient.xlsx ~/data/tngpipeline/${patient}/;\
 done
