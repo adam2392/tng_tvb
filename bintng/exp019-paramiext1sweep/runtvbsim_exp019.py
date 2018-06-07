@@ -12,6 +12,7 @@ import argparse
 
 from tvbsim.exp.utils import util
 from tvbsim.io.loadsimdataset import LoadSimDataset
+from tvbsim.visualize.plotter_sim import PlotterSim
 
 parser = argparse.ArgumentParser()
 parser.add_argument('patient', 
@@ -180,8 +181,7 @@ if __name__ == '__main__':
                 'clinpz': clinpzregions,
                 'iext1': iext,
             }
-        print(maintvbexp.getepileptorparams())
-        break
+
         ######################## run simulation ########################
         initcond = None
         configs = maintvbexp.setupsim(a=1., period=period, moved=False, initcond=initcond)
@@ -204,8 +204,19 @@ if __name__ == '__main__':
 
         '''                 PLOTTING OF DATA                        '''
         # DEFINE FIGURE DIR FOR THIS SIM
+        figdir = os.path.join(outputdatadir, str(i))
+        if not os.path.exists(figdir):
+            os.makedirs(figdir)
+        plotter = PlotterSim()
 
         # PLOT RAW TS
+        # ts_obj = Timeseries(np.swapaxes(tavg_data, 1, 2), OrderedDict(
+        #                 {TimeseriesDimensions.SPACE.value: sim.connectivity.region_labels, 
+        #                  TimeseriesDimensions.STATE_VARIABLES.value: sim_settings.monitor_expressions}), time[0], 
+        #                 time[1] - time[0], "ms")
+        # plotter.plot_simulated_timeseries(ts_obj, sim.model, lsa_hypothesis.lsa_propagation_indices, 
+        #                                   spectral_raster_plot=spectral_raster_plot, log_scale=True)
+
 
         # PLOT THE PHASE PLOTS
 
