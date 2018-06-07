@@ -167,7 +167,7 @@ if __name__ == '__main__':
                 'x0pz':x0pz,
                 'x0norm':x0norm,
                 'patient': patient,
-                'samplerate': _samplerate,
+                'samplerate': _3samplerate,
                 'clinez': clinezregions,
                 'clinpz': clinpzregions,
                 'iext1': iext,
@@ -208,7 +208,7 @@ if __name__ == '__main__':
         for idx,key in enumerate(state_vars.keys()):
             var = state_vars[key]
             if idx==0:
-                ts = np.zeros((len(state_vars), *tuple(var.shape)))
+                ts = np.zeros((len(state_vars), *var.shape))
                 ts[idx,...] = var
             else:
                 ts[idx,...] = var 

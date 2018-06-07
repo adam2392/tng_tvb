@@ -20,7 +20,7 @@ ssh                             := ssh $(port)
 
 # download fragility results for tvb sim
 *download-results:
-	@{ rsync -aP -z --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/ ~/Downloads/tngcluster/;\
+	@{ rsync -aP -z --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp015 ~/Downloads/tngcluster/;\
 }
 
 # rsync -aP -z --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp014 ~/Downloads/tngcluster/;\
@@ -35,7 +35,7 @@ ssh                             := ssh $(port)
 
 # download the raw tvb sim
 *download-tvbsims:
-	@{ rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/ ~/Downloads/tngcluster/tvbforwardsim/;\
+	@{ rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/exp015 ~/Downloads/tngcluster/tvbforwardsim/;\
 }
 # rsync -aPz --progress adamli@cluster.thevirtualbrain.org:/home/adamli/data/tvbforwardsim/traindata ~/Downloads/tngcluster/tvbforwardsim/;\
 # rsync -aPz adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp012 ~/Downloads/tngcluster/;\
