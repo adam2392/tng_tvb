@@ -204,12 +204,11 @@ if __name__ == '__main__':
         if not os.path.exists(figdir):
             os.makedirs(figdir)
         plotter = PlotterSim()
-
         for idx,key in enumerate(state_vars.keys()):
             var = state_vars[key]
             if idx==0:
-                ts = np.zeros((len(state_vars), *var.shape))
-                ts[idx,...] = var
+                ts = var
+                ts = ts[np.newaxis, ...]
             else:
                 ts[idx,...] = var 
         print(ts.shape)
