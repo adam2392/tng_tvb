@@ -1,4 +1,4 @@
-from fragility.base.constants.config import FiguresConfig
+from tvbsim.base.constants.config import FiguresConfig
 import matplotlib
 # matplotlib.use(FiguresConfig().MATPLOTLIB_BACKEND)
 from matplotlib import pyplot, gridspec
@@ -7,11 +7,11 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 import numpy
 from collections import OrderedDict
-from fragility.visualize.baseplotter import BasePlotter
+from tvbsim.visualize.baseplotter import BasePlotter
 
 # import computations
-from fragility.base.computations.math_utils import compute_in_degree
-from fragility.base.utils.data_structures_utils import generate_region_labels, ensure_list, ensure_string, \
+from tvbsim.base.computations.math_utils import compute_in_degree
+from tvbsim.base.utils.data_structures_utils import generate_region_labels, ensure_list, ensure_string, \
     isequal_string, sort_dict, linspace_broadcast, \
     list_of_dicts_to_dicts_of_ndarrays, \
     dicts_of_lists_to_lists_of_dicts, \

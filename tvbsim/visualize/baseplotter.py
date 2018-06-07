@@ -7,8 +7,8 @@ from natsort import natsorted
 import matplotlib
 from matplotlib import pyplot
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from fragility.base.constants.config import Config, FiguresConfig
-from fragility.base.utils.log_error import initialize_logger
+from tvbsim.base.constants.config import Config, FiguresConfig
+from tvbsim.base.utils.log_error import initialize_logger
 
 
 class BasePlotter(object):

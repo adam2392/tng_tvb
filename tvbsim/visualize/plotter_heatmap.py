@@ -1,4 +1,4 @@
-from fragility.base.constants.config import FiguresConfig
+from tvbsim.base.constants.config import FiguresConfig
 import matplotlib
 # matplotlib.use(FiguresConfig().MATPLOTLIB_BACKEND)
 from matplotlib import pyplot, gridspec
@@ -7,11 +7,11 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 import numpy
 from collections import OrderedDict
-from fragility.visualize.baseplotter import BasePlotter
-from fragility.base.computations.math_utils import compute_in_degree
-from fragility.base.utils.data_structures_utils import generate_region_labels
+from tvbsim.visualize.baseplotter import BasePlotter
+from tvbsim.base.computations.math_utils import compute_in_degree
+from tvbsim.base.utils.data_structures_utils import generate_region_labels
 
-import fragility.base.constants.model_constants as constants
+import tvbsim.base.constants.model_constants as constants
 
 class PlotterHeatmap(BasePlotter):
     def __init__(self, config=None):
@@ -37,7 +37,7 @@ class PlotterHeatmap(BasePlotter):
         pyplot.figure(figure_name + str(heatmap.number_of_regions),
                       self.config.figures.SUPER_LARGE_PORTRAIT)
 
-        ax = self.plot_heatmap_overtime(heatmap.fragility,
+        ax = self.plot_heatmap_overtime(heatmap.tvbsim,
                                    heatmap.labels, heatmap.timepoints, 111,
                                    "Fragility measure", caxlabel="Fragility Metric")
         
