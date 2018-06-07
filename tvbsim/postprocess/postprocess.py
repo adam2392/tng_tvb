@@ -40,7 +40,6 @@ class PostProcessor(object):
             'y2': y2,
             'g': g
         }
-        print('We should try returning the rest of the state variables for understanding the simulation better!')
 
         return new_times, new_epits, new_seegts, new_zts, state_vars
 

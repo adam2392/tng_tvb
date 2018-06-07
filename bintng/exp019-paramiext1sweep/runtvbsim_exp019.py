@@ -77,6 +77,7 @@ if __name__ == '__main__':
 
     # define the parameter sweeping by changing iext
     iext_param_sweep = np.arange(2.0,4.0,0.1)
+    iext_param_sweep = [3.0]
     for i, iext in enumerate(iext_param_sweep):
         print("Using iext1 value of {}".format(iext))
         ###################### INITIALIZE TVB SIMULATOR ##################
@@ -135,7 +136,7 @@ if __name__ == '__main__':
         # simulation parameters
         _factor = 1
         _samplerate = 1000*_factor # Hz
-        sim_length = 60*_samplerate    
+        sim_length = 10*_samplerate    
         period = 1./_factor
 
         maintvbexp.initepileptor(x0norm=x0norm, x0ez=x0ez, x0pz=x0pz,
@@ -178,7 +179,7 @@ if __name__ == '__main__':
 
         postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
         ######################## POST PROCESSING ########################
-        secstoreject = 20
+        secstoreject = 1
         times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
 
         # save all the raw simulated data
