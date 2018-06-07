@@ -76,18 +76,25 @@ class OutputConfig(object):
 
 
 class FiguresConfig(object):
-    VERY_LARGE_SIZE = (40, 20)
-    VERY_LARGE_PORTRAIT = (30, 50)
-    SUPER_LARGE_SIZE = (80, 40)
     LARGE_SIZE = (20, 15)
     SMALL_SIZE = (15, 10)
+    VERY_LARGE_SIZE = (40, 20)
+    # SUPER_LARGE_SIZE = (80, 40)
+    SUPER_LARGE_SIZE = (150, 80)
+
+    VERY_LARGE_PORTRAIT = (30, 50)
+    SUPER_LARGE_PORTRAIT = (40, 70)
+
     FIG_FORMAT = 'pdf'  # 'eps' 'pdf' 'svg'
     SAVE_FLAG = True
     SHOW_FLAG = True              # interactive mode and show?
     MOUSE_HOOVER = False
-    MATPLOTLIB_BACKEND = "Qt4Agg"  # , "Agg", "qt5"
+    MATPLOTLIB_BACKEND = "Qt4Agg"  # , "Agg", "qt5"''
 
-
+    NORMAL_FONT_SIZE = 30
+    LARGE_FONT_SIZE = 50
+    VERY_LARGE_FONT_SIZE = 70
+    
 class CalculusConfig(object):
     SYMBOLIC_CALCULATIONS_FLAG = False
 

@@ -46,10 +46,14 @@ patients=('id002_cj
 # done
 
 
-rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp015 ~/Downloads/tngcluster/
-rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp016 ~/Downloads/tngcluster/
-rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp017 ~/Downloads/tngcluster/
-rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp018 ~/Downloads/tngcluster/
+rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp013/freq ~/Downloads/tngcluster/exp013/
+rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp014/freq ~/Downloads/tngcluster/exp014/
+# rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp017 ~/Downloads/tngcluster/
+# rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp018 ~/Downloads/tngcluster/
+# rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp015 ~/Downloads/tngcluster/
+# rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp016 ~/Downloads/tngcluster/
+# rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp017 ~/Downloads/tngcluster/
+# rsync -aP -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/tvbsim/exp018 ~/Downloads/tngcluster/
 
 
 
