@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import argparse
 
+from tvbsim.maintvbexp import MainTVBSim
 from tvbsim.exp.utils import util
 from tvbsim.io.loadsimdataset import LoadSimDataset
 from tvbsim.visualize.plotter_sim import PlotterSim
@@ -82,7 +83,7 @@ if __name__ == '__main__':
         print("Using iext1 value of {}".format(iext))
         ###################### INITIALIZE TVB SIMULATOR ##################
         conn = connectivity.Connectivity.from_file(loader.connfile)
-        maintvbexp = tvbsim.MainTVBSim(conn, condspeed=np.inf)
+        maintvbexp = MainTVBSim(conn, condspeed=np.inf)
         
         # load the necessary data files to run simulation
         maintvbexp.loadseegxyz(seegfile=loader.sensorsfile)
