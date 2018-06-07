@@ -13,6 +13,7 @@ import argparse
 from tvbsim.exp.utils import util
 from tvbsim.io.loadsimdataset import LoadSimDataset
 from tvbsim.visualize.plotter_sim import PlotterSim
+from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('patient', 
@@ -34,23 +35,13 @@ all_patients = ['id001_bt',
     'id013_lk', 'id014_vc', 'id015_gjl',
     'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma']
 
-def post_process_data(filename, times, state_vars_ts, seegts, postprocessor):
-    ######################## POST PROCESSING ########################
-    secstoreject = 20
-    times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
-
-    # loader.load_data(seegts)
-    # loader.addlinenoise()
-    # loader.filter_data()
-    # seegts = loader.rawdata 
-
+def post_process_data(filename, times, epits, seegts, zts, state_vars):
     print('finished simulating!')
     print(epits.shape)
     print(seegts.shape)
     print(times.shape)
     print(zts.shape)
     print(state_vars.keys())
-    print(allindices)
 
     # save tseries
     np.savez_compressed(filename, epits=epits, 
@@ -58,8 +49,6 @@ def post_process_data(filename, times, state_vars_ts, seegts, postprocessor):
                                 times=times, 
                                 zts=zts, 
                                 state_vars=state_vars)
-
-    return epits
     
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -188,8 +177,12 @@ if __name__ == '__main__':
         times, statevars_ts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
         postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
+        ######################## POST PROCESSING ########################
+        secstoreject = 20
+        times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
+
         # save all the raw simulated data
-        epits = post_process_data(filename, times, statevars_ts, seegts, postprocessor)
+        post_process_data(filename, epits, seegts, zts, state_vars)
 
         # GET ONSET/OFFSET OF SEIZURE
         detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
@@ -209,18 +202,31 @@ if __name__ == '__main__':
             os.makedirs(figdir)
         plotter = PlotterSim()
 
+        for idx,key in enumerate(state_vars.keys()):
+            var = state_vars[key]
+            if idx==0:
+                ts = np.zeros((len(state_vars), *tuple(var.shape)))
+                ts[idx,...] = var
+            else:
+                ts[idx,...] = var 
+        print(ts.shape)
+        print(TimeseriesDimensions.SPACE.value)
+        print(maintvbexp.region_labels)
+
         # PLOT RAW TS
-        # ts_obj = Timeseries(np.swapaxes(tavg_data, 1, 2), OrderedDict(
-        #                 {TimeseriesDimensions.SPACE.value: sim.connectivity.region_labels, 
-        #                  TimeseriesDimensions.STATE_VARIABLES.value: sim_settings.monitor_expressions}), time[0], 
-        #                 time[1] - time[0], "ms")
+        ts_obj = Timeseries(ts, 
+                        OrderedDict({TimeseriesDimensions.SPACE.value: maintvbexp.region_labels}), 
+                        times[0], 
+                        times[1] - times[0], "ms")
         # plotter.plot_simulated_timeseries(ts_obj, sim.model, lsa_hypothesis.lsa_propagation_indices, 
         #                                   spectral_raster_plot=spectral_raster_plot, log_scale=True)
 
 
         # PLOT THE PHASE PLOTS
-
-        # PLOT Z TIME SERIES
+        special_idx = None
+        plotter.plot_timeseries(state_vars, [], mode="traj", special_idx=special_idx, 
+                                        title='Epileptor space trajectory', figure_name="Epileptor Space Trajectory",
+                                        labels=maintvbexp.region_labels)
 
         # PLOT EPILEPTOR SOURCE SIGNALS
 
