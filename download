@@ -1,24 +1,22 @@
 #!/bin/bash -l
 
-# patients=('id002_cj
-#   			id004_cv  id006_fb  id008_gc  
-# 			id010_js  id012_pc  id014_rb  id016_hh  id018_ol 
-# 			 id020_ct  id022_jgi  id024_ml  id026_lz 
-# 			id001_ac    id003_cm  id005_et  id007_fb  
-# 			id009_il  id011_ml  id013_pg  id015_sf  id017_mm
-# 			id019_rg  id021_cf  id023_md   id025_pb
-# 			id026_lz id027_kl id028_ag')
-patients=('id001_bt  id003_mg  id005_ft  id007_rd   id009_ba
-	id011_gr  id014_vc   id016_lm  id018_lo
-	id002_sd  id004_bj  id006_mr  id008_dmc
-	id010_cmn  id013_lk  id015_gjl  id017_mk id018_lo id020_lma
-	id021_jc 
-	id022_te id023_br')
-# patients=('id012_fl id019_pj')
-# patients=(
-# 	# 'id021_jc 
-# 	'id022_te id023_br')
+patients=('id002_cj
+  			id004_cv  id006_fb  id008_gc  
+			id010_js  id012_pc  id014_rb  id016_hh  id018_ol 
+			 id020_ct  id022_jgi  id024_ml  id026_lz 
+			id001_ac    id003_cm  id005_et  id007_fb  
+			id009_il  id011_ml  id013_pg  id015_sf  id017_mm
+			id019_rg  id021_cf  id023_md   id025_pb
+			id026_lz id027_kl id028_ag')
+# patients=('id001_bt  id003_mg  id005_ft  id007_rd   id009_ba
+# 	id011_gr  id014_vc   id016_lm  id018_lo
+# 	id002_sd  id004_bj  id006_mr  id008_dmc
+# 	id010_cmn  id013_lk  id015_gjl  id017_mk id018_lo id020_lma
+# 	id021_jc 
+# 	id022_te id023_br')
 
+
+""" FOR RSYNCING FROM THE PIPELINE (UPDATED) DATASETS """
 # for patient in $patients; do
 # 	echo $patient
 # 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/seeg ~/Downloads/tngpipeline/${patient};\
@@ -29,11 +27,20 @@ patients=('id001_bt  id003_mg  id005_ft  id007_rd   id009_ba
 # 	# make download-update patient=$patient
 # done
 
+""" FOR RSYNCING ON THE TNG CLUSTER """
+# for patient in $patients; do
+# 	echo $patient
+# 	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/seeg ~/data/tngpipeline/${patient};\
+# 	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/tvb ~/data/tngpipeline/${patient};\
+# 	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/elec ~/data/tngpipeline/${patient};\
+# 	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/dwi/label_in_T1*.gz ~/data/tngpipeline/${patient}/dwi;\
+# 	rsync -aPz /home/vep/RetrospectivePatients/0-Raw/${patient}/patient.xlsx ~/data/tngpipeline/${patient}/;\
+# done
+
+""" FOR RSYNCING FROM THE PIPELINE (OLD) DATASETS """
 for patient in $patients; do
 	echo $patient
-	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/seeg ~/data/tngpipeline/${patient};\
-	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/tvb ~/data/tngpipeline/${patient};\
-	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/elec ~/data/tngpipeline/${patient};\
-	rsync -aPz /home/vep/RetrospectivePatients/1-Processed/${patient}/dwi/label_in_T1*.gz ~/data/tngpipeline/${patient}/dwi;\
-	rsync -aPz /home/vep/RetrospectivePatients/0-Raw/${patient}/patient.xlsx ~/data/tngpipeline/${patient}/;\
+	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/Pipeline/1-Processed/${patient}/dwi/label_in_T1* ~/Downloads/tngpipeline/old/${patient}/dwi/;\
+	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/Pipeline/1-Processed/${patient}/seeg/* ~/Downloads/tngpipeline/old/${patient}/elec/;\
+	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/Pipeline/1-Processed/${patient}/tvb ~/Downloads/tngpipeline/old/${patient};\
 done

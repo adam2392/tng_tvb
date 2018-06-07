@@ -54,21 +54,19 @@ ssh                             := ssh $(port)
 # 	@{ rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/ ~/Downloads/rawdata/;\
 # }
 *download-data:
-	@{ rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/dwi/label_in_T1* ~/Downloads/rawdata/${patient};\
+	@{ rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/dwi/label_in_T1* ~/Downloads/tngpipeline/${patient}/dwi/;\
 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/seeg ~/Downloads/tngpipeline/${patient};\
 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/tvb ~/Downloads/tngpipeline/${patient};\
 	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/${patient}/elec ~/Downloads/tngpipeline/${patient};\
 }
 # rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/0-Raw/${patient}/patient.xlsx ~/Downloads/tngpipeline/${patient}/;\
 
-# rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/patients.xlsx ~/Downloads/;
-# rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/id016_lm/tvb ~/Downloads/rawdata/id016_lm
-	# rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/RetrospectivePatients/1-Processed/id008_dmc/elec ~/Downloads/rawdata/id008_dmc;
-
-# rsync -aP /Users/adam2392/Documents/tvb/_tvblibrary/tvb/simulator/models/epileptor.py adamli@cluster.thevirtualbrain.org:/home/adamli/tng_tvb/_tvblibrary/tvb/simulator/models/
-# rsync -aP /Users/adam2392/Documents/tvb/metadata/ adamli@cluster.thevirtualbrain.org:/home/adamli/metadata/;
-# rsync -aP /Volumes/ADAM\ LI/pydata/output/mvar/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/;
-# rsync -aP /Volumes/ADAM\ LI/pydata/converted/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/converted/;
+*download-old-data:
+	@{ rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/Pipeline/1-Processed/${patient}/dwi/label_in_T1* ~/Downloads/tngpipeline/${patient}/dwi/;\
+	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/Pipeline/1-Processed/${patient}/seeg ~/Downloads/tngpipeline/${patient};\
+	rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/Pipeline/1-Processed/${patient}/tvb ~/Downloads/tngpipeline/${patient};\
+}
+# rsync -aPz -e "ssh -i /Users/adam2392/.ssh/id_tng" adamli@cluster.thevirtualbrain.org:/home/vep/Pipeline/1-Processed/${patient}/elec ~/Downloads/tngpipeline/${patient};\
 ######################### Functions to Make #########################
 # download: *download-patient
 download-update: *download-data

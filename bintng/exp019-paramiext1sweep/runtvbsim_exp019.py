@@ -97,6 +97,7 @@ if __name__ == '__main__':
                     '{0}_dist{1}_{2}.npz'.format(patient, movedist, i))
         metafilename = os.path.join(outputdatadir,
                     '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
+        direc, simfilename = os.path.split(filename)
 
         # set ez/pz regions
         ezregions = clinezregions
@@ -170,6 +171,7 @@ if __name__ == '__main__':
                 'clinez': clinezregions,
                 'clinpz': clinpzregions,
                 'iext1': iext,
+                'filename': simfilename,
             }
 
         ######################## run simulation ########################
