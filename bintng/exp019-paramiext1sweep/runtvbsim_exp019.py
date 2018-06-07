@@ -12,7 +12,7 @@ import argparse
 
 import tvbsim
 from tvbsim.postprocess import PostProcessor
-from tvbsim.detectonsetoffset import DetectShift
+from tvbsim.postprocess.detectonsetoffset import DetectShift
 from tvbsim.maintvbexp import MainTVBSim
 from tvbsim.exp.utils import util
 from tvbsim.io.loadsimdataset import LoadSimDataset
