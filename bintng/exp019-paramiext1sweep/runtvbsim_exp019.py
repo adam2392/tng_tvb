@@ -168,7 +168,7 @@ if __name__ == '__main__':
                 'x0pz':x0pz,
                 'x0norm':x0norm,
                 'patient': patient,
-                'samplerate': _3samplerate,
+                'samplerate': _samplerate,
                 'clinez': clinezregions,
                 'clinpz': clinpzregions,
                 'iext1': iext,
