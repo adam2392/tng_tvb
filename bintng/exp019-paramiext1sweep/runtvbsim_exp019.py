@@ -3,13 +3,16 @@ sys.path.append('../_tvblibrary/')
 sys.path.append('../_tvbdata/')
 sys.path.append('../')
 sys.path.append('../../')
-import tvbsim
+
 from tvb.simulator.lab import *
 import os.path
 import numpy as np
 import pandas as pd
 import argparse
 
+import tvbsim
+from tvbsim.postprocess import PostProcessor
+from tvbsim.detectonsetoffset import DetectShift
 from tvbsim.maintvbexp import MainTVBSim
 from tvbsim.exp.utils import util
 from tvbsim.io.loadsimdataset import LoadSimDataset
@@ -180,7 +183,7 @@ if __name__ == '__main__':
         configs = maintvbexp.setupsim(a=1., period=period, moved=False, initcond=initcond)
         times, statevars_ts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
-        postprocessor = tvbsim.postprocess.PostProcessor(samplerate=_samplerate, allszindices=allindices)
+        postprocessor = PostProcessor(samplerate=_samplerate, allszindices=allindices)
         ######################## POST PROCESSING ########################
         secstoreject = 1
         times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
@@ -189,7 +192,7 @@ if __name__ == '__main__':
         post_process_data(filename, epits, seegts, zts, state_vars)
 
         # GET ONSET/OFFSET OF SEIZURE
-        detector = tvbsim.postprocess.detectonsetoffset.DetectShift()
+        detector = DetectShift()
         settimes = detector.getonsetsoffsets(epits, allindices)
         seizonsets, seizoffsets = detector.getseiztimes(settimes)
         print("The detected onset/offsets are: {}".format(zip(seizonsets,seizoffsets)))
