@@ -211,10 +211,10 @@ if __name__ == '__main__':
         for idx,key in enumerate(state_vars.keys()):
             var = state_vars[key]
             if idx==0:
-                ts = var
-                ts = ts[np.newaxis, ...]
-            else:
-                ts[idx,...] = var 
+                ts = np.zeros((len(state_vars.keys()), *tuple(var.shape)))
+                # ts = var
+                # ts = ts[np.newaxis, ...]
+            ts[idx,...] = var 
         print(ts.shape)
         print(TimeseriesDimensions.SPACE.value)
         print(maintvbexp.region_labels)
