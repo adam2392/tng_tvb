@@ -211,9 +211,8 @@ if __name__ == '__main__':
         for idx,key in enumerate(state_vars.keys()):
             var = state_vars[key]
             if idx==0:
-                ts = np.zeros((len(state_vars.keys()), *tuple(var.shape)))
-                # ts = var
-                # ts = ts[np.newaxis, ...]
+                numtime, numsignal = var.shape
+                ts = np.zeros((len(state_vars.keys()), numtime, numsignal))
             ts[idx,...] = var 
         print(ts.shape)
         print(TimeseriesDimensions.SPACE.value)
