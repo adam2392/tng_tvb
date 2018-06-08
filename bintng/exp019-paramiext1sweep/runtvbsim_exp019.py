@@ -189,7 +189,7 @@ if __name__ == '__main__':
         times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
 
         # save all the raw simulated data
-        post_process_data(filename, epits, seegts, zts, state_vars)
+        post_process_data(filename, times, epits, seegts, zts, state_vars)
 
         # GET ONSET/OFFSET OF SEIZURE
         detector = DetectShift()
