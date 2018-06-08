@@ -220,7 +220,7 @@ if __name__ == '__main__':
 
         # PLOT RAW TS
         ts_obj = Timeseries(ts, 
-                        OrderedDict({TimeseriesDimensions.SPACE.value: maintvbexp.region_labels}), 
+                        OrderedDict({TimeseriesDimensions.SPACE.value: maintvbexp.conn.region_labels}), 
                         times[0], 
                         times[1] - times[0], "ms")
         # plotter.plot_simulated_timeseries(ts_obj, sim.model, lsa_hypothesis.lsa_propagation_indices, 
@@ -231,7 +231,7 @@ if __name__ == '__main__':
         special_idx = None
         plotter.plot_timeseries(state_vars, [], mode="traj", special_idx=special_idx, 
                                         title='Epileptor space trajectory', figure_name="Epileptor Space Trajectory",
-                                        labels=maintvbexp.region_labels)
+                                        labels=maintvbexp.conn.region_labels)
 
         # PLOT EPILEPTOR SOURCE SIGNALS
 
