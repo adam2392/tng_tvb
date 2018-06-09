@@ -216,7 +216,7 @@ if __name__ == '__main__':
             ts[idx,...] = var 
         print(ts.shape)
         print(TimeseriesDimensions.SPACE.value)
-        print(maintvbexp.region_labels)
+        print(maintvbexp.conn.region_labels)
 
         # PLOT RAW TS
         ts_obj = Timeseries(ts, 
@@ -236,4 +236,5 @@ if __name__ == '__main__':
         # PLOT EPILEPTOR SOURCE SIGNALS
 
 
+        ''' RUN FREQ DECOMPOSITION '''
 
