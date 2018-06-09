@@ -66,6 +66,13 @@ class LoadSimDataset(BaseLoader):
         self.offset_sec = np.divide(self.offset_ind, self.samplerate)
         self.onset_sec = np.divide(self.onset_ind, self.samplerate)
 
+    def savejsondata(self, metadata, metafilename):
+        # save the timepoints, included channels used, parameters
+        dumped = json.dumps(metadata, cls=NumpyEncoder)
+        with open(metafilename, 'w') as f:
+            json.dump(dumped, f)
+        self.logger.info('Saved metadata as json!')
+        
     def loadmeta_tvbdata(self):
         self.logger.debug('Reading in metadata!')
         # rename files from .xyz -> .txt
