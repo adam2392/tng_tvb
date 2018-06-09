@@ -1,6 +1,6 @@
 from tvbsim.base.constants.config import Config
 from tvbsim.base.utils.log_error import initialize_logger
-from tvbsim.base.model.basemodel import BaseWindowModel
+from tvbsim.base.preprocess.dsp.basemodel import BaseWindowModel
 import numpy as np
 
 
