@@ -75,7 +75,9 @@ if __name__ == '__main__':
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
-    loader = LoadSimDataset(rawdatadir=metadatadir, patient=patient)
+    loader = LoadSimDataset(rawdatadir=metadatadir,
+                            datafile=None, 
+                            patient=patient)
 
     # get the ez/pz indices we want to use
     clinezinds = loader.ezinds

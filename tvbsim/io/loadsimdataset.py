@@ -17,7 +17,7 @@ class LoadSimDataset(BaseLoader):
     datafile = None
     patient = None
 
-    def __init__(self, root_dir, datafile, rawdatadir, patient=None,
+    def __init__(self, root_dir=None, datafile=None, rawdatadir=None, patient=None,
                  preload=False, reference='monopolar', config=None):
         super(LoadSimDataset, self).__init__(config=config)
         self.root_dir = root_dir
@@ -34,15 +34,15 @@ class LoadSimDataset(BaseLoader):
 
         # load in the meta data and create mne raw object
         self.loadmeta_tvbdata()
-        metafile = datafile.split('.npz')[0] + '.json'
-        self._loadjsonfile(metafile)
-        self._loadmetadata()
-        rawdata = self.loadsimdata()
-        self.create_info_obj()
-        self.create_raw_obj(rawdata)
 
         # preload the processed data
         if preload:
+            metafile = datafile.split('.npz')[0] + '.json'
+            self._loadjsonfile(metafile)
+            self._loadmetadata()
+            rawdata = self.loadsimdata()
+            self.create_info_obj()
+            self.create_raw_obj(rawdata)
             self.load_data()
 
     def _loadjsonfile(self, metafile):
