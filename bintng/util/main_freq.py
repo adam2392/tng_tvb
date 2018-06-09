@@ -3,7 +3,7 @@ import argparse
 
 # import frequency analysis runners
 from run_freq import FreqAnalysis
-from fragility.io.loadsimdataset import LoadSimDataset
+from tvbsim.io.loadsimdataset import LoadSimDataset
 
 FREQ_MODES = ['fft', 'morlet']
 DATA_TYPE = ['sim']
