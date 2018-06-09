@@ -3,7 +3,6 @@ import scipy
 from scipy import interpolate
 from bisect import bisect_left
 
-
 def next_fast_len(target):
     """
     Find the next fast size of input data to `fft`, for zero-padding, etc.

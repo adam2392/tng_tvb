@@ -4,7 +4,7 @@ import spectrum
 from .helper import *
 from .basefreqmodel import BaseFreqModel
 import math
-import fragility.base.constants.model_constants as constants
+import tvbsim.base.constants.model_constants as constants
 
 '''
 ToDo: If you want to allow mtaper fft for any arbitrary off by factor of 0.5 in milliseconds
