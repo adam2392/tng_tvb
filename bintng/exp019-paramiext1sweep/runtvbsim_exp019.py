@@ -75,7 +75,9 @@ if __name__ == '__main__':
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
-    loader = LoadSimDataset(rawdatadir=metadatadir,
+    rawdatadir = os.path.join(metadatadir, patient)
+
+    loader = LoadSimDataset(rawdatadir=rawdatadir,
                             datafile=None, 
                             patient=patient)
 
