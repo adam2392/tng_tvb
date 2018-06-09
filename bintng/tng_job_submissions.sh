@@ -49,6 +49,7 @@ read answer
 
 metadatadir="/home/adamli/data/tngpipeline/"
 outputdatadir="/home/adamli/data/tvbforwardsim/${expname}/" # and with allregions/
+freqoutputdatadir="/home/adamli/data/output/tvbsim/${expname}/"
 echo "This is the data directories: "
 echo "$metadatadir "
 echo "$outputdatadir "
@@ -74,6 +75,7 @@ for patient in $patients; do
 	exvars="--export=patient=${patient},\
 metadatadir=${metadatadir},\
 outputdatadir=${outputdatadir},\
+freqoutputdatadir=${freqoutputdatadir},\
 dist=${dist},\
 shuffleweights=${shuffleweights} "
 

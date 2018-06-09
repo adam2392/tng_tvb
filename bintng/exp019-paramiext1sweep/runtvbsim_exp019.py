@@ -3,12 +3,15 @@ sys.path.append('../_tvblibrary/')
 sys.path.append('../_tvbdata/')
 sys.path.append('../')
 sys.path.append('../../')
+sys.path.append('./util/')
 
 from tvb.simulator.lab import *
 import os.path
 import numpy as np
 import pandas as pd
 import argparse
+
+import main_freq
 
 import tvbsim
 from tvbsim.postprocess import PostProcessor
@@ -18,12 +21,15 @@ from tvbsim.exp.utils import util
 from tvbsim.io.loadsimdataset import LoadSimDataset
 from tvbsim.visualize.plotter_sim import PlotterSim
 from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
+from collections import OrderedDict
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('patient', 
                     help="Patient to analyze")
 parser.add_argument('--outputdatadir', default='./',
                     help="Where to save the output simulated data.")
+parser.add_argument('--freqoutputdatadir', help="Where to save the output freq analysis of simulated data")
 parser.add_argument('--metadatadir', default='/Volumes/ADAM\ LI/rawdata/tngpipeline/',
                     help="Where the metadata for the TVB sims is.")
 parser.add_argument('--movedist', default=-1, type=int,
@@ -237,4 +243,34 @@ if __name__ == '__main__':
 
 
         ''' RUN FREQ DECOMPOSITION '''
+        reference = 'monopolar'
+        patdatadir = outputdatadir
+        datafile = filename
+        mode = 'fft'
+        idx = 0
+        # create checker for num wins
+        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
+        if not os.path.exists(freqoutputdir):
+            os.makedirs(freqoutputdir)
+        # where to save final computation
+        outputfilename = os.path.join(freqoutputdir, 
+                '{}_{}_{}model.npz'.format(patient, mode, idx))
+        outputmetafilename = os.path.join(freqoutputdir,
+            '{}_{}_{}meta.json'.format(patient, mode, idx))
+        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
 
+        mode = 'morlet'
+        # create checker for num wins
+        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
+        if not os.path.exists(freqoutputdir):
+            os.makedirs(freqoutputdir)
+        # where to save final computation
+        outputfilename = os.path.join(freqoutputdir, 
+                '{}_{}_{}model.npz'.format(patient, mode, idx))
+        outputmetafilename = os.path.join(freqoutputdir,
+            '{}_{}_{}meta.json'.format(patient, mode, idx))
+        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
+
+        idx += 1

@@ -24,8 +24,9 @@ echo ${SLURM_SUBMIT_DIR}
 echo "Patient is: ${patient}"
 echo "Metadatadir is: ${metadatadir}"
 echo "Outputdatadir is: ${outputdatadir}"
+echo "Freqoutputdatadir is: ${freqoutputdatadir}"
 echo "Distance to move is: ${dist}"
 echo "Should we shuffle weights?: ${shuffleweights}"
 
-python ./exp019-paramiext1sweep/runtvbsim_exp019.py ${patient} --metadatadir ${metadatadir} --outputdatadir ${outputdatadir} --movedist ${dist} --shuffleweights ${shuffleweights}
+python ./exp019-paramiext1sweep/runtvbsim_exp019.py ${patient} --metadatadir ${metadatadir} --outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} --movedist ${dist} --shuffleweights ${shuffleweights} 
 exit
