@@ -2,7 +2,7 @@ import os
 import argparse 
 
 # import frequency analysis runners
-from .run_freq import FreqAnalysis
+from run_freq import FreqAnalysis
 from fragility.io.loadsimdataset import LoadSimDataset
 
 FREQ_MODES = ['fft', 'morlet']

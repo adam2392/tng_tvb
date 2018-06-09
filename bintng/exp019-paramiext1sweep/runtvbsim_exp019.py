@@ -246,13 +246,13 @@ if __name__ == '__main__':
         reference = 'monopolar'
         patdatadir = outputdatadir
         datafile = filename
-        mode = 'fft'
         idx = 0
         winsize = 5000
         stepsize = 2500
         metadata['winsize'] = winsize
         metadata['stepsize'] = stepsize
         
+        mode = 'fft'
         # create checker for num wins
         freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
         if not os.path.exists(freqoutputdir):
