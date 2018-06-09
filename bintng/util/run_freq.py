@@ -2,9 +2,9 @@ import os
 import json
 import numpy as np
 import io
-from fragility.base.utils.data_structures_utils import NumpyEncoder
-from fragility.base.preprocess.dsp.frequencyanalysis import MorletWavelet
-from fragility.base.preprocess.dsp.frequencyanalysis import MultiTaperFFT
+from tvbsim.base.utils.data_structures_utils import NumpyEncoder
+from tvbsim.base.preprocess.dsp.frequencyanalysis import MorletWavelet
+from tvbsim.base.preprocess.dsp.frequencyanalysis import MultiTaperFFT
 try:
     to_unicode = unicode
 except NameError:
