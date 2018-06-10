@@ -49,8 +49,9 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
     metadata['rawfilename'] = datafile
 
     # save the data
+    print("saving freq data at ", outputfilename)
     run_freq.save_data(outputfilename, outputmetafilename, power, phase, metadata)
-
+    print("successfully saved!")
 def load_raw_data(patdatadir, datafile, metadatadir, patient, reference):
     loader = LoadSimDataset(root_dir=patdatadir, 
                                 datafile=datafile, 
