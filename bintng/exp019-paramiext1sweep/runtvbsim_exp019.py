@@ -24,6 +24,8 @@ from tvbsim.visualize.plotter_sim import PlotterSim
 from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
 from collections import OrderedDict
 
+from tvbsim.base.constants.config import Config
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('patient', 
@@ -219,6 +221,10 @@ if __name__ == '__main__':
         figdir = os.path.join(outputdatadir, str(i))
         if not os.path.exists(figdir):
             os.makedirs(figdir)
+
+        config = Config(output_base=figdir) 
+        config.figures.MATPLOTLIB_BACKEND="inline"
+        config.figures.SHOW_FLAG=True
         plotter = PlotterSim()
         for idx,key in enumerate(state_vars.keys()):
             var = state_vars[key]
