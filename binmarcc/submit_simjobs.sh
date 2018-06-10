@@ -10,8 +10,8 @@ module unload git
 ml python
 ml parallel
 ml anaconda-python/2.7
-
 source activate tvb
+
 # patients listed 5 per row
 patients=(
     'id001_ac
@@ -19,53 +19,41 @@ patients=(
     id014_rb'
  )
 
-## activate virtualenv/condaenv to use their modules
-
 # 1. Prompt user for input that runs the analysis
 echo "Begin analysis." # print beginning statement
-read -p "Enter num ez: " numez
-read -p "Enter num pz: " numpz
+read -p "Enter distance: " dist
+read -p "Enter expname: " expname
 
 # set values and their defauls
-numez=${numez:-2}
-numpz=${numpz:-0}
+dist=${dist:--1}
+expname=${expname:-exp019-paramiext1sweep}
+shuffleweights=${shuffleweights:-1}
+echo ${dist}
+echo ${expname}
 
-# NEED TO RUN FOR EZ=0,1,2,3 and varying PZ all once
 # show 
-echo $numez
-echo $numpz
+echo "Parameters read in: $dist $expname"
 
 # Pause before running to check
-printf "About to run on patients (press enter to continue): $patients" 
+echo "About to run on patients (press enter to continue): $patients" 
 read answer
 
-# metadatadir='/home-1/ali39@jhu.edu/data/fragility/tvbforwardsim/metadata/'
 metadatadir='/home-1/ali39@jhu.edu/data/tngpipeline/'
-outputdatadir='/home-1/ali39@jhu.edu/data/fragility/tvbforwardsim/'
+outputdatadir='/home-1/ali39@jhu.edu/data/tvbforwardsim/'
 printf "\nThis is the data directories: \n"
 printf "Metadatadir: $metadatadir \n"
 printf "Output datadir: $outputdatadir \n"
 printf "\n"
 
-#### Create all logging directories if needed
-# _gnuerr = all error logs for sbatch gnu runs %A.out 
-# _gnuout = all output logs for sbatch gnu runs %A.out 
-# _logs = the parallel gnu logfile for resuming job at errors 
-outdir=_out
-# create output directory 
-if [ -d "$outdir" ]; then  
-	echo "Out log directory exists!\n\n"
-else
-	mkdir $outdir
-fi
+# run setup of a slurm job
+setup="./config/slurm/setup.sh"
+. $setup
+# two configuration for slurm type jobs
+array_config="./config/slurm/array_jobs.txt"
+short_config="./config/slurm/short_jobs.txt"
+long_config="./config/slurm/long_jobs.txt"
 
 # 2. Define Slurm Parameters
-NUM_PROCSPERNODE=1  	# number of processors per node (1-24). Use 24 for GNU jobs.
-NUM_NODES=1				# number of nodes to request
-NUM_CPUPERTASK=1
-## job reqs
-walltime=2:00:0					# the walltime for each computationfi
-
 partition=shared 	# debug, shared, unlimited, parallel, gpu, lrgmem, scavenger
 # partition=debug
 qos=scavenger
@@ -77,30 +65,23 @@ for patient in $patients; do
 	# set jobname
 	jobname="${patient}_${numez}_${numpz}_submitgnu_tvbsim.log"
 
-
 	# create export commands
-	exvars="patient=${patient},\
-numez=${numez},\
-numpz=${numpz},\
+	exvars="--export=patient=${patient},\
 metadatadir=${metadatadir},\
 outputdatadir=${outputdatadir},\
-numprocs=${NUM_PROCSPERNODE} "
+freqoutputdatadir=${freqoutputdatadir},\
+dist=${dist},\
+shuffleweights=${shuffleweights} "
 
 	# build basic sbatch command with all params parametrized
-	sbatcomm="sbatch \
-	 --time=${walltime} \
-	 --nodes=${NUM_NODES} \
-	 --cpus-per-task=${NUM_CPUPERTASK} \
-	 --job-name=${jobname} \
-	 --ntasks-per-node=${NUM_PROCSPERNODE} \
-	 --partition=${partition} "
+	sbatchcomm=$(cat $long_config)
+	sbatchcomm="$sbatchcomm --job-name=${jobname} --partition=${partition}"
 
 	# build a scavenger job, gpu job, or other job
-	printf "Sbatch should run now\n"
-	
+	echo "Sbatch should run now"
 	echo $sbatcomm $exvars ./runtvbsimjob.sbatch 
 
-	${sbatcomm} --export=$exvars ./runtvbsimjob.sbatch
+	${sbatcomm} $exvars ./runtvbsimjob.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."

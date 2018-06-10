@@ -13,26 +13,21 @@
 # on MARCC using GNU parallel
 #---------------------------------------------------------------------
 
-ml python
+ml python/2.7
 ml anaconda-python/2.7
-
 source activate tvb
-# . /soft/miniconda3/activate
-# source activate tvbforwardsim
 
 # Debug output to make sure we are in the correct file
 echo "Runninng sbatch tvb forward sim file..."
 echo ${SBATCH_JOB_NAME}
 echo ${SLURM_SUBMIT_DIR}
-echo ${patient}
-echo ${numez}
-echo ${numpz}
-echo ${metadatadir}
-echo ${outputdatadir}
-echo ${numprocs}
-# echo ${movecontacts}
+echo "Patient is: ${patient}"
+echo "Metadatadir is: ${metadatadir}"
+echo "Outputdatadir is: ${outputdatadir}"
+echo "Freqoutputdatadir is: ${freqoutputdatadir}"
+echo "Distance to move is: ${dist}"
+echo "Should we shuffle weights?: ${shuffleweights}"
 
-# for iwin in $(seq 1 $numprocs); do
 python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${numprocs}
-# done
+
 exit

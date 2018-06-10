@@ -68,6 +68,7 @@ if __name__ == '__main__':
     outputdatadir = args.outputdatadir
     metadatadir = args.metadatadir
     movedist = args.movedist
+    freqoutputdatadir = args.freqoutputdatadir
     shuffleweights = args.shuffleweights
 
     # set all directories to output data, get meta data, get raw data
@@ -233,14 +234,17 @@ if __name__ == '__main__':
                         OrderedDict({TimeseriesDimensions.SPACE.value: maintvbexp.conn.region_labels}), 
                         times[0], 
                         times[1] - times[0], "ms")
-        # plotter.plot_simulated_timeseries(ts_obj, sim.model, lsa_hypothesis.lsa_propagation_indices, 
-        #                                   spectral_raster_plot=spectral_raster_plot, log_scale=True)
-
+        data_dict = {'x1(t)': state_vars['x1'], 
+                    'x2(t)': state_vars['x2'],
+                    'y1(t)': state_vars['y1'],
+                    'y2(t)': state_vars['y2'],
+                    'g(t)': state_vars['g'],
+                    'z(t)': zts}
 
         # PLOT THE PHASE PLOTS
         try:
             special_idx = None
-            plotter.plot_timeseries(ts_obj, [], mode="traj", special_idx=special_idx, 
+            plotter.plot_timeseries(data_dict, [], mode="traj", special_idx=special_idx, 
                                         title='Epileptor space trajectory', figure_name="Epileptor Space Trajectory",
                                         labels=maintvbexp.conn.region_labels)
         except Exception as e:
