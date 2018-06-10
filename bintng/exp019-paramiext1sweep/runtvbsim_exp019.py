@@ -234,21 +234,24 @@ if __name__ == '__main__':
                         OrderedDict({TimeseriesDimensions.SPACE.value: maintvbexp.conn.region_labels}), 
                         times[0], 
                         times[1] - times[0], "ms")
-        data_dict = {'x1(t)': state_vars['x1'], 
-                    'x2(t)': state_vars['x2'],
-                    'y1(t)': state_vars['y1'],
-                    'y2(t)': state_vars['y2'],
-                    'g(t)': state_vars['g'],
-                    'z(t)': zts}
-
-        # PLOT THE PHASE PLOTS
-        try:
+        
+        phase_comb = itertools.combinations(state_vars.keys(), 2)
+        for keys in phase_comb:
+            data_dict = {
+                keys[0]: state_vars[keys[0]],
+                keys[1]: state_vars[keys[1]]
+            }
+            # data_dict = {'x1(t)': state_vars['x1'], 
+            #         'x2(t)': state_vars['x2'],
+            #         'y1(t)': state_vars['y1'],
+            #         'y2(t)': state_vars['y2'],
+            #         'g(t)': state_vars['g'],
+            #         'z(t)': zts}
+            # PLOT THE PHASE PLOTS
             special_idx = None
             plotter.plot_timeseries(data_dict, [], mode="traj", special_idx=special_idx, 
-                                        title='Epileptor space trajectory', figure_name="Epileptor Space Trajectory",
+                                        title='Epileptor space trajectory '+keys, figure_name="Epileptor Space Trajectory " + keys,
                                         labels=maintvbexp.conn.region_labels)
-        except Exception as e:
-            print(e)
 
         ''' RUN FREQ DECOMPOSITION '''
         reference = 'monopolar'
