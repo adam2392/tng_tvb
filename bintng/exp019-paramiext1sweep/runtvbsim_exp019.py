@@ -238,6 +238,7 @@ if __name__ == '__main__':
         
         phase_comb = itertools.combinations(state_vars.keys(), 2)
         for keys in phase_comb:
+            keys = list(keys)
             data_dict = {
                 keys[0]: state_vars[keys[0]],
                 keys[1]: state_vars[keys[1]]
@@ -250,8 +251,9 @@ if __name__ == '__main__':
             #         'z(t)': zts}
             # PLOT THE PHASE PLOTS
             special_idx = None
+
             plotter.plot_timeseries(data_dict, [], mode="traj", special_idx=special_idx, 
-                                        title='Epileptor space trajectory '+keys, figure_name="Epileptor Space Trajectory " + keys,
+                                        title='Epileptor space trajectory '+' '.join(keys), figure_name="Epileptor Space Trajectory " + ' '.join(keys),
                                         labels=maintvbexp.conn.region_labels)
 
         ''' RUN FREQ DECOMPOSITION '''
