@@ -244,6 +244,7 @@ if __name__ == '__main__':
         
         phase_comb = itertools.combinations(state_vars.keys(), 2)
         for keys in phase_comb:
+            print("Plotting for ", keys)
             keys = list(keys)
             data_dict = {
                 keys[0]: state_vars[keys[0]],
@@ -262,6 +263,7 @@ if __name__ == '__main__':
                                         title='Epileptor space trajectory '+' '.join(keys), figure_name="Epileptor Space Trajectory " + ' '.join(keys),
                                         labels=maintvbexp.conn.region_labels)
 
+        print("finished plotting!")
         ''' RUN FREQ DECOMPOSITION '''
         reference = 'monopolar'
         patdatadir = outputdatadir
