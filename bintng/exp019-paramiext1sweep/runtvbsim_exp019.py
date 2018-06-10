@@ -238,13 +238,13 @@ if __name__ == '__main__':
 
 
         # PLOT THE PHASE PLOTS
-        special_idx = None
-        plotter.plot_timeseries(ts, [], mode="traj", special_idx=special_idx, 
+        try:
+            special_idx = None
+            plotter.plot_timeseries(ts_obj, [], mode="traj", special_idx=special_idx, 
                                         title='Epileptor space trajectory', figure_name="Epileptor Space Trajectory",
                                         labels=maintvbexp.conn.region_labels)
-
-        # PLOT EPILEPTOR SOURCE SIGNALS
-
+        except Exception as e:
+            print(e)
 
         ''' RUN FREQ DECOMPOSITION '''
         reference = 'monopolar'
