@@ -26,6 +26,10 @@ class LoadSimDataset(BaseLoader):
         self.reference = reference
         self.patient = patient
 
+        if patient is not None:
+            if patient not in self.rawdatadir:
+                self.rawdatadir = os.path.join(self.rawdatadir, patient)
+
         # set directories for the datasets
         self.seegdir = os.path.join(self.rawdatadir, 'seeg', 'fif')
         self.elecdir = os.path.join(self.rawdatadir, 'elec')
