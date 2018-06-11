@@ -2,7 +2,6 @@ import sys
 sys.path.append('../_tvblibrary/')
 sys.path.append('../_tvbdata/')
 sys.path.append('../')
-sys.path.append('../../')
 sys.path.append('./util/')
 
 from tvb.simulator.lab import *
@@ -18,12 +17,11 @@ import tvbsim
 from tvbsim.postprocess import PostProcessor
 from tvbsim.postprocess.detectonsetoffset import DetectShift
 from tvbsim.maintvbexp import MainTVBSim
-from tvbsim.exp.utils import util
-from tvbsim.io.loadsimdataset import LoadSimDataset
+from tvbsim.io.pateint.subject import Subject
+
 from tvbsim.visualize.plotter_sim import PlotterSim
 from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
 from collections import OrderedDict
-
 from tvbsim.base.constants.config import Config
 
 
@@ -46,7 +44,8 @@ all_patients = ['id001_bt',
     'id006_mr', 'id007_rd', 'id008_dmc',
     'id009_ba', 'id010_cmn', 'id011_gr',
     'id013_lk', 'id014_vc', 'id015_gjl',
-    'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma']
+    'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma',
+    'id021', 'id022', 'id023']
 
 def save_processed_data(filename, times, epits, seegts, zts, state_vars):
     print('finished simulating!')
@@ -98,9 +97,8 @@ if __name__ == '__main__':
 
     rawdatadir = os.path.join(metadatadir, patient)
 
-    # define loader for this patient
-    loader = PatientLoader(patient=patient,
-    						rawdatadir=rawdatadir)
+    # define sloader for this patient
+    loader = Subject(name=patient, root_pat_dir=rawdatadir, preload=False)
     # get the metadata for this patient
     '''
     - connectivity
@@ -108,7 +106,8 @@ if __name__ == '__main__':
     - ez_hypothesis
     - 
     '''
-    INSERT_CODE HERE
+    conn = loader.conn 
+    surf = loader.surf
 
     # get the ez/pz indices we want to use
     clinezinds = loader.ezinds
@@ -118,12 +117,11 @@ if __name__ == '__main__':
 
     sys.stdout.write("All clinical regions are: {}".format(allclinregions))
     ###################### INITIALIZE TVB SIMULATOR ##################
-    conn = loader.conn
     maintvbexp = MainTVBSim(conn, condspeed=np.inf)
     # load the necessary data files to run simulation
-    maintvbexp.loadseegxyz(seegfile=loader.sensorsfile)
+    maintvbexp.loadseegxyz(seegfile=loader.seegfile)
     maintvbexp.loadgainmat(gainfile=loader.gainfile)
-    maintvbexp.loadsurfdata(directory=loader.tvbdir, use_subcort=False)
+    maintvbexp.importsurfdata(surf=surf)
 
     ## OUTPUTFILE NAME ##
     filename = os.path.join(outputdatadir,
@@ -148,7 +146,8 @@ if __name__ == '__main__':
     if maintvbexp.pzregion is None:
         x0pz = None
     maintvbexp.loadepileptor(ezregions=ezregions, pzregions=pzregions,
-    					x0ez=x0ez, x0pz=x0pz,**epileptor_params)
+    						x0ez=x0ez, x0pz=x0pz,
+    						epileptor_params)
     allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
     show_debug(maintvbexp)
 
@@ -163,13 +162,28 @@ if __name__ == '__main__':
     	'dt': 0.05,
     	'noise': hiss,
     }
-    maintvbexp.loadintegrator(**integrator_params)
+    maintvbexp.loadintegrator(integrator_params)
 
+    coupling_params = {
+    	'a': 1.,
+    }
+    maintvbexp.loadcoupling(**coupling_params)
+
+    initcond = None
+    monitor_params = {
+    	'period': period,
+    	'moved': False,
+    	'initcond': initcond
+    }
+    maintvbexp.loadmonitors(**monitor_params)
+
+    # move contacts if we wnat to
     for ind in maintvbexp.ezind:
             new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
         print(elecindicesmoved)
         print(maintvbexp.seeg_labels[elecindicesmoved])
 
+    # perform some kind of parameter sweep
     for i, iext in enumerate(iext_param_sweep):
         print("Using iext1 value of {}".format(iext))
         
@@ -182,9 +196,7 @@ if __name__ == '__main__':
         metadata['clinpz'] =clinpzregions
 
         ######################## run simulation ########################
-        initcond = None
-        configs = maintvbexp.setupsim(a=1., period=period, 
-        						moved=False, initcond=initcond)
+        configs = maintvbexp.setupsim()
         times, statevars_ts, seegts = maintvbexp.mainsim(sim_length=sim_length)
 
         ######################## POST PROCESSING ########################
@@ -204,7 +216,7 @@ if __name__ == '__main__':
         metadata['offsettimes'] = seizoffsets
 
         # save metadata
-        loader.savejsondata(metadata, metafilename)
+        loader._writejsonfile(metadata, metafilename)
 
         ''' RUN FREQ DECOMPOSITION '''
         reference = 'monopolar'

@@ -12,7 +12,7 @@ import h5py
 from enum import Enum
 '''
 
-Load regions functions for fragility analysis module to get structural
+Load regions functions for tvbsim analysis module to get structural
 connectivity data and load it so that you can get access to
 
 - region labels in cortex

@@ -4,7 +4,8 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	# 'id001_ac id002_cj
+	'id001_ac')
+	#  id002_cj
 	# id003_cm id004_cv
 	# id005_et id006_fb
 	# id008_gc id009_il
@@ -12,7 +13,7 @@ patients=(
 	# id012_pc id013_pg
 	# id014_rb'
 # 'id003_cm id008_gc id014_rb'
-	'id001_bt')
+	# 'id001_bt')
 	# id002_sd
 	# id003_mg id004_bj id005_ft
 	# id006_mr id007_rd id008_dmc
@@ -28,7 +29,7 @@ read -p "Enter expname: " expname
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp019-paramiext1sweep}
+expname=${expname:-exp020}
 shuffleweights=${shuffleweights:-1}
 echo ${dist}
 echo ${expname}
@@ -40,7 +41,7 @@ echo "Parameters read in: $dist $expname"
 echo "About to run on patients (press enter to continue): $patients" 
 read answer
 
-metadatadir="/home/adamli/data/tngpipeline/"
+metadatadir="/home/adamli/data/tngpipeline/old/"
 outputdatadir="/home/adamli/data/tvbforwardsim/${expname}/" # and with allregions/
 freqoutputdatadir="/home/adamli/data/output/tvbsim/${expname}/"
 echo "This is the data directories: "

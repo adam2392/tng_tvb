@@ -12,7 +12,7 @@ from tvbsim.base.utils.log_error import initialize_logger
 
 '''
 
-Load regions functions for fragility analysis module to get structural
+Load regions functions for tvbsim analysis module to get structural
 connectivity data and load it so that you can get access to
 
 - region labels in cortex
@@ -69,9 +69,9 @@ class LoadConn(object):
         self.logger.info(
             "Successfully read connectvity from: %s" %
             source_file)
-
-        conn = self.convert_to_obj(source_file, result)
-        return conn
+        return result
+        # conn = self.convert_to_obj(source_file, result)
+        # return conn
 
     def convert_to_obj(self, path, result):
         weights = result['weights']

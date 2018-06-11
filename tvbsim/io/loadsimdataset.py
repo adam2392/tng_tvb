@@ -1,9 +1,9 @@
 import os
+import io
 import numpy as np
 import pandas as pd
 import mne
 import json
-import io
 
 from tvbsim.io.utils import seegrecording
 from tvbsim.io.base import BaseLoader
@@ -17,7 +17,7 @@ class LoadSimDataset(BaseLoader):
     datafile = None
     patient = None
 
-    def __init__(self, root_dir=None, datafile=None, rawdatadir=None, patient=None,
+    def __init__(self, root_dir, datafile, rawdatadir, patient=None,
                  preload=False, reference='monopolar', config=None):
         super(LoadSimDataset, self).__init__(config=config)
         self.root_dir = root_dir
@@ -25,10 +25,6 @@ class LoadSimDataset(BaseLoader):
         self.datafile = datafile
         self.reference = reference
         self.patient = patient
-
-        if patient is not None:
-            if patient not in self.rawdatadir:
-                self.rawdatadir = os.path.join(self.rawdatadir, patient)
 
         # set directories for the datasets
         self.seegdir = os.path.join(self.rawdatadir, 'seeg', 'fif')
@@ -38,16 +34,25 @@ class LoadSimDataset(BaseLoader):
 
         # load in the meta data and create mne raw object
         self.loadmeta_tvbdata()
+        metafile = datafile.split('.npz')[0] + '.json'
+        self._loadjsonfile(metafile)
+        self._loadmetadata()
+        rawdata = self.loadsimdata()
+        self.create_info_obj()
+        self.create_raw_obj(rawdata)
 
         # preload the processed data
         if preload:
-            metafile = datafile.split('.npz')[0] + '.json'
-            self._loadjsonfile(metafile)
-            self._loadmetadata()
-            rawdata = self.loadsimdata()
-            self.create_info_obj()
-            self.create_raw_obj(rawdata)
             self.load_data()
+
+    def _loadjsonfile(self, metafile):
+        if not metafile.endswith('.json'):
+            metafile += '.json'
+
+        with io.open(metafile, encoding='utf-8', mode='r') as fp:
+            json_str = json.loads(fp.read())
+        metadata = json.loads(json_str)
+        self.metadata = metadata
 
     def _loadmetadata(self):
         # set line frequency and add to it
@@ -61,11 +66,6 @@ class LoadSimDataset(BaseLoader):
         self.offset_sec = np.divide(self.offset_ind, self.samplerate)
         self.onset_sec = np.divide(self.onset_ind, self.samplerate)
 
-    def savejsondata(self, metadata, metafilename):
-        # save the timepoints, included channels used, parameters
-        self._writejsonfile(metadata, metafilename)
-        self.logger.info('Saved metadata as json!')
-        
     def loadmeta_tvbdata(self):
         self.logger.debug('Reading in metadata!')
         # rename files from .xyz -> .txt
@@ -92,7 +92,7 @@ class LoadSimDataset(BaseLoader):
         sfreq = self.samplerate
         ch_names = list(self.chanlabels)
         linefreq = self.linefreq
-        lowpass_freq = 0.1
+        lowpass_freq = 0.5
         highpass_freq = 499
         ch_types = ['seeg'] * len(ch_names)
         # It is also possible to use info from another raw object.
@@ -136,7 +136,6 @@ class LoadSimDataset(BaseLoader):
                           bandwidth,
                           numharmonics,
                           self.samplerate)
-
         numsamps = rawdata.shape[1]
 
         self.logger.debug(

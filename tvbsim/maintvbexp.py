@@ -7,7 +7,6 @@ from exp.basetvbexp import TVBExp
 from exp.movecontactexp import MoveContactExp
 import warnings
 
-
 class MainTVBSim(TVBExp, MoveContactExp):
     x0ez = x0pz = x0norm = None
 
@@ -85,23 +84,13 @@ class MainTVBSim(TVBExp, MoveContactExp):
         if rand == True:
             self.pzind, self.pzregion = self.sample_randregions(1)
 
-    def initintegrator(self, ts=0.05, noise_cov=None, ntau=0, noiseon=True):
-        if noise_cov is None:
-            noise_cov = np.array([0.001, 0.001, 0.,
-                                  0.0001, 0.0001, 0.])
-        ####################### 3. Integrator for Models ######################
-        # define cov noise for the stochastic heun integrato
-        hiss = noise.Additive(nsig=noise_cov)
-        # hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
-        # hiss = noise.Multiplicative(nsig=noise_cov)
-        if noiseon:
-            heunint = integrators.HeunStochastic(dt=ts, noise=hiss)
-        else:
-            heunint = integrators.HeunDeterministic(dt=ts)
+    def load_integrator(self, integrator_params):
+        heunint = integrators.HeunStochastic(**integrator_params)
+        # heunint = integrators.HeunDeterministic(dt=ts)
         self.integrator = heunint
 
-    def initepileptor(self, x0norm, x0ez=None, x0pz=None,
-                      **kwargs):
+    def loadepileptor(self, ezregions, pzregions,
+                        x0ez=-2.3, x0pz=-2.05, x0norm=-1.6, epileptor_params):
         '''
         State variables for the Epileptor model:
         Repeated here for redundancy:
@@ -113,15 +102,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         '''
         ####################### 2. Neural Mass Model @ Nodes ##################
         epileptors = models.Epileptor(
-            variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], **kwargs)
-        # if r is not None:
-        #     epileptors.r = r
-        # if Ks is not None:
-        #     epileptors.Ks = Ks
-        # if tt is not None:
-        #     epileptors.tt = tt
-        # if tau is not None:
-        #     epileptors.tau = tau
+            variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], **epileptor_params)
 
         # this comes after setting all parameters
         epileptors.x0 = x0norm * np.ones(len(self.conn.region_labels))
@@ -143,11 +124,12 @@ class MainTVBSim(TVBExp, MoveContactExp):
                     "pz index not set yet! Do you want to proceed with simulation?")
         self.epileptors = epileptors
 
-    def setupsim(self, a=1., period=1., moved=False, initcond=None):
+    def loadcoupling(self, a=1.)
         ################## 4. Difference Coupling Between Nodes ###############
         coupl = coupling.Difference(a=a)
-        # self.coupl = coupl
+        self.coupl = coupl
 
+    def loadmonitors(self, period=1., moved=False, initcond=None):
         if initcond is not None:
             self.initcond = initcond
 
@@ -157,12 +139,6 @@ class MainTVBSim(TVBExp, MoveContactExp):
             gainfile = self.gainfile
         else:
             gainfile = None
-
-        # adding observation noise?
-        # ntau=0
-        # noise_cov=np.array([1.0])
-        # obsnoise = noise.Additive(nsig=noise_cov, ntau=ntau)
-        # obsnoise = None
 
         ############## 5. Import Sensor XYZ, Gain Matrix For Monitors #########
         mon_tavg = monitors.TemporalAverage(period=period)  # monitor model
@@ -185,20 +161,21 @@ class MainTVBSim(TVBExp, MoveContactExp):
             self.gainmat = self.gain_matrix_inv_square()
             # self.gainmat = self.simplest_gain_matrix()
             sim_monitors[1].gain = self.gainmat
-
         self.monitors = sim_monitors
 
+    def setupsim(self):
         # initialize simulator object
-        self.sim = simulator.Simulator(model=self.epileptors,
-                                       # initial_conditions = self.init_cond,
-                                       connectivity=self.conn,
-                                       coupling=coupl,
-                                       integrator=self.integrator,
-                                       monitors=self.monitors)
+        simulator_params = {
+            'model': self.epileptors,
+            'connectivity': self.conn,
+            'coupling': self.coupl,
+            'integrator': self.integrator,
+            'monitors': self.monitors
+        }
+        self.sim = simulator.Simulator(**simulator_params)
         configs = self.sim.configure()
         return configs
 
     def mainsim(self, sim_length=60000):
-        (times, epilepts), (_, seegts) = self.sim.run(
-            simulation_length=sim_length)
-        return times, epilepts, seegts
+        (times, simvars), (_, seegts) = self.sim.run(simulation_length=sim_length)
+        return times, simvars, seegts

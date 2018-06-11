@@ -2,6 +2,12 @@ import numpy as np
 import zipfile
 import os
 
+class Surface(object):
+    def __init__(self, vertices, normals, areas, regmap):
+        self.vertices = vertices
+        self.normals = normals
+        self.areas = areas
+        self.regmap = regmap
 
 class LoadSurface():
     def loadsurfdata(self, directory, use_subcort=False):
@@ -9,11 +15,11 @@ class LoadSurface():
         Pass in directory for where the entire metadata for this patient is
         '''
         # Shift to account for 0 - unknown region, not included later
-        regmapfile = os.path.join(directory, "region_mapping_cort.txt")
-        if not os.path.exists(regmapfile):
-            regmapfile = os.path.join(directory, "region_mapping_cort.dk.txt")
-
-        reg_map_cort = np.genfromtxt(regmapfile, dtype=int) - 1
+        reg_map_cort = np.genfromtxt(
+            (os.path.join(
+                directory,
+                "region_mapping_cort.txt")),
+            dtype=int) - 1
         with zipfile.ZipFile(os.path.join(directory, "surface_cort.zip")) as zip:
             with zip.open('vertices.txt') as fhandle:
                 verts_cort = np.genfromtxt(fhandle)
@@ -30,14 +36,16 @@ class LoadSurface():
             self.normals = normals_cort
             self.areas = vert_areas_cort
             self.regmap = reg_map_cort
-            return (verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
+            
+            surf = self.convert_to_obj(verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
+            return surf
+            # return (verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
         else:
-            regmapfile = os.path.join(directory, "region_mapping_subcort.txt")
-            if not os.path.exists(regmapfile):
-                regmapfile = os.path.join(
-                    directory, "region_mapping_subcort.dk.txt")
-
-            reg_map_subc = np.genfromtxt(regmapfile, dtype=int) - 1
+            reg_map_subc = np.genfromtxt(
+                (os.path.join(
+                    directory,
+                    "region_mapping_subcort.txt")),
+                dtype=int) - 1
             with zipfile.ZipFile(os.path.join(directory, "surface_subcort.zip")) as zip:
                 with zip.open('vertices.txt') as fhandle:
                     verts_subc = np.genfromtxt(fhandle)
@@ -56,7 +64,14 @@ class LoadSurface():
             self.normals = normals
             self.areas = areas
             self.regmap = regmap
-            return (verts, normals, areas, regmap)
+
+            surf = self.convert_to_obj(vertices, normals, areas, regmap)
+            return surf
+            # return (verts, normals, areas, regmap)
+
+    def convert_to_obj(self, vertices, normals, areas, regmap):
+        surf = Surface(vertices, normals, areas, regmap)
+        return surf
 
     def __compute_triangle_areas(self, vertices, triangles):
         """Calculates the area of triangles making up a surface."""

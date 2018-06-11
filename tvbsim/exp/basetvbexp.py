@@ -55,6 +55,13 @@ class TVBExp(object):
         self.gainfile = gainfile
         self.gainmat = gain_pd.as_matrix()
 
+    def importsurfdata(self, surf):
+        self.surf = surf
+        self.vertices = self.surf.verts_cort
+        self.normals = self.surf.normals_cort
+        self.areas = self.surf.vert_areas_cort
+        self.regmap = self.surf.reg_map_cort
+        
     def loadsurfdata(self, directory, use_subcort=False):
         '''
         Pass in directory for where the entire metadata for this patient is
