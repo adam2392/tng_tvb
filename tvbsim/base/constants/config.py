@@ -87,7 +87,7 @@ class FiguresConfig(object):
 
     FIG_FORMAT = 'pdf'  # 'eps' 'pdf' 'svg'
     SAVE_FLAG = True
-    SHOW_FLAG = True              # interactive mode and show?
+    SHOW_FLAG = False # True              # interactive mode and show?
     MOUSE_HOOVER = False
     MATPLOTLIB_BACKEND = "Qt4Agg"  # , "Agg", "qt5"''
 

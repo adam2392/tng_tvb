@@ -256,7 +256,6 @@ class PlotterRaw(BasePlotter):
 
         # initialize figure
         pyplot.figure(title, figsize=figsize)
-        pyplot.hold(True)
         axes = []
 
         # print each column of subplots

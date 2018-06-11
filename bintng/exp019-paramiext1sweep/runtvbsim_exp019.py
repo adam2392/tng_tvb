@@ -216,6 +216,45 @@ if __name__ == '__main__':
         # save metadata
         loader.savejsondata(metadata, metafilename)
 
+        ''' RUN FREQ DECOMPOSITION '''
+        reference = 'monopolar'
+        patdatadir = outputdatadir
+        datafile = filename
+        idx = 0
+        winsize = 5000
+        stepsize = 2500
+        metadata['winsize'] = winsize
+        metadata['stepsize'] = stepsize
+        
+        mode = 'fft'
+        # create checker for num wins
+        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
+        if not os.path.exists(freqoutputdir):
+            os.makedirs(freqoutputdir)
+        # where to save final computation
+        outputfilename = os.path.join(freqoutputdir, 
+                '{}_{}_{}model.npz'.format(patient, mode, idx))
+        outputmetafilename = os.path.join(freqoutputdir,
+            '{}_{}_{}meta.json'.format(patient, mode, idx))
+        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
+
+        mode = 'morlet'
+        # create checker for num wins
+        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
+        if not os.path.exists(freqoutputdir):
+            os.makedirs(freqoutputdir)
+        # where to save final computation
+        outputfilename = os.path.join(freqoutputdir, 
+                '{}_{}_{}model.npz'.format(patient, mode, idx))
+        outputmetafilename = os.path.join(freqoutputdir,
+            '{}_{}_{}meta.json'.format(patient, mode, idx))
+        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
+
+        idx += 1
+
+
         '''                 PLOTTING OF DATA                        '''
         # DEFINE FIGURE DIR FOR THIS SIM
         figdir = os.path.join(outputdatadir, str(i))
@@ -264,40 +303,3 @@ if __name__ == '__main__':
                                         labels=maintvbexp.conn.region_labels)
 
         print("finished plotting!")
-        ''' RUN FREQ DECOMPOSITION '''
-        reference = 'monopolar'
-        patdatadir = outputdatadir
-        datafile = filename
-        idx = 0
-        winsize = 5000
-        stepsize = 2500
-        metadata['winsize'] = winsize
-        metadata['stepsize'] = stepsize
-        
-        mode = 'fft'
-        # create checker for num wins
-        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
-        if not os.path.exists(freqoutputdir):
-            os.makedirs(freqoutputdir)
-        # where to save final computation
-        outputfilename = os.path.join(freqoutputdir, 
-                '{}_{}_{}model.npz'.format(patient, mode, idx))
-        outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, idx))
-        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
-        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
-
-        mode = 'morlet'
-        # create checker for num wins
-        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
-        if not os.path.exists(freqoutputdir):
-            os.makedirs(freqoutputdir)
-        # where to save final computation
-        outputfilename = os.path.join(freqoutputdir, 
-                '{}_{}_{}model.npz'.format(patient, mode, idx))
-        outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, idx))
-        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
-        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
-
-        idx += 1
