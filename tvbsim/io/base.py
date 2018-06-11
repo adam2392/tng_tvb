@@ -8,6 +8,11 @@ from tvbsim.io.utils import utils, seegrecording
 from tvbsim.io.readers.read_connectivity import LoadConn
 import io
 
+# to allow compatability between python2/3
+try:
+    to_unicode = unicode
+except NameError:
+    to_unicode = str
 class BaseLoader(object):
     # gainfile = None
     # sensorsfile = None
@@ -78,12 +83,24 @@ class BaseLoader(object):
         self.conn = conn
         self.logger.info("\nLoaded in connectivity!\n")
 
-    def _loadjsonfile(self, metafile):
-        if not metafile.endswith('.json'):
-            metafile += '.json'
 
-        with io.open(metafile, encoding='utf-8', mode='r') as fp:
-            json_str = fp.read() #json.loads(
-        metadata = json.loads(json_str)
-        print(metadata.keys())
+    def _writejsonfile(self, metadata, metafilename):
+        with io.open(metafilename, 'w', encoding='utf8') as outfile:
+            str_ = json.dumps(metadata,
+                              indent=4, sort_keys=True, cls=NumpyEncoder,
+                              separators=(',', ': '), ensure_ascii=False)
+            outfile.write(to_unicode(str_))
+
+    def _loadjsonfile(self, metafilename):
+        if not metafilename.endswith('.json'):
+            metafilename += '.json'
+
+        try:
+            with open(metafilename, 'r', encoding='utf8') as f:
+                metadata = json.load(f)
+        except:
+            with io.open(metafilename, encoding='utf-8', mode='r') as fp:
+                json_str = fp.read() #json.loads(
+            metadata = json.loads(json_str)
+
         self.metadata = metadata

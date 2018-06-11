@@ -25,6 +25,7 @@ class TVBExp(object):
             'tau': self.epileptors.tau,
             'tt': self.epileptors.tt,
             'x0': self.epileptors.x0,
+            'iext': self.epileptors.Iext,
             'nsig': self.integrator.noise.nsig,
             'ntau': self.integrator.noise.ntau,
         }

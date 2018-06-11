@@ -9,8 +9,28 @@ import warnings
 
 
 class MainTVBSim(TVBExp, MoveContactExp):
+    x0ez = x0pz = x0norm = None
+
     def __init__(self, conn, condspeed=np.inf):
         TVBExp.__init__(self, conn=conn, condspeed=condspeed)
+
+    def get_metadata(self):
+        self.metadata = {
+                'regions': self.conn.region_labels,
+                'regions_centers': self.conn.centres,
+                'chanlabels': self.seeg_labels,
+                'chanxyz': self.seeg_xyz,
+                'ezregs': self.ezregion,
+                'pzregs': self.pzregion,
+                'ezindices': self.ezind,
+                'pzindices': self.pzind,
+                'epiparams': self.getepileptorparams(),
+                'gainmat': self.gainmat,
+                'x0ez': self.x0ez,
+                'x0pz': self.x0pz,
+                'x0norm': self.x0norm,
+        }
+        return self.metadata
 
     def setezregion(self, ezregions, rand=False):
         if np.asarray(ezregions).size == 1:

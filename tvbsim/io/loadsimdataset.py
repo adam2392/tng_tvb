@@ -11,6 +11,7 @@ from tvbsim.base.preprocess.util.noise import LineNoise
 from tvbsim.base.utils.data_structures_utils import NumpyEncoder
 from datetime import date
 
+
 class LoadSimDataset(BaseLoader):
     root_dir = None
     rawdatadir = None
@@ -49,14 +50,6 @@ class LoadSimDataset(BaseLoader):
             self.create_raw_obj(rawdata)
             self.load_data()
 
-    def _loadjsonfile(self, metafile):
-        if not metafile.endswith('.json'):
-            metafile += '.json'
-
-        with io.open(metafile, encoding='utf-8', mode='r') as fp:
-            json_str = fp.read()
-        metadata = json.loads(json_str)
-        self.metadata = metadata
 
     def _loadmetadata(self):
         # set line frequency and add to it
@@ -72,9 +65,7 @@ class LoadSimDataset(BaseLoader):
 
     def savejsondata(self, metadata, metafilename):
         # save the timepoints, included channels used, parameters
-        dumped = json.dumps(metadata, cls=NumpyEncoder)
-        with open(metafilename, 'w') as f:
-            json.dump(dumped, f)
+        self._writejsonfile(metadata, metafilename)
         self.logger.info('Saved metadata as json!')
         
     def loadmeta_tvbdata(self):
