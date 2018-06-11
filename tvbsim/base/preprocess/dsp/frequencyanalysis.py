@@ -20,11 +20,11 @@ def next_greater_power_of_2(x):
 
 class MultiTaperFFT(BaseFreqModel):
     def __init__(self, winsize=constants.WINSIZE_SPEC, stepsize=constants.STEPSIZE_SPEC,
-                 samplerate=None, timewidth=constants.MTBANDWIDTH, method=None):
+                 samplerate=None, mtbandwidth=constants.MTBANDWIDTH, mtfreqs=[], method=None):
         BaseFreqModel.__init__(self, winsize, stepsize, samplerate)
 
         # multitaper FFT using welch's method
-        self.timewidth = timewidth
+        self.mtbandwidth = mtbandwidth
         # possible values of method are 'eigen', 'hann',
         if not method:
             self.method = 'eigen'
@@ -33,7 +33,8 @@ class MultiTaperFFT(BaseFreqModel):
             0,
             self.samplerate // 2,
             (self.winsize * self.samplerate / 1000) // 2 + 1)
-
+        # if mtfreqs:
+            # self.freqsfft = mtfreqs
     def loadrawdata(self, rawdata):
         assert rawdata.shape[0] < rawdata.shape[1]
         # rem = rawdata.shape[1]%int(self.stepsamps)
@@ -90,7 +91,7 @@ class MultiTaperFFT(BaseFreqModel):
         numwins = self.timepoints.shape[0]
 
         # set the number of tapers to use
-        numtapers = 2 * self.timewidth - 1
+        numtapers = 2 * self.mtbandwidth - 1
 
         taperind = 1
         vweights = 1
@@ -98,7 +99,7 @@ class MultiTaperFFT(BaseFreqModel):
         taperampnorm = 1
 
         # get discrete tapering windows
-        w, eigens = dpss_windows(numsamps, self.timewidth, numtapers)
+        w, eigens = dpss_windows(numsamps, self.mtbandwidth, numtapers)
         # get the weighted eigenvalues
         vweights = np.ones((1, 1, len(eigens)))
         vweights[0, 0, :] = eigens / np.sum(eigens)
