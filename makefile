@@ -44,7 +44,7 @@ ssh                             := ssh $(port)
 	@{ rsync -aP /Users/adam2392/Documents/pydata/output/mvar/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/output/mvar/;\
 }
 *push-data:
-	@{ rsync -aP /Users/adam2392/Downloads/tngpipeline/ adamli@cluster.thevirtualbrain.org:/home/adamli/data/tngpipeline/;\
+	@{ rsync -aP /Users/adam2392/Downloads/tngpipeline/old adamli@cluster.thevirtualbrain.org:/home/adamli/data/tngpipeline/;\
 }
 
 # *push-fragility:
