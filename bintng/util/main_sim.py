@@ -227,6 +227,7 @@ if __name__ == '__main__':
         stepsize = 2500
         metadata['winsize'] = winsize
         metadata['stepsize'] = stepsize
+        print(metadata.keys())
         main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
 
         mode = 'morlet'
