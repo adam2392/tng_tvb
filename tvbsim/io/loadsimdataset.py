@@ -8,7 +8,6 @@ import io
 from tvbsim.io.utils import seegrecording
 from tvbsim.io.base import BaseLoader
 from tvbsim.base.preprocess.util.noise import LineNoise
-from tvbsim.base.utils.data_structures_utils import NumpyEncoder
 from datetime import date
 
 
@@ -49,7 +48,6 @@ class LoadSimDataset(BaseLoader):
             self.create_info_obj()
             self.create_raw_obj(rawdata)
             self.load_data()
-
 
     def _loadmetadata(self):
         # set line frequency and add to it
