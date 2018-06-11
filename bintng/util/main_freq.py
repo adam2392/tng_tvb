@@ -12,6 +12,7 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
     if not mode in FREQ_MODES:
         raise Exception("mode should be either 'fft', or 'morlet'. Not {}".format(mode))
 
+    print(metadata.keys())
     if mode == 'fft':
         # FFT Parameters
         mtbandwidth = 4
