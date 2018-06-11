@@ -221,11 +221,7 @@ if __name__ == '__main__':
         patdatadir = outputdatadir
         datafile = filename
         idx = 0
-        winsize = 5000
-        stepsize = 2500
-        metadata['winsize'] = winsize
-        metadata['stepsize'] = stepsize
-        
+
         mode = 'fft'
         # create checker for num wins
         freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
@@ -237,6 +233,11 @@ if __name__ == '__main__':
         outputmetafilename = os.path.join(freqoutputdir,
             '{}_{}_{}meta.json'.format(patient, mode, idx))
         rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+        winsize = 5000
+        stepsize = 2500
+        metadata['winsize'] = winsize
+        metadata['stepsize'] = stepsize
+        
         main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
 
         mode = 'morlet'
@@ -250,6 +251,11 @@ if __name__ == '__main__':
         outputmetafilename = os.path.join(freqoutputdir,
             '{}_{}_{}meta.json'.format(patient, mode, idx))
         rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+        winsize = 5000
+        stepsize = 2500
+        metadata['winsize'] = winsize
+        metadata['stepsize'] = stepsize
+        
         main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
 
         idx += 1
