@@ -19,9 +19,9 @@ def next_greater_power_of_2(x):
 
 
 class MultiTaperFFT(BaseFreqModel):
-    def __init__(self, winsizems=constants.WINSIZE_SPEC, stepsizems=constants.STEPSIZE_SPEC,
+    def __init__(self, winsize=constants.WINSIZE_SPEC, stepsize=constants.STEPSIZE_SPEC,
                  samplerate=None, timewidth=constants.MTBANDWIDTH, method=None):
-        BaseFreqModel.__init__(self, winsizems, stepsizems, samplerate)
+        BaseFreqModel.__init__(self, winsize, stepsize, samplerate)
 
         # multitaper FFT using welch's method
         self.timewidth = timewidth
@@ -139,9 +139,9 @@ class MultiTaperFFT(BaseFreqModel):
 
 
 class MorletWavelet(BaseFreqModel):
-    def __init__(self, winsizems=constants.WINSIZE_SPEC, stepsizems=constants.STEPSIZE_SPEC,
+    def __init__(self, winsize=constants.WINSIZE_SPEC, stepsize=constants.STEPSIZE_SPEC,
                  samplerate=None, waveletfreqs=None, waveletwidth=constants.WAVELETWIDTH):
-        BaseFreqModel.__init__(self, winsizems, stepsizems, samplerate)
+        BaseFreqModel.__init__(self, winsize, stepsize, samplerate)
         if waveletfreqs is None:
             self.logger.error('Wavelet freqs should be set here!')
         self.waveletfreqs = waveletfreqs
