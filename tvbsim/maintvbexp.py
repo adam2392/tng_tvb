@@ -9,7 +9,8 @@ import warnings
 
 class MainTVBSim(TVBExp, MoveContactExp):
     x0ez = x0pz = x0norm = None
-
+    ezindices = []
+    
     def __init__(self, conn, condspeed=np.inf):
         TVBExp.__init__(self, conn=conn, condspeed=condspeed)
 

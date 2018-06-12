@@ -18,6 +18,22 @@ class TVBExp(object):
         self.conn.weights = conn.weights / np.max(conn.weights)
         self.init_cond = None
 
+    @staticmethod
+    def randshuffleweights(weights):
+        weights = np.random.choice(
+            weights.ravel(),
+            size=weights.shape,
+            replace=False)
+        return weights
+
+    @staticmethod
+    def randshufflepats(patientlist, patient):
+        patientlist = list(patientlist)
+        patientlist.remove(patient)
+        randpat = random.choice(patientlist)
+        return randpat
+
+
     def getepileptorparams(self):
         params = {
             'r': self.epileptors.r,
