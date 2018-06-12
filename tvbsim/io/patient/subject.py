@@ -13,7 +13,7 @@ INTERICTAL_TYPES = ['interictal', 'ii', 'aslp', 'aw']
 
 class Subject(BaseSubjectLoader):
     sim_recordings = []
-    def __init__(self, name, root_pat_dir=None, atlas=None, DEBUG=True, config=None):
+    def __init__(self, name, root_pat_dir=None, atlas=None, DEBUG=True, preload=True, config=None):
         super(Subject, self).__init__(config=config)
         self.name = name
 

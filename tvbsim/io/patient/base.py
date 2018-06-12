@@ -8,6 +8,7 @@ from tvbsim.base.constants.config import Config
 from tvbsim.base.utils.log_error import initialize_logger
 from tvbsim.io.utils import utils
 from tvbsim.io.readers.read_surf import LoadSurface 
+from tvbsim.io.readers.read_connectivity import LoadConn
 from .contacts import Contacts
 
 # to allow compatability between python2/3
@@ -79,9 +80,9 @@ class BaseSubjectLoader(object):
         '''
         Initialization function to be called
         '''
-        self.tvbdir = os.path.join(self.resultsdir, "tvb")
-        self.dwidir = os.path.join(self.resultsdir, "dwi")
-        self.elecdir = os.path.join(self.resultsdir, "elec")
+        self.tvbdir = os.path.join(self.root_pat_dir, "tvb")
+        self.dwidir = os.path.join(self.root_pat_dir, "dwi")
+        self.elecdir = os.path.join(self.root_pat_dir, "elec")
         self.seegfile = os.path.join(self.elecdir , 'seeg.txt')
         if not self._exists(self.seegfile):
             self.seegfile = os.path.join(self.elecdir , 'seeg.xyz')
@@ -142,7 +143,7 @@ class BaseSubjectLoader(object):
         if not self._exists(self.connfile):
             return
 
-        self.conn = LoadConn().read_connectivity(self.connfile)
+        self.conn = LoadConn().readconnectivity(self.connfile)
 
     def _loadsurface(self):
         self.surfacefile = os.path.join(self.tvbdir, "surface_cort.%s.zip" % self.atlas)

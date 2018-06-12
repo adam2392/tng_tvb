@@ -81,7 +81,7 @@ def process_weights(conn, shuffle=False, patient=None, other_pats=[]):
             conn.weights = randweights
     return conn
 
-def initialize_tvb_model(loader, ezregions, pzregions):
+def initialize_tvb_model(loader, ezregions, pzregions, period):
     ###################### INITIALIZE TVB SIMULATOR ##################
     maintvbexp = MainTVBSim(loader.conn, condspeed=np.inf)
     # load the necessary data files to run simulation
@@ -188,15 +188,18 @@ if __name__ == '__main__':
     # get the ez/pz indices we want to use
     clinezinds = loader.ezinds
     clinpzinds = []
-    clinezregions = list(loader.conn.region_labels[clinezinds])
+    clinezregions = list(loader.conn['region_labels'][clinezinds])
     clinpzregions = []
 
     modelezinds = clinezinds
     modelpzinds = clinpzinds
+    modelezregions = clinezregions
+    modelpzregions = clinpzregions
     # allclinregions = clinezregions + clinpzregions
     # sys.stdout.write("All clinical regions are: {}".format(allclinregions))
     
-    maintvbexp = initialize_tvb_model(loader, ezinds=modelezinds, pzinds=modelpzinds)
+    maintvbexp = initialize_tvb_model(loader, ezregions=modelezregions, 
+                    pzregions=modelpzregions, period=period)
     # move contacts if we wnat to
     for ind in maintvbexp.ezind:
         new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)

@@ -5,7 +5,7 @@ import re
 import numpy as np
 
 
-class NamedPoints():
+class NamedPoints(object):
     def __init__(self, fl):
         data = np.genfromtxt(fl, dtype=None)
         self.xyz = np.array([[l[1], l[2], l[3]] for l in data])
@@ -18,7 +18,7 @@ class Contacts(NamedPoints):
     contact_pair_regex_2 = re.compile("^([A-Za-z]+[']?)([0-9]+)-([A-Za-z]+[']?)([0-9]+)$")
 
     def __init__(self, filename):
-        super().__init__(filename)
+        super(Contacts, self).__init__(filename)
         self.electrodes = {}
         for i, name in enumerate(self.names):
             match = self.contact_single_regex.match(name)
