@@ -110,10 +110,10 @@ class MainTVBSim(TVBExp, MoveContactExp):
                 'x0': -2.45, # x0c value = -2.05
                 # 'Iext': iext,
             }
-            print("In {} using default parameters!".format(maintvbexp.py))
+            print("In maintvbexp.py using default parameters!")
+        
         ####################### 2. Neural Mass Model @ Nodes ##################
-        epileptors = models.Epileptor(
-            variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], **epileptor_params)
+        epileptors = models.Epileptor(variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], **epileptor_params)
 
         # this comes after setting all parameters
         epileptors.x0 = x0norm * np.ones(len(self.conn.region_labels))
