@@ -19,12 +19,13 @@ from tvbsim.postprocess.postprocess import PostProcessor
 from tvbsim.postprocess.detectonsetoffset import DetectShift
 from tvbsim.maintvbexp import MainTVBSim
 from tvbsim.io.patient.subject import Subject
+from tvbsim.base.constants.config import Config
 
 # to run plotting at the end
 from tvbsim.visualize.plotter_sim import PlotterSim
 from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
 from collections import OrderedDict
-from tvbsim.base.constants.config import Config
+
 
 
 parser = argparse.ArgumentParser()
