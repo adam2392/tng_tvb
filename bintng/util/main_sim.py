@@ -11,14 +11,16 @@ import pandas as pd
 import argparse
 import itertools
 
+# wrapper for frequency analysis
 import main_freq
 
-import tvbsim
-from tvbsim.postprocess import PostProcessor
+# to run simulation and post processing and data loading
+from tvbsim.postprocess.postprocess import PostProcessor
 from tvbsim.postprocess.detectonsetoffset import DetectShift
 from tvbsim.maintvbexp import MainTVBSim
 from tvbsim.io.patient.subject import Subject
 
+# to run plotting at the end
 from tvbsim.visualize.plotter_sim import PlotterSim
 from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
 from collections import OrderedDict
