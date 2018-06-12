@@ -1,4 +1,3 @@
-
 import json
 import os
 import re
@@ -7,6 +6,7 @@ import mne
 import numpy as np
 from .base import BaseSubjectLoader
 
+import sys
 import warnings
 if not sys.warnoptions:
     warnings.simplefilter("ignore")
