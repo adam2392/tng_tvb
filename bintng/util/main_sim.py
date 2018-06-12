@@ -194,7 +194,7 @@ if __name__ == '__main__':
     maintvbexp = initialize_tvb_model(loader, ezinds=clinezinds, pzinds=clinpzinds)
     # move contacts if we wnat to
     for ind in maintvbexp.ezind:
-            new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
+        new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
         print(elecindicesmoved)
         print(maintvbexp.seeg_labels[elecindicesmoved])
 
