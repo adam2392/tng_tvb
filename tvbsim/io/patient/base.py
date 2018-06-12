@@ -185,7 +185,7 @@ class BaseSubjectLoader(object):
         print("Checking ez hypothesis file: ", self._exists(self.ez_hyp_file))
         # print("Checking surface file: ", self._exists(self.surfacefile))
 
-        def clipseizure(self, buffer_sec=60):
+    def clipseizure(self, buffer_sec=60):
         onsetind = self.onset_ind
         offsetind = self.offset_ind 
 
