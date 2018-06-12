@@ -100,9 +100,9 @@ def initialize_tvb_model(loader, ezregions, pzregions, period):
     }
     x0ez=-1.65
     x0pz=-2.0 # x0pz = None
-    if maintvbexp.ezregion is None:
+    if ezregions is None:
         x0ez = None
-    if maintvbexp.pzregion is None:
+    if pzregions is None:
         x0pz = None
     maintvbexp.loadepileptor(ezregions=ezregions, pzregions=pzregions,
                             x0ez=x0ez, x0pz=x0pz,
@@ -111,7 +111,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period):
     show_debug(maintvbexp)
     maintvbexp.ezindices = allindices
     ######### Integrator Parameters ##########
-    n_tau = 0
+    ntau = 0
     noise_cov = np.array([0.001, 0.001, 0.,\
                               0.0001, 0.0001, 0.])
     # define cov noise for the stochastic heun integrator
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     # get the ez/pz indices we want to use
     clinezinds = loader.ezinds
     clinpzinds = []
-    clinezregions = list(loader.conn['region_labels'][clinezinds])
+    clinezregions = list(loader.conn.region_labels[clinezinds])
     clinpzregions = []
 
     modelezinds = clinezinds

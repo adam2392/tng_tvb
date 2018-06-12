@@ -127,23 +127,11 @@ class BaseSubjectLoader(object):
         if not self._exists(self.connfile):
             return
 
-        with zipfile.ZipFile(self.connfile) as zf:
-            with zf.open("weights.txt") as fl:
-                self.weights = np.genfromtxt(fl, dtype=float)
-            with zf.open("tract_lengths.txt") as fl:
-                self.tract_lengths = np.genfromtxt(fl, dtype=float)
-            with zf.open("centres.txt") as fl:
-                self.region_centres = np.genfromtxt(fl, usecols=(1, 2, 3), dtype=float)
-            with zf.open("centres.txt") as fl:
-                self.region_labels = np.genfromtxt(fl, usecols=(0,), dtype=str)
-    def _loadconnectivity(self):
-        self.connfile = os.path.join(self.tvbdir, "connectivity.%s.zip" % self.atlas)
-        if not self._exists(self.connfile):
-            self.connfile = os.path.join(self.tvbdir, "connectivity.zip")
-        if not self._exists(self.connfile):
-            return
-
         self.conn = LoadConn().readconnectivity(self.connfile)
+        self.weights = self.conn.weights
+        self.region_labels = self.conn.region_labels
+        self.region_centres = self.conn.centres
+        self.tract_lengths = self.conn.tract_lengths
 
     def _loadsurface(self):
         self.surfacefile = os.path.join(self.tvbdir, "surface_cort.%s.zip" % self.atlas)

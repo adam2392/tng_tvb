@@ -69,9 +69,9 @@ class LoadConn(object):
         self.logger.info(
             "Successfully read connectvity from: %s" %
             source_file)
-        return result
-        # conn = self.convert_to_obj(source_file, result)
-        # return conn
+        # return result
+        conn = self.convert_to_obj(source_file, result)
+        return conn
 
     def convert_to_obj(self, path, result):
         weights = result['weights']

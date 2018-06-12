@@ -85,7 +85,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         if rand == True:
             self.pzind, self.pzregion = self.sample_randregions(1)
 
-    def load_integrator(self, integrator_params):
+    def loadintegrator(self, integrator_params):
         heunint = integrators.HeunStochastic(**integrator_params)
         # heunint = integrators.HeunDeterministic(dt=ts)
         self.integrator = heunint
@@ -133,6 +133,9 @@ class MainTVBSim(TVBExp, MoveContactExp):
                     "PZ index not set yet! Do you want to proceed with simulation?")
                 warnings.warn(
                     "pz index not set yet! Do you want to proceed with simulation?")
+
+        self.setezregion(ezregions)
+        self.setpzregion(pzregions)
         self.epileptors = epileptors
 
     def loadcoupling(self, a=1.):
