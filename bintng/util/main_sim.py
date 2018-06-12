@@ -103,7 +103,7 @@ def initialize_tvb_model(loader, ezregions, pzregions):
         x0pz = None
     maintvbexp.loadepileptor(ezregions=ezregions, pzregions=pzregions,
                             x0ez=x0ez, x0pz=x0pz,
-                            epileptor_params)
+                            epileptor_params=epileptor_params)
     allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
     show_debug(maintvbexp)
     maintvbexp.ezindices = allindices

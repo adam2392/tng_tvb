@@ -8,9 +8,6 @@ import warnings
 
 
 class MoveContactExp(object):
-    def __init__(self):
-        pass
-
     def simplest_gain_matrix(self):
         '''
         This is a function to recompute a new gain matrix based on xyz that moved

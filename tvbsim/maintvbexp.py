@@ -91,7 +91,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
         self.integrator = heunint
 
     def loadepileptor(self, ezregions, pzregions,
-                        x0ez=-2.3, x0pz=-2.05, x0norm=-1.6, epileptor_params):
+                        x0ez=-2.3, x0pz=-2.05, x0norm=-1.6, epileptor_params=None):
         '''
         State variables for the Epileptor model:
         Repeated here for redundancy:
@@ -101,6 +101,16 @@ class MainTVBSim(TVBExp, MoveContactExp):
         x2 = fourth
         y2 = fifth
         '''
+        if epileptor_params is None:
+                epileptor_params = {
+                'r': 0.00037,#/1.5   # Temporal scaling in the third state variable
+                'Ks': -10,                 # Permittivity coupling, fast to slow time scale
+                'tt': 0.07,                   # time scale of simulation
+                'tau': 10,                   # Temporal scaling coefficient in fifth st var
+                'x0': -2.45, # x0c value = -2.05
+                # 'Iext': iext,
+            }
+            print("In {} using default parameters!".format(maintvbexp.py))
         ####################### 2. Neural Mass Model @ Nodes ##################
         epileptors = models.Epileptor(
             variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], **epileptor_params)
