@@ -189,11 +189,13 @@ if __name__ == '__main__':
     clinpzinds = []
     clinezregions = list(loader.conn.region_labels[clinezinds])
     clinpzregions = []
-    allclinregions = clinezregions + clinpzregions
 
-    sys.stdout.write("All clinical regions are: {}".format(allclinregions))
+    modelezinds = clinezinds
+    modelpzinds = clinpzinds
+    # allclinregions = clinezregions + clinpzregions
+    # sys.stdout.write("All clinical regions are: {}".format(allclinregions))
     
-    maintvbexp = initialize_tvb_model(loader, ezinds=clinezinds, pzinds=clinpzinds)
+    maintvbexp = initialize_tvb_model(loader, ezinds=modelezinds, pzinds=modelpzinds)
     # move contacts if we wnat to
     for ind in maintvbexp.ezind:
         new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
@@ -209,8 +211,8 @@ if __name__ == '__main__':
         metadata['patient'] = patient
         metadata['samplerate'] = _samplerate
         metadata['simfilename'] = simfilename
-        metadata['clinez'] =clinezregions
-        metadata['clinpz'] =clinpzregions
+        metadata['clinez'] = clinezregions
+        metadata['clinpz'] = clinpzregions
 
         ######################## run simulation ########################
         configs = maintvbexp.setupsim()

@@ -102,14 +102,14 @@ class MainTVBSim(TVBExp, MoveContactExp):
         y2 = fifth
         '''
         if epileptor_params is None:
-                epileptor_params = {
-                'r': 0.00037,#/1.5   # Temporal scaling in the third state variable
-                'Ks': -10,                 # Permittivity coupling, fast to slow time scale
-                'tt': 0.07,                   # time scale of simulation
-                'tau': 10,                   # Temporal scaling coefficient in fifth st var
-                'x0': -2.45, # x0c value = -2.05
-                # 'Iext': iext,
-            }
+            epileptor_params = {
+                    'r': 0.00037,#/1.5   # Temporal scaling in the third state variable
+                    'Ks': -10,                 # Permittivity coupling, fast to slow time scale
+                    'tt': 0.07,                   # time scale of simulation
+                    'tau': 10,                   # Temporal scaling coefficient in fifth st var
+                    'x0': -2.45, # x0c value = -2.05
+                    # 'Iext': iext,
+                }
             print("In maintvbexp.py using default parameters!")
         
         ####################### 2. Neural Mass Model @ Nodes ##################
