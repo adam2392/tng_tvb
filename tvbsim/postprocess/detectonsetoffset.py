@@ -63,6 +63,11 @@ class DetectShift(object):
             seiz_epi[ireg, :] = butter_lowpass_filter(
                 np.ravel(seiz_epi[ireg, :]), highcut, fs, order=5)
 
+        # import matplotlib
+        # import matplotlib.pyplot as plt 
+        # plt.plot(seiz_epi, 'k*')
+        # plt.show()
+
         seizonsets = []
         seizoffsets = []
         for ind in range(len(allinds)):

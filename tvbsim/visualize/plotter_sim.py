@@ -169,8 +169,8 @@ class PlotterSim(BasePlotter):
         # get the number of variables to plot
         n_vars = len(data_dict)
         # get the variable keys and their values
-        var_keys = list(data_dict.keys())
-        data = list(data_dict.values())
+        var_keys = list(reversed(data_dict.keys()))
+        data = list(reversed(data_dict.values()))
 
         # loop through data and preprocess to get the plotting limits
         data_lims = []
@@ -277,6 +277,7 @@ class PlotterSim(BasePlotter):
                                             arrowprops=dict(arrowstyle='simple', fc='white', alpha=0.5))
 
         # run saving of the figure
+        pyplot.gca().invert_yaxis()
         self._save_figure(pyplot.gcf(), figure_name)
         self._check_show()
         return pyplot.gcf(), axes, lines
