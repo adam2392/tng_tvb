@@ -135,7 +135,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
                     "pz index not set yet! Do you want to proceed with simulation?")
         self.epileptors = epileptors
 
-    def loadcoupling(self, a=1.)
+    def loadcoupling(self, a=1.):
         ################## 4. Difference Coupling Between Nodes ###############
         coupl = coupling.Difference(a=a)
         self.coupl = coupl
