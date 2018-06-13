@@ -109,7 +109,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period):
                             x0ez=x0ez, x0pz=x0pz,
                             epileptor_params=epileptor_params)
     allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
-    show_debug(maintvbexp)
+    showdebug(maintvbexp)
     maintvbexp.ezindices = allindices
     ######### Integrator Parameters ##########
     ntau = 0
