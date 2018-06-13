@@ -26,8 +26,6 @@ from tvbsim.visualize.plotter_sim import PlotterSim
 from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
 from collections import OrderedDict
 
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('patient', 
                     help="Patient to analyze")
@@ -144,6 +142,19 @@ def showdebug(maintvbexp):
     sys.stdout.write("The tvbexp ez indices is: %s" % maintvbexp.ezind)
     sys.stdout.write("The tvbexp pz indices is: %s " % maintvbexp.pzind)
 
+def select_ez_outside(conn, numsamps):
+    # region selector for out of clinical EZ simulations
+    numsamps = 5 * len(ezregions)
+    epsilon = 60 # the mm radius for each region to exclude other regions
+    regionselector = tvbsim.exp.selectregion.Regions(conn.region_labels, conn.centres, epsilon)
+    # the set of regions that are outside what clinicians labeled EZ
+    outside_set = regionselector.generate_outsideset(ezregions)
+    # sample it for a list of EZ regions
+    osr_list = regionselector.sample_outsideset(outside_set, numsamps)
+
+    osr_inds = [ind for ind, reg in conn.region_labels if reg in osr_list]
+    return osr_list, osr_inds
+
 def run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename):
     ''' RUN FREQ DECOMPOSITION '''
     winsize = 5000
@@ -202,6 +213,10 @@ if __name__ == '__main__':
     clinpzinds = []
     clinezregions = list(loader.conn.region_labels[clinezinds])
     clinpzregions = []
+
+    # if we are sampling regions outside our EZ
+    # numsamps = 2 # should be around 1-3?
+    # osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
 
     modelezinds = clinezinds
     modelpzinds = clinpzinds
