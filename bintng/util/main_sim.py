@@ -108,9 +108,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period):
     maintvbexp.loadepileptor(ezregions=ezregions, pzregions=pzregions,
                             x0ez=x0ez, x0pz=x0pz,
                             epileptor_params=epileptor_params)
-    allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
     showdebug(maintvbexp)
-    maintvbexp.ezindices = allindices
     ######### Integrator Parameters ##########
     ntau = 0
     noise_cov = np.array([0.001, 0.001, 0.,\
@@ -211,14 +209,6 @@ if __name__ == '__main__':
     modelpzregions = clinpzregions
     # allclinregions = clinezregions + clinpzregions
     # sys.stdout.write("All clinical regions are: {}".format(allclinregions))
-    
-    maintvbexp = initialize_tvb_model(loader, ezregions=modelezregions, 
-                    pzregions=modelpzregions, period=period)
-    # move contacts if we wnat to
-    for ind in maintvbexp.ezind:
-        new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
-        print(elecindicesmoved)
-        print(maintvbexp.seeg_labels[elecindicesmoved])
 
     # perform some kind of parameter sweep
     for i, iext in enumerate(iext_param_sweep):
@@ -231,6 +221,15 @@ if __name__ == '__main__':
 
         print("Using iext1 value of {}".format(iext))
         
+        maintvbexp = initialize_tvb_model(loader, ezregions=modelezregions, 
+                    pzregions=modelpzregions, period=period)
+        allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
+        # move contacts if we wnat to
+        for ind in maintvbexp.ezind:
+            new_seeg_xyz, elecindicesmoved = maintvbexp.move_electrodetoreg(ind, movedist)
+            print(elecindicesmoved)
+            print(maintvbexp.seeg_labels[elecindicesmoved])
+
         # save metadata from the exp object and from here
         metadata = maintvbexp.get_metadata()
         metadata['patient'] = patient
