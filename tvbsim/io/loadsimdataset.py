@@ -185,11 +185,12 @@ class LoadSimDataset(BaseLoader):
             self.rawdata = self.rawdata[graychans_inds, :]
             self.chanxyz = self.chanxyz[graychans_inds, :]
             self.chanlabels = self.chanlabels[graychans_inds]
+            assert self.contact_regs.shape[0] == self.chanlabels.shape[0]
 
         # print(self.contact_regs.shape)
         # print(self.rawdata.shape)
         # print(self.chanxyz.shape)
-        assert self.contact_regs.shape[0] == self.chanlabels.shape[0]
+
         assert self.chanlabels.shape[0] == self.rawdata.shape[0]
         assert self.rawdata.shape[0] == self.chanxyz.shape[0]
 
