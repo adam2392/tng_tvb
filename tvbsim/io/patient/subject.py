@@ -27,6 +27,7 @@ class Subject(BaseSubjectLoader):
             self.atlas = atlas
 
         # initializations - to find files
+        self._renamefiles()
         self._init_files()
         # load in connectivity
         self._loadconnectivity()

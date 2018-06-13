@@ -39,9 +39,9 @@ class BaseLoader(object):
             self.logger.debug("\nAlready renamed seeg.xyz possibly!\n")
 
         self.sensorsfile = newsensorsfile
-        self.gainfile = os.path.join(self.elecdir, 'gain-in-square.txt')
-        if not os.path.exists(self.sensorsfile):
-            self.gainfile = os.path.join(self.elecdir, 'gain-in-square.dk.txt')
+        self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
+        if not os.path.exists(self.gainfile):
+            self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.dk.txt')
 
     def _loadseegxyz(self):
         seegfile = os.path.join(self.elecdir, 'seeg.txt')

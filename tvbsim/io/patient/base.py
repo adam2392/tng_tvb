@@ -56,6 +56,7 @@ class BaseSubjectLoader(object):
         for _mask in masks:
             mask *= ~ _mask
         return mask
+
     def sync_gray_chans(self):
         # reject white matter contacts
         _gray_channels_mask = np.array([ch != -1 for ch in self.contact_regs], dtype=bool)
@@ -75,6 +76,22 @@ class BaseSubjectLoader(object):
         rawdata_mask *= ~ _non_xyz_mask
         xyzdata_mask *= ~ _non_data_mask
         return rawdata_mask, xyzdata_mask
+
+    def _renamefiles(self):
+        sensorsfile = os.path.join(self.elecdir, 'seeg.xyz')
+        newsensorsfile = os.path.join(self.elecdir, 'seeg.txt')
+        try:
+            # copyfile(sensorsfile, newsensorsfile)
+            os.rename(sensorsfile, newsensorsfile)
+        except BaseException:
+            self.logger.debug("\nAlready renamed seeg.xyz possibly!\n")
+
+        gainfile = os.path.join(self.elecdir, 'gain_inv-square.mat')
+        newgainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
+        try:
+            os.rename(gainfile, newgainfile)
+        except BaseException:
+            self.logger.debug("\nAlready renamed gaininv.mat possibly!\n")
 
     def _init_files(self):
         '''
