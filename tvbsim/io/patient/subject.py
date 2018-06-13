@@ -39,7 +39,8 @@ class Subject(BaseSubjectLoader):
             self._loadcontacts()
             self._loadseegxyz()
         # map contacts to regions using DWI and T1 Parcellation
-        self._mapcontacts_toregs()
+        if self._exists(self.label_volume_file):
+            self._mapcontacts_toregs()
 
         if DEBUG:
             self._check_all_files()

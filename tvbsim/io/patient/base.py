@@ -104,7 +104,9 @@ class BaseSubjectLoader(object):
         self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.{}.txt'.format(self.atlas))
         if not self._exists(self.gainfile):
             self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
-            
+        self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.%s.nii.gz" % self.atlas)
+        if not self._exists(self.label_volume_file):
+            self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.nii.gz")
     def _mapcontacts_toregs(self):
         self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.%s.nii.gz" % self.atlas)
         if not self._exists(self.label_volume_file):
