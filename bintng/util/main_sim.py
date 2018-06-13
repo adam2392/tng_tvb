@@ -198,13 +198,6 @@ if __name__ == '__main__':
     # perhaps shuffle connectivity?
     # conn = process_weights(conn, shuffle=False, patient=None, other_pats=[])
 
-    ## OUTPUTFILE NAME ##
-    filename = os.path.join(outputdatadir,
-                '{0}_dist{1}_{2}.npz'.format(patient, movedist, i))
-    metafilename = os.path.join(outputdatadir,
-                '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
-    direc, simfilename = os.path.split(filename)
-
     # get the ez/pz indices we want to use
     clinezinds = loader.ezinds
     clinpzinds = []
@@ -228,6 +221,13 @@ if __name__ == '__main__':
 
     # perform some kind of parameter sweep
     for i, iext in enumerate(iext_param_sweep):
+        ## OUTPUTFILE NAME ##
+        filename = os.path.join(outputdatadir,
+                    '{0}_dist{1}_{2}.npz'.format(patient, movedist, i))
+        metafilename = os.path.join(outputdatadir,
+                    '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
+        direc, simfilename = os.path.split(filename)
+        
         print("Using iext1 value of {}".format(iext))
         
         # save metadata from the exp object and from here
