@@ -6,16 +6,13 @@ import numpy as np
 
 from tvbsim.base.constants.config import Config
 from tvbsim.base.utils.log_error import initialize_logger
+from tvbsim.base.utils.data_structures_utils import NumpyEncoder
 from tvbsim.io.utils import utils
 from tvbsim.io.readers.read_surf import LoadSurface 
 from tvbsim.io.readers.read_connectivity import LoadConn
 from .contacts import Contacts
 
 # to allow compatability between python2/3
-# try:
-#     str = unicode(str, errors='replace')
-# except:
-#     _ = 1
 try:
     to_unicode = unicode
 except NameError:
