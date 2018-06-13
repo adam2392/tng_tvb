@@ -43,6 +43,13 @@ class BaseLoader(object):
         if not os.path.exists(self.gainfile):
             self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.dk.txt')
 
+        self.label_volume_file = os.path.join(
+            self.dwidir, 'label_in_T1.nii.gz')
+        if not os.path.exists(self.label_volume_file):
+            self.label_volume_file = os.path.join(
+                self.dwidir, 'label_in_T1.dk.nii.gz')
+        if not os.path.exists(self.label_volume_file):
+            self.label_volume_file = None
     def _loadseegxyz(self):
         seegfile = os.path.join(self.elecdir, 'seeg.txt')
         seeg_pd = utils.loadseegxyz(seegfile)
@@ -51,15 +58,9 @@ class BaseLoader(object):
         self.logger.debug("\nLoaded in seeg xyz coords!\n")
 
     def _mapcontacts_toregs(self):
-        contacts_file = os.path.join(self.elecdir, 'seeg.txt')
-        self.label_volume_file = os.path.join(
-            self.dwidir, 'label_in_T1.nii.gz')
-        if not os.path.exists(self.label_volume_file):
-            self.label_volume_file = os.path.join(
-                self.dwidir, 'label_in_T1.dk.nii.gz')
         self.contact_regs = np.array(
             utils.mapcontacts_toregs(
-                contacts_file,
+                self.sensorsfile,
                 self.label_volume_file))
         self.logger.debug("\nMapped contacts to regions!\n")
 
