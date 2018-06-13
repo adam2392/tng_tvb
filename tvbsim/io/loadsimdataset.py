@@ -179,11 +179,12 @@ class LoadSimDataset(BaseLoader):
         self.chanlabels = np.array([lab.lower() for lab in self.chanlabels])
 
         # reject white matter contacts
-        graychans_inds = np.where(self.contact_regs != -1)[0]
-        self.contact_regs = self.contact_regs[graychans_inds]
-        self.rawdata = self.rawdata[graychans_inds, :]
-        self.chanxyz = self.chanxyz[graychans_inds, :]
-        self.chanlabels = self.chanlabels[graychans_inds]
+        if self.contact_regs:
+            graychans_inds = np.where(self.contact_regs != -1)[0]
+            self.contact_regs = self.contact_regs[graychans_inds]
+            self.rawdata = self.rawdata[graychans_inds, :]
+            self.chanxyz = self.chanxyz[graychans_inds, :]
+            self.chanlabels = self.chanlabels[graychans_inds]
 
         # print(self.contact_regs.shape)
         # print(self.rawdata.shape)

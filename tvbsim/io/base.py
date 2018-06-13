@@ -13,6 +13,9 @@ except NameError:
     to_unicode = str
 
 class BaseLoader(object):
+    chanxyzlabels = []
+    chanxyz = []
+    contact_regs = []
     # gainfile = None
     # sensorsfile = None
     # connfile = None
