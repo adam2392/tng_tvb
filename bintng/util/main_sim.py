@@ -145,6 +145,26 @@ def showdebug(maintvbexp):
     sys.stdout.write("The tvbexp ez indices is: %s" % maintvbexp.ezind)
     sys.stdout.write("The tvbexp pz indices is: %s " % maintvbexp.pzind)
 
+def run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename):
+    ''' RUN FREQ DECOMPOSITION '''
+    winsize = 5000
+    stepsize = 2500
+
+    if mode == 'fft':
+        metadata['winsize'] = winsize
+        metadata['stepsize'] = stepsize
+        metadata['fftfilename'] = outputfilename
+        print(metadata.keys())
+        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
+
+    if mode=='morlet':    
+        metadata['winsize'] = winsize
+        metadata['stepsize'] = stepsize
+        metadata['morletfilename'] = outputfilename
+        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
+
+    
+
 if __name__ == '__main__':
     args = parser.parse_args()
 
@@ -241,12 +261,13 @@ if __name__ == '__main__':
         # save metadata
         loader._writejsonfile(metadata, metafilename)
 
-        ''' RUN FREQ DECOMPOSITION '''
+        # load in the data to run frequency analysis
         reference = 'monopolar'
         patdatadir = outputdatadir
         datafile = filename
+        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+
         idx = 0
-        
         mode = 'fft'
         # create checker for num wins
         freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
@@ -257,14 +278,7 @@ if __name__ == '__main__':
                 '{}_{}_{}model.npz'.format(patient, mode, idx))
         outputmetafilename = os.path.join(freqoutputdir,
             '{}_{}_{}meta.json'.format(patient, mode, idx))
-        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
-        winsize = 5000
-        stepsize = 2500
-        metadata['winsize'] = winsize
-        metadata['stepsize'] = stepsize
-        metadata['fftfilename'] = outputfilename
-        print(metadata.keys())
-        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
+        run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
         mode = 'morlet'
         # create checker for num wins
@@ -276,16 +290,8 @@ if __name__ == '__main__':
                 '{}_{}_{}model.npz'.format(patient, mode, idx))
         outputmetafilename = os.path.join(freqoutputdir,
             '{}_{}_{}meta.json'.format(patient, mode, idx))
-        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
-        winsize = 5000
-        stepsize = 2500
-        metadata['winsize'] = winsize
-        metadata['stepsize'] = stepsize
-        metadata['morletfilename'] = outputfilename
-        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
-
+        run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
         idx += 1
-
 
         '''                 PLOTTING OF DATA                        '''
         # DEFINE FIGURE DIR FOR THIS SIM
@@ -321,12 +327,6 @@ if __name__ == '__main__':
                 keys[0]: state_vars[keys[0]],
                 keys[1]: state_vars[keys[1]]
             }
-            # data_dict = {'x1(t)': state_vars['x1'], 
-            #         'x2(t)': state_vars['x2'],
-            #         'y1(t)': state_vars['y1'],
-            #         'y2(t)': state_vars['y2'],
-            #         'g(t)': state_vars['g'],
-            #         'z(t)': zts}
             # PLOT THE PHASE PLOTS
             special_idx = None
 
