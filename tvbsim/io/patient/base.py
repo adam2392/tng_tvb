@@ -105,7 +105,7 @@ class BaseSubjectLoader(object):
         if not self._exists(self.seegfile):
             self.seegfile = os.path.join(self.elecdir , 'seeg.xyz')
         self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.{}.txt'.format(self.atlas))
-        if not self._exists(self.seegfile):
+        if not self._exists(self.gainfile):
             self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
             
     def _mapcontacts_toregs(self):
