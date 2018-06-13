@@ -83,7 +83,8 @@ def process_weights(conn, shuffle=False, patient=None, other_pats=[]):
 
 def initialize_tvb_model(loader, ezregions, pzregions, period):
     ###################### INITIALIZE TVB SIMULATOR ##################
-    maintvbexp = MainTVBSim(loader.conn, condspeed=np.inf)
+    conn = connectivity.Connectivity.from_file(loader.connfile)
+    maintvbexp = MainTVBSim(conn, condspeed=np.inf)
     # load the necessary data files to run simulation
     maintvbexp.loadseegxyz(seegfile=loader.seegfile)
     maintvbexp.loadgainmat(gainfile=loader.gainfile)
@@ -227,7 +228,7 @@ if __name__ == '__main__':
         metafilename = os.path.join(outputdatadir,
                     '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
         direc, simfilename = os.path.split(filename)
-        
+
         print("Using iext1 value of {}".format(iext))
         
         # save metadata from the exp object and from here
