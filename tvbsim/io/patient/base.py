@@ -101,6 +101,7 @@ class BaseSubjectLoader(object):
         self.dwidir = os.path.join(self.root_pat_dir, "dwi")
         self.elecdir = os.path.join(self.root_pat_dir, "elec")
         self.seegfile = os.path.join(self.elecdir , 'seeg.txt')
+        self._renamefiles()
         if not self._exists(self.seegfile):
             self.seegfile = os.path.join(self.elecdir , 'seeg.xyz')
         self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.{}.txt'.format(self.atlas))
