@@ -107,6 +107,7 @@ class BaseSubjectLoader(object):
         self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.%s.nii.gz" % self.atlas)
         if not self._exists(self.label_volume_file):
             self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.nii.gz")
+    
     def _mapcontacts_toregs(self):
         self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.%s.nii.gz" % self.atlas)
         if not self._exists(self.label_volume_file):

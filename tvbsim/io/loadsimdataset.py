@@ -74,7 +74,8 @@ class LoadSimDataset(BaseLoader):
         # rename files from .xyz -> .txt
         self._renamefiles()
         self._loadseegxyz()
-        self._mapcontacts_toregs()
+        if os.path.exists(self.label_volume_file):
+            self._mapcontacts_toregs()
 
         # load in ez hypothesis and connectivity from TVB pipeline
         self._loadezhypothesis()
