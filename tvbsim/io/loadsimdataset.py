@@ -48,15 +48,6 @@ class LoadSimDataset(BaseLoader):
         if preload:
             self.load_data()
 
-    def _loadjsonfile(self, metafile):
-        if not metafile.endswith('.json'):
-            metafile += '.json'
-
-        with io.open(metafile, encoding='utf-8', mode='r') as fp:
-            json_str = json.loads(fp.read())
-        metadata = json.loads(json_str)
-        self.metadata = metadata
-
     def _loadmetadata(self):
         # set line frequency and add to it
         self.samplerate = self.metadata['samplerate']
