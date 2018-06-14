@@ -82,7 +82,7 @@ shuffleweights=${shuffleweights} "
 	echo $sbatchcomm $exvars runtvbjob.sbatch 
 	echo "Sbatch should run now"
 	
-	${sbatchcomm} $exvars ./exp020/runtvbsim_exp020.sbatch
+	${sbatchcomm} $exvars ./runtvbsim_exp.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."

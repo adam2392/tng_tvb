@@ -246,15 +246,15 @@ if __name__ == '__main__':
         ######## SELECT EZ REGIONS OUTSIDE THE CLIN DEFINITIONS
         # if we are sampling regions outside our EZ
         numsamps = 2 # should be around 1-3?
-        osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, clinezregions, numsamps)
+        # osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, clinezregions, numsamps)
 
         ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
-        ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
+        ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps)
 
         ######## SET THE MODEL'S EZ AND PZ REGIONS ########
-        modelezinds = osr_ezinds
+        modelezinds = ezinds
         modelpzinds = []
-        modelezregions = osr_ezregs
+        modelezregions = ezregs
         modelpzregions = []
 
         print("Model ez: ", modelezregions, modelezinds)
@@ -323,7 +323,7 @@ if __name__ == '__main__':
         outputfilename = os.path.join(freqoutputdir, 
                 '{}_{}_{}model.npz'.format(patient, mode, (2*i)))
         outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, idx))
+            '{}_{}_{}meta.json'.format(patient, mode, (2*i)))
         run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
         mode = 'morlet'
@@ -335,7 +335,7 @@ if __name__ == '__main__':
         outputfilename = os.path.join(freqoutputdir, 
                 '{}_{}_{}model.npz'.format(patient, mode, (2*i)+1))
         outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, idx))
+            '{}_{}_{}meta.json'.format(patient, mode, (2*i)+1))
         run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
         '''                 PLOTTING OF DATA                        '''
