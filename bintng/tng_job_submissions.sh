@@ -30,7 +30,7 @@ read -p "Enter expname: " expname
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp020}
+expname=${expname:-exp019}
 shuffleweights=${shuffleweights:-1}
 echo ${dist}
 echo ${expname}

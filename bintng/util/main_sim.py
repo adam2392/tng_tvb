@@ -160,7 +160,7 @@ def select_ez_outside(conn, numsamps):
     return osr_list, osr_inds
 
 def select_ez_inside(conn, clinezregs, numsamps):
-    inside_list = np.random.choice(clinezregs, size=numsamps, replace=False)
+    inside_list = np.random.choice(clinezregs, size=min(len(clinezregs), numsamps), replace=False)
     inside_inds = [ind for ind, reg in enumerate(conn.region_labels) if reg in inside_list]
     return inside_list, inside_inds
 
@@ -221,33 +221,24 @@ if __name__ == '__main__':
     #     print("shuffling weights!")
     #     conn = process_weights(conn, shuffle=False, patient=None, other_pats=[])
 
+    ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
+    ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
+    modelezinds = ezinds
+    modelpzinds = []
+    modelezregions = ezregs
+    modelpzregions = []
+
     # perform some kind of parameter sweep
     # define the parameter sweeping by changing iext
-    # iext_param_sweep = np.arange(2.0,4.0,0.1)
-    # iext_param_sweep = [3.0]
-    # for i, iext in enumerate(iext_param_sweep):
-    # print("Using iext1 value of {}".format(iext))
-    i = 0
-    for i in range(5):
+    iext_param_sweep = np.arange(2.0,4.0,0.1)
+    iext_param_sweep = [3.0]
+    for i, iext in enumerate(iext_param_sweep):
+    print("Using iext1 value of {}".format(iext))
         # get the ez/pz indices we want to use
         clinezinds = loader.ezinds
         clinpzinds = []
         clinezregions = list(loader.conn.region_labels[clinezinds])
         clinpzregions = []
-        # modelezinds = clinezinds
-        # modelpzinds = clinpzinds
-        # modelezregions = clinezregions
-        # modelpzregions = clinpzregions
-        # if we are sampling regions outside our EZ
-        # numsamps = 2 # should be around 1-3?
-        # osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
-
-        ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
-        ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
-        modelezinds = ezinds
-        modelpzinds = []
-        modelezregions = ezregs
-        modelpzregions = []
 
         print("Model ez: ", modelezregions, modelezinds)
         print("Model pz: ", modelpzregions, modelpzinds)
@@ -260,7 +251,7 @@ if __name__ == '__main__':
         direc, simfilename = os.path.split(filename)
         
         maintvbexp = initialize_tvb_model(loader, ezregions=modelezregions, 
-                    pzregions=modelpzregions, period=period) #, Iext=iext)
+                    pzregions=modelpzregions, period=period, Iext=iext)
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
         # move contacts if we wnat to
         for ind in maintvbexp.ezind:
