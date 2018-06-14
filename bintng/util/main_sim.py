@@ -336,6 +336,7 @@ if __name__ == '__main__':
         for keys in phase_comb:
             print("Plotting for ", keys)
             print("ONLY PLOTTING THE EZ REGIONS PHASE SPACE")
+            print(state_vars[keys[0]][modelezinds,:].shape)
             keys = list(keys)
             data_dict = {
                 keys[0]: state_vars[keys[0]][modelezinds,:],
