@@ -95,8 +95,12 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
         'tt': 0.07,                   # time scale of simulation
         'tau': 10,                   # Temporal scaling coefficient in fifth st var
         'x0': -2.45, # x0c value = -2.05
-        **kwargs,
     }
+    for key, value in kwargs.iteritems():
+        print "%s = %s" % (key, value)
+        if key == 'Iext':
+            epileptor_params[key] = value
+
     x0ez=-1.65
     x0pz=-2.0 # x0pz = None
     if ezregions is None:
@@ -179,6 +183,14 @@ def run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilenam
         main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
 
 if __name__ == '__main__':
+    '''
+    MAIN THINGS TO CHANGE:
+    1. FOR LOOP FOR PARAMETER SWEEP / MULTIPLE SIMS
+    2. PARAMETER INPUTS TO EPILEPTOR MODEL
+        - REGIONS,
+        - parameter values
+    3. shuffling
+    '''
     args = parser.parse_args()
 
     # extract passed in variable
@@ -205,7 +217,9 @@ if __name__ == '__main__':
     # define sloader for this patient
     loader = Subject(name=patient, root_pat_dir=rawdatadir, preload=False)
     # perhaps shuffle connectivity?
-    # conn = process_weights(conn, shuffle=False, patient=None, other_pats=[])
+    # if shuffleweights:
+    #     print("shuffling weights!")
+    #     conn = process_weights(conn, shuffle=False, patient=None, other_pats=[])
 
     # perform some kind of parameter sweep
     # define the parameter sweeping by changing iext
@@ -238,7 +252,6 @@ if __name__ == '__main__':
         print("Model ez: ", modelezregions, modelezinds)
         print("Model pz: ", modelpzregions, modelpzinds)
         
-
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
                     '{0}_dist{1}_{2}.npz'.format(patient, movedist, i))
