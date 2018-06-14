@@ -225,10 +225,9 @@ if __name__ == '__main__':
     loader = Subject(name=patient, root_pat_dir=rawdatadir, preload=False)
     shuffledpat = None
     # perhaps shuffle connectivity?
-    # if shuffleweights:
-    #     print("shuffling weights!")
-    #     conn, shuffledpat = process_weights(loader.conn, metadatadir, patient=patient, allpats=all_patients)
-
+    if shuffleweights:
+        print("shuffling weights!")
+        conn, shuffledpat = process_weights(loader.conn, metadatadir, patient=patient, allpats=all_patients)
 
     # perform some kind of parameter sweep
     # define the parameter sweeping by changing iext

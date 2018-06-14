@@ -27,11 +27,12 @@ patients=(
 echo "Begin analysis." # print beginning statement
 read -p "Enter distance: " dist
 read -p "Enter expname: " expname
+read -p "Shuffle weights?: " shuffleweights
 
 # set values and their defauls
 dist=${dist:--1}
 expname=${expname:-exp020}
-shuffleweights=${shuffleweights:-1}
+shuffleweights=${shuffleweights:-0}
 echo ${dist}
 echo ${expname}
 
