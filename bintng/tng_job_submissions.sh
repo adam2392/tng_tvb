@@ -31,12 +31,12 @@ read -p "Enter expname: " expname
 # set values and their defauls
 dist=${dist:--1}
 expname=${expname:-exp020}
-shuffleweights=${shuffleweights:-1}
+shuffleweights=${shuffleweights:-0}
 echo ${dist}
 echo ${expname}
 
 # show 
-echo "Parameters read in: $dist $expname"
+echo "Parameters read in: $dist $expname $shuffleweights"
 
 # Pause before running to check
 echo "About to run on patients (press enter to continue): $patients" 

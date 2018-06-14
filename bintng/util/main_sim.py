@@ -160,7 +160,7 @@ def select_ez_outside(conn, numsamps):
     return osr_list, osr_inds
 
 def select_ez_inside(conn, clinezregs, numsamps):
-    inside_list = np.random.choice(clinezregs, size=numsamps, replace=False)
+    inside_list = np.random.choice(clinezregs, size=min(len(clinezregs,numsamps)), replace=False)
     inside_inds = [ind for ind, reg in enumerate(conn.region_labels) if reg in inside_list]
     return inside_list, inside_inds
 
@@ -227,7 +227,6 @@ if __name__ == '__main__':
     # iext_param_sweep = [3.0]
     # for i, iext in enumerate(iext_param_sweep):
     # print("Using iext1 value of {}".format(iext))
-    i = 0
     for i in range(5):
         # get the ez/pz indices we want to use
         clinezinds = loader.ezinds
