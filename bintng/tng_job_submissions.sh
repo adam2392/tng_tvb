@@ -30,7 +30,7 @@ read -p "Enter expname: " expname
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp021}
+expname=${expname:-exp020}
 shuffleweights=${shuffleweights:-1}
 echo ${dist}
 echo ${expname}
@@ -71,11 +71,12 @@ for patient in $patients; do
 metadatadir=${metadatadir},\
 outputdatadir=${outputdatadir},\
 freqoutputdatadir=${freqoutputdatadir},\
+expname=${expname},\
 dist=${dist},\
 shuffleweights=${shuffleweights} "
 
 	# build basic sbatch command with all params parametrized
-	sbatchcomm=$(cat $long_config)
+	sbatchcomm=$(cat $short_config)
 	sbatchcomm="$sbatchcomm --job-name=${jobname}"
 
 	# build a scavenger job, gpu job, or other job
