@@ -30,7 +30,7 @@ read -p "Enter expname: " expname
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp020}
+expname=${expname:-exp021}
 shuffleweights=${shuffleweights:-0}
 echo ${dist}
 echo ${expname}
@@ -75,14 +75,14 @@ dist=${dist},\
 shuffleweights=${shuffleweights} "
 
 	# build basic sbatch command with all params parametrized
-	sbatchcomm=$(cat $short_config)
+	sbatchcomm=$(cat $long_config)
 	sbatchcomm="$sbatchcomm --job-name=${jobname}"
 
 	# build a scavenger job, gpu job, or other job
 	echo $sbatchcomm $exvars runtvbjob.sbatch 
 	echo "Sbatch should run now"
 	
-	${sbatchcomm} $exvars ./${expname}/runtvbsim_${expname}.sbatch
+	${sbatchcomm} $exvars ./exp020/runtvbsim_${expname}.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."

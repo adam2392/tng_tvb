@@ -208,7 +208,7 @@ if __name__ == '__main__':
     period = 1./_factor
 
     # set all directories to output data, get meta data, get raw data
-    outputdatadir = os.path.join(outputdatadir, 'clin', patient)
+    outputdatadir = os.path.join(outputdatadir, patient)
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
@@ -233,19 +233,16 @@ if __name__ == '__main__':
         clinpzinds = []
         clinezregions = list(loader.conn.region_labels[clinezinds])
         clinpzregions = []
-        # modelezinds = clinezinds
-        # modelpzinds = clinpzinds
-        # modelezregions = clinezregions
-        # modelpzregions = clinpzregions
+
         # if we are sampling regions outside our EZ
-        # numsamps = 2 # should be around 1-3?
-        # osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
+        numsamps = 2 # should be around 1-3?
+        osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
 
         ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
         ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
-        modelezinds = ezinds
+        modelezinds = osr_ezinds
         modelpzinds = []
-        modelezregions = ezregs
+        modelezregions = osr_ezregs
         modelpzregions = []
 
         print("Model ez: ", modelezregions, modelezinds)
