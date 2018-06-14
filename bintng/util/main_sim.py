@@ -173,7 +173,6 @@ def run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilenam
         metadata['morletfilename'] = outputfilename
         main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
 
-    
 
 if __name__ == '__main__':
     args = parser.parse_args()

@@ -44,8 +44,6 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
         metadata['waveletwidth'] = waveletwidth
 
     # add the consistent parameters
-    metadata['winsize'] = winsize
-    metadata['stepsize'] = stepsize
     metadata['timepoints'] = timepoints
     metadata['rawfilename'] = datafile
 

@@ -190,7 +190,6 @@ class LoadSimDataset(BaseLoader):
         # print(self.contact_regs.shape)
         # print(self.rawdata.shape)
         # print(self.chanxyz.shape)
-
         assert self.chanlabels.shape[0] == self.rawdata.shape[0]
         assert self.rawdata.shape[0] == self.chanxyz.shape[0]
 
