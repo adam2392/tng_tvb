@@ -156,12 +156,12 @@ def select_ez_outside(conn, numsamps):
     # sample it for a list of EZ regions
     osr_list = regionselector.sample_outsideset(outside_set, numsamps)
 
-    osr_inds = [ind for ind, reg in conn.region_labels if reg in osr_list]
+    osr_inds = [ind for ind, reg in enumerate(conn.region_labels) if reg in osr_list]
     return osr_list, osr_inds
 
 def select_ez_inside(conn, clinezregs, numsamps):
     inside_list = np.random.choice(clinezregs, size=numsamps, replace=False)
-    inside_inds = [ind for ind, reg in conn.region_labels if reg in inside_list]
+    inside_inds = [ind for ind, reg in enumerate(conn.region_labels) if reg in inside_list]
     return inside_list, inside_inds
 
 def run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename):
