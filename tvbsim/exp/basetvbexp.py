@@ -8,7 +8,7 @@ import zipfile
 import numpy as np
 import pandas as pd
 from scipy.optimize import fsolve
-
+import random
 
 class TVBExp(object):
     def __init__(self, conn, condspeed=np.inf):
