@@ -1,5 +1,6 @@
 import os
 import argparse 
+import numpy as np 
 
 # import frequency analysis runners
 from run_freq import FreqAnalysis
