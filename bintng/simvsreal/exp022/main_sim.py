@@ -74,7 +74,7 @@ def save_processed_data(filename, times, epits, seegts, zts, state_vars):
 def process_weights(conn, metadatadir, patient=None, allpats=[]):
     if allpats and patient is not None:
         # shuffle across patients
-        randpat = MainTVBSim.randshufflepats(allpats, patient)   
+        randpat = MainTVBSim().randshufflepats(allpats, patient)   
         shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
         if not os.path.exists(shuffled_connfile):
             shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
@@ -82,7 +82,7 @@ def process_weights(conn, metadatadir, patient=None, allpats=[]):
         conn = connectivity.Connectivity.from_file(shuffled_connfile)
     elif patient is None and not allpats:
         # shuffle within patients
-        randweights = MainTVBSim.randshuffleweights(conn.weights)
+        randweights = MainTVBSim().randshuffleweights(conn.weights)
         conn.weights = randweights
         randpat = None
     return conn, randpat
@@ -245,15 +245,15 @@ if __name__ == '__main__':
         ######## SELECT EZ REGIONS OUTSIDE THE CLIN DEFINITIONS
         # if we are sampling regions outside our EZ
         numsamps = 2 # should be around 1-3?
-        osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, clinezregions, numsamps)
+        # osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, clinezregions, numsamps)
 
         ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
-        # ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps)
+        ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps)
 
         ######## SET THE MODEL'S EZ AND PZ REGIONS ########
-        modelezinds = osr_ezinds
+        modelezinds = ezinds
         modelpzinds = []
-        modelezregions = osr_ezregs
+        modelezregions = ezregs
         modelpzregions = []
 
         print("Model ez: ", modelezregions, modelezinds)

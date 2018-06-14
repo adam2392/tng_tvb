@@ -36,7 +36,7 @@ echo "Exp name is: ${expname}"
 # movedist = args.movedist
 # freqoutputdatadir = args.freqoutputdatadir
 # shuffleweights = args.shuffleweights
-python ./${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
+python ./simvsreal/${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
 	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
 	--movedist ${dist} --shuffleweights ${shuffleweights} 
 exit

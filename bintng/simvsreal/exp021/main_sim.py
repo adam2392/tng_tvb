@@ -74,7 +74,7 @@ def save_processed_data(filename, times, epits, seegts, zts, state_vars):
 def process_weights(conn, metadatadir, patient=None, allpats=[]):
     if allpats and patient is not None:
         # shuffle across patients
-        randpat = MainTVBSim.randshufflepats(allpats, patient)   
+        randpat = MainTVBSim().randshufflepats(allpats, patient)   
         shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
         if not os.path.exists(shuffled_connfile):
             shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
@@ -82,7 +82,7 @@ def process_weights(conn, metadatadir, patient=None, allpats=[]):
         conn = connectivity.Connectivity.from_file(shuffled_connfile)
     elif patient is None and not allpats:
         # shuffle within patients
-        randweights = MainTVBSim.randshuffleweights(conn.weights)
+        randweights = MainTVBSim().randshuffleweights(conn.weights)
         conn.weights = randweights
         randpat = None
     return conn, randpat
