@@ -27,35 +27,6 @@ from tvbsim.visualize.plotter_sim import PlotterSim
 from tvbsim.base.dataobjects.timeseries import TimeseriesDimensions, Timeseries 
 from collections import OrderedDict
 
-parser = argparse.ArgumentParser()
-parser.add_argument('patient', 
-                    help="Patient to analyze")
-parser.add_argument('--outputdatadir', default='./',
-                    help="Where to save the output simulated data.")
-parser.add_argument('--freqoutputdatadir', help="Where to save the output freq analysis of simulated data")
-parser.add_argument('--metadatadir', default='/Volumes/ADAM\ LI/rawdata/tngpipeline/',
-                    help="Where the metadata for the TVB sims is.")
-parser.add_argument('--movedist', default=-1, type=int,
-                    help="How to move channels.")
-parser.add_argument('--shuffleweights', default=1, type=int,  
-                    help="How to move channels.")
-
-# all_patients = ['id001_bt',
-#     'id002_sd',
-#     'id003_mg', 'id004_bj', 'id005_ft',
-#     'id006_mr', 'id007_rd', 'id008_dmc',
-#     'id009_ba', 'id010_cmn', 'id011_gr',
-#     'id013_lk', 'id014_vc', 'id015_gjl',
-#     'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma',
-#     'id021', 'id022', 'id023']
-
-all_patients = ['id001_ac',
-    'id002_cj',
-    'id003_cm', 'id004_cv', 'id005_et',
-    'id006_fb', 'id008_gc',
-    'id009_il', 'id010_js', 'id011_ml', 'id012_pc',
-    'id013_pg', 'id014_rb']
-
 def save_processed_data(filename, times, epits, seegts, zts, state_vars):
     print('finished simulating!')
     print(epits.shape)
@@ -74,7 +45,7 @@ def save_processed_data(filename, times, epits, seegts, zts, state_vars):
 def process_weights(conn, metadatadir, patient=None, allpats=[]):
     if allpats and patient is not None:
         # shuffle across patients
-        randpat = MainTVBSim().randshufflepats(allpats, patient)   
+        randpat = MainTVBSim.randshufflepats(allpats, patient)   
         shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
         if not os.path.exists(shuffled_connfile):
             shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
@@ -82,7 +53,7 @@ def process_weights(conn, metadatadir, patient=None, allpats=[]):
         conn = connectivity.Connectivity.from_file(shuffled_connfile)
     elif patient is None and not allpats:
         # shuffle within patients
-        randweights = MainTVBSim().randshuffleweights(conn.weights)
+        randweights = MainTVBSim.randshuffleweights(conn.weights)
         conn.weights = randweights
         randpat = None
     return conn, randpat

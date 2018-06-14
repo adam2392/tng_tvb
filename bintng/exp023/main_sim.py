@@ -13,6 +13,9 @@ import itertools
 
 # wrapper for frequency analysis
 import main_freq
+from util_sim import save_processed_data, process_weights, \
+            initialize_tvb_model, showdebug, select_ez_outside, \
+            select_ez_inside, run_freq_analysis
 
 # to run simulation and post processing and data loading
 from tvbsim.exp.selectregion import Regions
@@ -55,139 +58,6 @@ all_patients = ['id001_ac',
     'id006_fb', 'id008_gc',
     'id009_il', 'id010_js', 'id011_ml', 'id012_pc',
     'id013_pg', 'id014_rb']
-
-def save_processed_data(filename, times, epits, seegts, zts, state_vars):
-    print('finished simulating!')
-    print(epits.shape)
-    print(seegts.shape)
-    print(times.shape)
-    print(zts.shape)
-    print(state_vars.keys())
-
-    # save tseries
-    np.savez_compressed(filename, epits=epits, 
-                                seegts=seegts,
-                                times=times, 
-                                zts=zts, 
-                                state_vars=state_vars)
-    
-def process_weights(conn, metadatadir, patient=None, allpats=[]):
-    if allpats and patient is not None:
-        # shuffle across patients
-        randpat = MainTVBSim.randshufflepats(allpats, patient)   
-        shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
-        if not os.path.exists(shuffled_connfile):
-            shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
-
-        conn = connectivity.Connectivity.from_file(shuffled_connfile)
-    elif patient is None and not allpats:
-        # shuffle within patients
-        randweights = MainTVBSim.randshuffleweights(conn.weights)
-        conn.weights = randweights
-        randpat = None
-    return conn, randpat
-
-def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
-    ###################### INITIALIZE TVB SIMULATOR ##################
-    conn = connectivity.Connectivity.from_file(loader.connfile)
-    maintvbexp = MainTVBSim(conn, condspeed=np.inf)
-    # load the necessary data files to run simulation
-    maintvbexp.loadseegxyz(seegfile=loader.seegfile)
-    maintvbexp.loadgainmat(gainfile=loader.gainfile)
-    maintvbexp.importsurfdata(surf=loader.surf)
-
-    ######### Model (Epileptor) Parameters ##########
-    epileptor_params = {
-        'r': 0.00037,#/1.5   # Temporal scaling in the third state variable
-        'Ks': -10,                 # Permittivity coupling, fast to slow time scale
-        'tt': 0.07,                   # time scale of simulation
-        'tau': 10,                   # Temporal scaling coefficient in fifth st var
-        'x0': -2.45, # x0c value = -2.05
-    }
-    for key, value in kwargs.iteritems():
-        print "%s = %s" % (key, value)
-        if key == 'Iext':
-            epileptor_params[key] = value
-
-    x0ez=-1.65
-    x0pz=-2.0 # x0pz = None
-    if ezregions is None:
-        x0ez = None
-    if pzregions is None:
-        x0pz = None
-    maintvbexp.loadepileptor(ezregions=ezregions, pzregions=pzregions,
-                            x0ez=x0ez, x0pz=x0pz,
-                            epileptor_params=epileptor_params)
-    showdebug(maintvbexp)
-    ######### Integrator Parameters ##########
-    ntau = 0
-    noise_cov = np.array([0.001, 0.001, 0.,\
-                              0.0001, 0.0001, 0.])
-    # define cov noise for the stochastic heun integrator
-    hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
-    # hiss = noise.Multiplicative(nsig=noise_cov)
-    integrator_params = {
-        'dt': 0.05,
-        'noise': hiss,
-    }
-    maintvbexp.loadintegrator(integrator_params)
-
-    # load couping
-    coupling_params = {
-        'a': 1.,
-    }
-    maintvbexp.loadcoupling(**coupling_params)
-
-    # load monitors
-    initcond = None
-    monitor_params = {
-        'period': period,
-        'moved': False,
-        'initcond': initcond
-    }
-    maintvbexp.loadmonitors(**monitor_params)
-    return maintvbexp
-
-def showdebug(maintvbexp):
-    sys.stdout.write("The tvbexp ez region is: %s" % maintvbexp.ezregion)
-    sys.stdout.write("The tvbexp pz region is: %s" % maintvbexp.pzregion)
-    sys.stdout.write("The tvbexp ez indices is: %s" % maintvbexp.ezind)
-    sys.stdout.write("The tvbexp pz indices is: %s " % maintvbexp.pzind)
-
-def select_ez_outside(conn, clinezregions, numsamps):
-    # region selector for out of clinical EZ simulations
-    epsilon = 60 # the mm radius for each region to exclude other regions
-    regionselector = Regions(conn.region_labels, conn.centres, epsilon)
-    # the set of regions that are outside what clinicians labeled EZ
-    outside_set = regionselector.generate_outsideset(clinezregions)
-    # sample it for a list of EZ regions
-    osr_list = regionselector.sample_outsideset(outside_set, numsamps)
-
-    osr_inds = [ind for ind, reg in enumerate(conn.region_labels) if reg in osr_list]
-    return osr_list, osr_inds
-
-def select_ez_inside(conn, clinezregs, numsamps):
-    inside_list = np.random.choice(clinezregs, size=min(len(clinezregs),numsamps), replace=False)
-    inside_inds = [ind for ind, reg in enumerate(conn.region_labels) if reg in inside_list]
-    return inside_list, inside_inds
-
-def run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename):
-    ''' RUN FREQ DECOMPOSITION '''
-    winsize = 5000
-    stepsize = 2500
-
-    if mode == 'fft':
-        metadata['winsize'] = winsize
-        metadata['stepsize'] = stepsize
-        metadata['fftfilename'] = outputfilename
-        print(metadata.keys())
-        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
-
-    if mode=='morlet':    
-        metadata['winsize'] = winsize
-        metadata['stepsize'] = stepsize
-        metadata['morletfilename'] = outputfilename
-        main_freq.run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename)
 
 if __name__ == '__main__':
     '''
