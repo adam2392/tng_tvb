@@ -29,15 +29,12 @@ echo "Distance to move is: ${dist}"
 echo "Should we shuffle weights?: ${shuffleweights}"
 echo "Exp name is: ${expname}"
 
- # extract passed in variable
-# patient = args.patient
-# outputdatadir = args.outputdatadir
-# metadatadir = args.metadatadir
-# movedist = args.movedist
-# freqoutputdatadir = args.freqoutputdatadir
-# shuffleweights = args.shuffleweights
-python ./simvsreal/${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
+python ./paramsweep/iext/main_sim.py ${patient} --metadatadir ${metadatadir} \
 	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
 	--movedist ${dist} --shuffleweights ${shuffleweights} 
+
+# python ./simvsreal/${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
+# 	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
+# 	--movedist ${dist} --shuffleweights ${shuffleweights} 
 exit
 

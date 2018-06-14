@@ -4,14 +4,14 @@ source activate tvbforwardsim
 
 # to submit tvb sims
 patients=(
-	'id001_ac
-	id002_cj
-	id003_cm id004_cv
-	id005_et id006_fb
-	id008_gc id009_il
-	id010_js id011_ml
-	id012_pc id013_pg
-	id014_rb')
+	'id001_ac')
+	# id002_cj
+	# id003_cm id004_cv
+	# id005_et id006_fb
+	# id008_gc id009_il
+	# id010_js id011_ml
+	# id012_pc id013_pg
+	# id014_rb')
 	# id001_bt
 	# id002_sd
 	# id003_mg id004_bj id005_ft
@@ -31,7 +31,7 @@ read -p "Shuffle weights?: " shuffleweights
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp020}
+expname=${expname:-exp019}
 shuffleweights=${shuffleweights:-0}
 echo ${dist}
 echo ${expname}
