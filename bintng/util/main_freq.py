@@ -28,6 +28,7 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
         # add to metadata
         metadata['mtbandwidth'] = mtbandwidth
         metadata['freqs'] = freqs
+        metadata['fftfilename'] = outputfilename
     elif mode == 'morlet':
         # Wavelet Parameters
         waveletfreqs = 2**(np.arange(1.,9.,1./5))
@@ -42,15 +43,16 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
 
         metadata['waveletfreqs'] = waveletfreqs
         metadata['waveletwidth'] = waveletwidth
+        metadata['morletfilename'] = outputfilename
 
     # add the consistent parameters
     metadata['timepoints'] = timepoints
-    metadata['rawfilename'] = datafile
-
+    
     # save the data
     print("saving freq data at ", outputfilename)
     run_freq.save_data(outputfilename, outputmetafilename, power, phase, metadata)
     print("successfully saved!")
+    
 def load_raw_data(patdatadir, datafile, metadatadir, patient, reference):
     loader = LoadSimDataset(root_dir=patdatadir, 
                                 datafile=datafile, 
