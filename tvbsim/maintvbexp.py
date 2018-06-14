@@ -112,6 +112,8 @@ class MainTVBSim(TVBExp, MoveContactExp):
                 }
             print("In maintvbexp.py using default parameters!")
         
+        self.setezregion(ezregions)
+        self.setpzregion(pzregions)
         ####################### 2. Neural Mass Model @ Nodes ##################
         epileptors = models.Epileptor(variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], **epileptor_params)
 
@@ -134,8 +136,6 @@ class MainTVBSim(TVBExp, MoveContactExp):
                 warnings.warn(
                     "pz index not set yet! Do you want to proceed with simulation?")
 
-        self.setezregion(ezregions)
-        self.setpzregion(pzregions)
         self.epileptors = epileptors
 
     def loadcoupling(self, a=1.):
