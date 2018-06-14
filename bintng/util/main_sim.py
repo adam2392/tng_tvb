@@ -233,7 +233,7 @@ if __name__ == '__main__':
     iext_param_sweep = np.arange(2.0,4.0,0.1)
     iext_param_sweep = [3.0]
     for i, iext in enumerate(iext_param_sweep):
-    print("Using iext1 value of {}".format(iext))
+        print("Using iext1 value of {}".format(iext))
         # get the ez/pz indices we want to use
         clinezinds = loader.ezinds
         clinpzinds = []

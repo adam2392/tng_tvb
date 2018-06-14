@@ -75,7 +75,7 @@ dist=${dist},\
 shuffleweights=${shuffleweights} "
 
 	# build basic sbatch command with all params parametrized
-	sbatchcomm=$(cat $short_config)
+	sbatchcomm=$(cat $long_config)
 	sbatchcomm="$sbatchcomm --job-name=${jobname}"
 
 	# build a scavenger job, gpu job, or other job
