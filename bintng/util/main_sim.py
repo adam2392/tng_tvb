@@ -235,14 +235,15 @@ if __name__ == '__main__':
         clinezregions = list(loader.conn.region_labels[clinezinds])
         clinpzregions = []
 
-        print("Model ez: ", modelezregions, modelezinds)
-        print("Model pz: ", modelpzregions, modelpzinds)
-            
         ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
         modelezinds = ezinds
         modelpzinds = []
         modelezregions = ezregs
         modelpzregions = []
+
+        print("Model ez: ", modelezregions, modelezinds)
+        print("Model pz: ", modelpzregions, modelpzinds)
+            
         
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
