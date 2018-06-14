@@ -28,7 +28,8 @@ class FreqAnalysis(object):
     @staticmethod
     def run_morlet(rawdata, waveletargs):
         morlet = MorletWavelet(**waveletargs)
-
+        winsize = waveletargs['winsize']
+        stepsize = waveletargs['stepsize']
         ################################ 2. Run FFT Model ###########################
         morlet.loadrawdata(rawdata=rawdata)
         power, phase = morlet.multiphasevec()
