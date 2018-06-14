@@ -185,7 +185,7 @@ if __name__ == '__main__':
         outputfilename = os.path.join(freqoutputdir, 
                 '{}_{}_{}model.npz'.format(patient, mode, (2*i)))
         outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, idx))
+            '{}_{}_{}meta.json'.format(patient, mode, (2*i)))
         run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
         mode = 'morlet'
@@ -197,7 +197,7 @@ if __name__ == '__main__':
         outputfilename = os.path.join(freqoutputdir, 
                 '{}_{}_{}model.npz'.format(patient, mode, (2*i)+1))
         outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, idx))
+            '{}_{}_{}meta.json'.format(patient, mode, (2*i)+1))
         run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
         '''                 PLOTTING OF DATA                        '''
