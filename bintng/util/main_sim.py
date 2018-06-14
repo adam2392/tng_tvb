@@ -79,7 +79,7 @@ def process_weights(conn, shuffle=False, patient=None, other_pats=[]):
             conn.weights = randweights
     return conn
 
-def initialize_tvb_model(loader, ezregions, pzregions, period):
+def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     ###################### INITIALIZE TVB SIMULATOR ##################
     conn = connectivity.Connectivity.from_file(loader.connfile)
     maintvbexp = MainTVBSim(conn, condspeed=np.inf)
@@ -95,7 +95,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period):
         'tt': 0.07,                   # time scale of simulation
         'tau': 10,                   # Temporal scaling coefficient in fifth st var
         'x0': -2.45, # x0c value = -2.05
-        # 'Iext': iext,
+        **kwargs,
     }
     x0ez=-1.65
     x0pz=-2.0 # x0pz = None
@@ -155,6 +155,11 @@ def select_ez_outside(conn, numsamps):
     osr_inds = [ind for ind, reg in conn.region_labels if reg in osr_list]
     return osr_list, osr_inds
 
+def select_ez_inside(conn, clinezregs, numsamps):
+    inside_list = np.random.choice(clinezregs, size=numsamps, replace=False)
+    inside_inds = [ind for ind, reg in conn.region_labels if reg in inside_list]
+    return inside_list, inside_inds
+
 def run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename):
     ''' RUN FREQ DECOMPOSITION '''
     winsize = 5000
@@ -184,10 +189,6 @@ if __name__ == '__main__':
     freqoutputdatadir = args.freqoutputdatadir
     shuffleweights = args.shuffleweights
 
-    # define the parameter sweeping by changing iext
-    iext_param_sweep = np.arange(2.0,4.0,0.1)
-    iext_param_sweep = [3.0]
-
     # simulation parameters
     _factor = 1
     _samplerate = 1000*_factor # Hz
@@ -195,7 +196,7 @@ if __name__ == '__main__':
     period = 1./_factor
 
     # set all directories to output data, get meta data, get raw data
-    outputdatadir = os.path.join(outputdatadir, patient)
+    outputdatadir = os.path.join(outputdatadir, 'clin', patient)
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
@@ -206,36 +207,47 @@ if __name__ == '__main__':
     # perhaps shuffle connectivity?
     # conn = process_weights(conn, shuffle=False, patient=None, other_pats=[])
 
-    # get the ez/pz indices we want to use
-    clinezinds = loader.ezinds
-    clinpzinds = []
-    clinezregions = list(loader.conn.region_labels[clinezinds])
-    clinpzregions = []
-
-    # if we are sampling regions outside our EZ
-    # numsamps = 2 # should be around 1-3?
-    # osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
-
-    modelezinds = clinezinds
-    modelpzinds = clinpzinds
-    modelezregions = clinezregions
-    modelpzregions = clinpzregions
-    # allclinregions = clinezregions + clinpzregions
-    # sys.stdout.write("All clinical regions are: {}".format(allclinregions))
-
     # perform some kind of parameter sweep
-    for i, iext in enumerate(iext_param_sweep):
+    # define the parameter sweeping by changing iext
+    # iext_param_sweep = np.arange(2.0,4.0,0.1)
+    # iext_param_sweep = [3.0]
+    # for i, iext in enumerate(iext_param_sweep):
+    # print("Using iext1 value of {}".format(iext))
+    i = 0
+    for i in range(5):
+        # get the ez/pz indices we want to use
+        clinezinds = loader.ezinds
+        clinpzinds = []
+        clinezregions = list(loader.conn.region_labels[clinezinds])
+        clinpzregions = []
+        # modelezinds = clinezinds
+        # modelpzinds = clinpzinds
+        # modelezregions = clinezregions
+        # modelpzregions = clinpzregions
+        # if we are sampling regions outside our EZ
+        # numsamps = 2 # should be around 1-3?
+        # osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
+
+        ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
+        ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
+        modelezinds = ezinds
+        modelpzinds = []
+        modelezregions = ezregs
+        modelpzregions = []
+
+        print("Model ez: ", modelezregions, modelezinds)
+        print("Model pz: ", modelpzregions, modelpzinds)
+        
+
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
                     '{0}_dist{1}_{2}.npz'.format(patient, movedist, i))
         metafilename = os.path.join(outputdatadir,
                     '{0}_dist{1}_{2}.json'.format(patient, movedist, i))
         direc, simfilename = os.path.split(filename)
-
-        print("Using iext1 value of {}".format(iext))
         
         maintvbexp = initialize_tvb_model(loader, ezregions=modelezregions, 
-                    pzregions=modelpzregions, period=period)
+                    pzregions=modelpzregions, period=period) #, Iext=iext)
         allindices = np.hstack((maintvbexp.ezind, maintvbexp.pzind)).astype(int) 
         # move contacts if we wnat to
         for ind in maintvbexp.ezind:
@@ -257,7 +269,7 @@ if __name__ == '__main__':
 
         ######################## POST PROCESSING ########################
         postprocessor = PostProcessor(samplerate=_samplerate, allszindices=allindices)
-        secstoreject = 1
+        secstoreject = 15
         times, epits, seegts, zts, state_vars = postprocessor.postprocts(statevars_ts, seegts, times, secstoreject=secstoreject)
         # save all the raw simulated data
         save_processed_data(filename, times, epits, seegts, zts, state_vars)
@@ -280,7 +292,6 @@ if __name__ == '__main__':
         datafile = filename
         rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
 
-        idx = 0
         mode = 'fft'
         # create checker for num wins
         freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
@@ -288,7 +299,7 @@ if __name__ == '__main__':
             os.makedirs(freqoutputdir)
         # where to save final computation
         outputfilename = os.path.join(freqoutputdir, 
-                '{}_{}_{}model.npz'.format(patient, mode, idx))
+                '{}_{}_{}model.npz'.format(patient, mode, (2*i)))
         outputmetafilename = os.path.join(freqoutputdir,
             '{}_{}_{}meta.json'.format(patient, mode, idx))
         run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
@@ -300,11 +311,10 @@ if __name__ == '__main__':
             os.makedirs(freqoutputdir)
         # where to save final computation
         outputfilename = os.path.join(freqoutputdir, 
-                '{}_{}_{}model.npz'.format(patient, mode, idx))
+                '{}_{}_{}model.npz'.format(patient, mode, (2*i)+1))
         outputmetafilename = os.path.join(freqoutputdir,
             '{}_{}_{}meta.json'.format(patient, mode, idx))
         run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
-        idx += 1
 
         '''                 PLOTTING OF DATA                        '''
         # DEFINE FIGURE DIR FOR THIS SIM
