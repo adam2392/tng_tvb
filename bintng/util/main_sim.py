@@ -223,9 +223,9 @@ if __name__ == '__main__':
     # define sloader for this patient
     loader = Subject(name=patient, root_pat_dir=rawdatadir, preload=False)
     # perhaps shuffle connectivity?
-    # if shuffleweights:
-    #     print("shuffling weights!")
-    #     conn = process_weights(loader.conn, metadatadir, patient=patient, allpats=all_patients)
+    if shuffleweights:
+        print("shuffling weights!")
+        conn = process_weights(loader.conn, metadatadir, patient=patient, allpats=all_patients)
 
     # perform some kind of parameter sweep
     # define the parameter sweeping by changing iext
@@ -249,9 +249,9 @@ if __name__ == '__main__':
         ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
 
         ######## SET THE MODEL'S EZ AND PZ REGIONS ########
-        modelezinds = osr_ezinds
+        modelezinds = ezinds
         modelpzinds = []
-        modelezregions = osr_ezregs
+        modelezregions = ezregs
         modelpzregions = []
 
         print("Model ez: ", modelezregions, modelezinds)
