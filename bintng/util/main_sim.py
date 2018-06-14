@@ -303,6 +303,7 @@ if __name__ == '__main__':
         
         metadata['onsettimes'] = seizonsets
         metadata['offsettimes'] = seizoffsets
+        metadata['shuffledpat'] = shuffledpat
 
         # save metadata
         loader._writejsonfile(metadata, metafilename)
