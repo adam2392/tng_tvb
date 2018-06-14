@@ -48,7 +48,7 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
     
     # save the data
     print("saving freq data at ", outputfilename)
-    run_freq.save_data(outputfilename, outputmetafilename, power, phase, metadata)
+    FreqAnalysis.save_data(outputfilename, outputmetafilename, power, phase, metadata)
     print("successfully saved!")
     
 def load_raw_data(patdatadir, datafile, metadatadir, patient, reference):
