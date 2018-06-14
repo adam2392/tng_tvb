@@ -5,7 +5,7 @@ source activate tvbforwardsim
 # to submit tvb sims
 patients=(
 	'id001_ac')
-	#  id002_cj
+	# id002_cj
 	# id003_cm id004_cv
 	# id005_et id006_fb
 	# id008_gc id009_il
@@ -29,7 +29,7 @@ read -p "Enter expname: " expname
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp020}
+expname=${expname:-exp019}
 shuffleweights=${shuffleweights:-1}
 echo ${dist}
 echo ${expname}
@@ -74,7 +74,7 @@ dist=${dist},\
 shuffleweights=${shuffleweights} "
 
 	# build basic sbatch command with all params parametrized
-	sbatchcomm=$(cat $short_config)
+	sbatchcomm=$(cat $long_config)
 	sbatchcomm="$sbatchcomm --job-name=${jobname}"
 
 	# build a scavenger job, gpu job, or other job

@@ -28,5 +28,8 @@ echo "Freqoutputdatadir is: ${freqoutputdatadir}"
 echo "Distance to move is: ${dist}"
 echo "Should we shuffle weights?: ${shuffleweights}"
 
-python ./exp019-paramiext1sweep/runtvbsim_exp019.py ${patient} --metadatadir ${metadatadir} --outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} --movedist ${dist} --shuffleweights ${shuffleweights} 
+python ./util/main_sim.py ${patient} --metadatadir ${metadatadir} \
+	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
+	--movedist ${dist} --shuffleweights ${shuffleweights} 
+
 exit

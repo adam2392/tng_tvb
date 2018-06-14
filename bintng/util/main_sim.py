@@ -191,7 +191,7 @@ if __name__ == '__main__':
     # simulation parameters
     _factor = 1
     _samplerate = 1000*_factor # Hz
-    sim_length = 10*_samplerate    
+    sim_length = 60*_samplerate    
     period = 1./_factor
 
     # set all directories to output data, get meta data, get raw data
@@ -308,45 +308,44 @@ if __name__ == '__main__':
 
         '''                 PLOTTING OF DATA                        '''
         # DEFINE FIGURE DIR FOR THIS SIM
-        figdir = os.path.join(outputdatadir, str(i))
-        if not os.path.exists(figdir):
-            os.makedirs(figdir)
+        # figdir = os.path.join(outputdatadir, 'fig_'+str(i))
+        # # if not os.path.exists(figdir):
+        #     # os.makedirs(figdir)
 
-        config = Config(output_base=figdir) 
-        config.figures.MATPLOTLIB_BACKEND="inline"
-        config.figures.SHOW_FLAG=True
-        plotter = PlotterSim()
-        for idx,key in enumerate(state_vars.keys()):
-            var = state_vars[key]
-            if idx==0:
-                numtime, numsignal = var.shape
-                ts = np.zeros((len(state_vars.keys()), numtime, numsignal))
-            ts[idx,...] = var 
-        print(ts.shape)
-        print(TimeseriesDimensions.SPACE.value)
-        # print(maintvbexp.conn.region_labels)
+        # config = Config(output_base=figdir) 
+        # config.figures.MATPLOTLIB_BACKEND="inline"
+        # config.figures.SHOW_FLAG=True
+        # plotter = PlotterSim()
+        # for idx,key in enumerate(state_vars.keys()):
+        #     var = state_vars[key]
+        #     if idx==0:
+        #         numtime, numsignal = var.shape
+        #         ts = np.zeros((len(state_vars.keys()), numtime, numsignal))
+        #     ts[idx,...] = var 
+        # print(ts.shape)
+        # print(TimeseriesDimensions.SPACE.value)
 
-        # PLOT RAW TS
-        ts_obj = Timeseries(ts, 
-                        OrderedDict({TimeseriesDimensions.SPACE.value: maintvbexp.conn.region_labels}), 
-                        times[0], 
-                        times[1] - times[0], "ms")
+        # # PLOT RAW TS
+        # ts_obj = Timeseries(ts, 
+        #                 OrderedDict({TimeseriesDimensions.SPACE.value: maintvbexp.conn.region_labels}), 
+        #                 times[0], 
+        #                 times[1] - times[0], "ms")
         
-        phase_comb = itertools.combinations(state_vars.keys(), 2)
-        for keys in phase_comb:
-            print("Plotting for ", keys)
-            print("ONLY PLOTTING THE EZ REGIONS PHASE SPACE")
-            print(state_vars[keys[0]][modelezinds,:].shape)
-            keys = list(keys)
-            data_dict = {
-                keys[0]: state_vars[keys[0]][modelezinds,:],
-                keys[1]: state_vars[keys[1]][modelezinds,:],
-            }
-            # PLOT THE PHASE PLOTS
-            special_idx = None
+        # phase_comb = itertools.combinations(state_vars.keys(), 2)
+        # for keys in phase_comb:
+        #     print("Plotting for ", keys)
+        #     print("ONLY PLOTTING THE EZ REGIONS PHASE SPACE")
+        #     print(state_vars[keys[0]][modelezinds,:].shape)
+        #     keys = list(keys)
+        #     data_dict = {
+        #         keys[0]: state_vars[keys[0]][modelezinds,:],
+        #         keys[1]: state_vars[keys[1]][modelezinds,:],
+        #     }
+        #     # PLOT THE PHASE PLOTS
+        #     special_idx = None
 
-            plotter.plot_timeseries(data_dict, [], mode="traj", special_idx=special_idx, 
-                                        title='Epileptor space trajectory '+' '.join(keys), figure_name="Epileptor Space Trajectory " + ' '.join(keys),
-                                        labels=maintvbexp.conn.region_labels)
+        #     plotter.plot_timeseries(data_dict, [], mode="traj", special_idx=special_idx, 
+        #                                 title='Epileptor space trajectory '+' '.join(keys), figure_name="Epileptor Space Trajectory " + ' '.join(keys),
+        #                                 labels=maintvbexp.conn.region_labels)
 
-        print("finished plotting!")
+        # print("finished plotting!")
