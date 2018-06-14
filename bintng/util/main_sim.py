@@ -153,12 +153,12 @@ def showdebug(maintvbexp):
     sys.stdout.write("The tvbexp ez indices is: %s" % maintvbexp.ezind)
     sys.stdout.write("The tvbexp pz indices is: %s " % maintvbexp.pzind)
 
-def select_ez_outside(conn, numsamps):
+def select_ez_outside(conn, clinezregions, numsamps):
     # region selector for out of clinical EZ simulations
     epsilon = 60 # the mm radius for each region to exclude other regions
     regionselector = Regions(conn.region_labels, conn.centres, epsilon)
     # the set of regions that are outside what clinicians labeled EZ
-    outside_set = regionselector.generate_outsideset(ezregions)
+    outside_set = regionselector.generate_outsideset(clinezregions)
     # sample it for a list of EZ regions
     osr_list = regionselector.sample_outsideset(outside_set, numsamps)
 
@@ -243,7 +243,7 @@ if __name__ == '__main__':
         ######## SELECT EZ REGIONS OUTSIDE THE CLIN DEFINITIONS
         # if we are sampling regions outside our EZ
         numsamps = 2 # should be around 1-3?
-        osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
+        osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, clinezregions, numsamps)
 
         ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
         ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
