@@ -15,6 +15,7 @@ import itertools
 import main_freq
 
 # to run simulation and post processing and data loading
+from tvbsim.exp.selectregion import Regions
 from tvbsim.postprocess.postprocess import PostProcessor
 from tvbsim.postprocess.detectonsetoffset import DetectShift
 from tvbsim.maintvbexp import MainTVBSim
@@ -39,14 +40,21 @@ parser.add_argument('--movedist', default=-1, type=int,
 parser.add_argument('--shuffleweights', default=1, type=int,  
                     help="How to move channels.")
 
-all_patients = ['id001_bt',
-    'id002_sd',
-    'id003_mg', 'id004_bj', 'id005_ft',
-    'id006_mr', 'id007_rd', 'id008_dmc',
-    'id009_ba', 'id010_cmn', 'id011_gr',
-    'id013_lk', 'id014_vc', 'id015_gjl',
-    'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma',
-    'id021', 'id022', 'id023']
+# all_patients = ['id001_bt',
+#     'id002_sd',
+#     'id003_mg', 'id004_bj', 'id005_ft',
+#     'id006_mr', 'id007_rd', 'id008_dmc',
+#     'id009_ba', 'id010_cmn', 'id011_gr',
+#     'id013_lk', 'id014_vc', 'id015_gjl',
+#     'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma',
+#     'id021', 'id022', 'id023']
+
+all_patients = ['id001_ac',
+    'id002_cj',
+    'id003_cm', 'id004_cv', 'id005_et',
+    'id006_fb', 'id008_gc',
+    'id009_il', 'id010_js', 'id011_ml', 'id012_pc',
+    'id013_pg', 'id014_rb']
 
 def save_processed_data(filename, times, epits, seegts, zts, state_vars):
     print('finished simulating!')
@@ -63,20 +71,19 @@ def save_processed_data(filename, times, epits, seegts, zts, state_vars):
                                 zts=zts, 
                                 state_vars=state_vars)
     
-def process_weights(conn, shuffle=False, patient=None, other_pats=[]):
-    if shuffle:
-        if other_pats and patient is not None:
-            # shuffle across patients
-            randpat = MainTVBSim().randshufflepats(other_pats, patient)   
-            shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
-            if not os.path.exists(shuffled_connfile):
-                shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
+def process_weights(conn, metadatadir, patient=None, allpats=[]):
+    if allpats and patient is not None:
+        # shuffle across patients
+        randpat = MainTVBSim().randshufflepats(allpats, patient)   
+        shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.zip')
+        if not os.path.exists(shuffled_connfile):
+            shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
 
-            conn = connectivity.Connectivity.from_file(shuffled_connfile)
-        elif patient is None and not other_pats:
-            # shuffle within patients
-            randweights = MainTVBSim().randshuffleweights(conn.weights)
-            conn.weights = randweights
+        conn = connectivity.Connectivity.from_file(shuffled_connfile)
+    elif patient is None and not allpats:
+        # shuffle within patients
+        randweights = MainTVBSim().randshuffleweights(conn.weights)
+        conn.weights = randweights
     return conn
 
 def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
@@ -149,7 +156,7 @@ def showdebug(maintvbexp):
 def select_ez_outside(conn, numsamps):
     # region selector for out of clinical EZ simulations
     epsilon = 60 # the mm radius for each region to exclude other regions
-    regionselector = tvbsim.exp.selectregion.Regions(conn.region_labels, conn.centres, epsilon)
+    regionselector = Regions(conn.region_labels, conn.centres, epsilon)
     # the set of regions that are outside what clinicians labeled EZ
     outside_set = regionselector.generate_outsideset(ezregions)
     # sample it for a list of EZ regions
@@ -218,7 +225,7 @@ if __name__ == '__main__':
     # perhaps shuffle connectivity?
     # if shuffleweights:
     #     print("shuffling weights!")
-    #     conn = process_weights(conn, shuffle=False, patient=None, other_pats=[])
+    #     conn = process_weights(loader.conn, metadatadir, patient=patient, allpats=all_patients)
 
     # perform some kind of parameter sweep
     # define the parameter sweeping by changing iext
@@ -233,12 +240,15 @@ if __name__ == '__main__':
         clinezregions = list(loader.conn.region_labels[clinezinds])
         clinpzregions = []
 
+        ######## SELECT EZ REGIONS OUTSIDE THE CLIN DEFINITIONS
         # if we are sampling regions outside our EZ
         numsamps = 2 # should be around 1-3?
         osr_ezregs, osr_ezinds = select_ez_outside(loader.conn, numsamps)
 
         ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
         ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
+
+        ######## SET THE MODEL'S EZ AND PZ REGIONS ########
         modelezinds = osr_ezinds
         modelpzinds = []
         modelezregions = osr_ezregs
