@@ -221,19 +221,14 @@ if __name__ == '__main__':
     #     print("shuffling weights!")
     #     conn = process_weights(conn, shuffle=False, patient=None, other_pats=[])
 
-    ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
-    ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
-    modelezinds = ezinds
-    modelpzinds = []
-    modelezregions = ezregs
-    modelpzregions = []
-
     # perform some kind of parameter sweep
     # define the parameter sweeping by changing iext
     iext_param_sweep = np.arange(2.0,4.0,0.1)
     iext_param_sweep = [3.0]
     for i, iext in enumerate(iext_param_sweep):
         print("Using iext1 value of {}".format(iext))
+        
+        ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
         # get the ez/pz indices we want to use
         clinezinds = loader.ezinds
         clinpzinds = []
@@ -242,6 +237,12 @@ if __name__ == '__main__':
 
         print("Model ez: ", modelezregions, modelezinds)
         print("Model pz: ", modelpzregions, modelpzinds)
+            
+        ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
+        modelezinds = ezinds
+        modelpzinds = []
+        modelezregions = ezregs
+        modelpzregions = []
         
         ## OUTPUTFILE NAME ##
         filename = os.path.join(outputdatadir,
