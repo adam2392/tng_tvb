@@ -148,7 +148,6 @@ def showdebug(maintvbexp):
 
 def select_ez_outside(conn, numsamps):
     # region selector for out of clinical EZ simulations
-    numsamps = 5 * len(ezregions)
     epsilon = 60 # the mm radius for each region to exclude other regions
     regionselector = tvbsim.exp.selectregion.Regions(conn.region_labels, conn.centres, epsilon)
     # the set of regions that are outside what clinicians labeled EZ
