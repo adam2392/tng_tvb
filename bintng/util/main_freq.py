@@ -28,7 +28,6 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
         # add to metadata
         metadata['mtbandwidth'] = mtbandwidth
         metadata['freqs'] = freqs
-        metadata['fftfilename'] = outputfilename
     elif mode == 'morlet':
         # Wavelet Parameters
         waveletfreqs = 2**(np.arange(1.,9.,1./5))
@@ -43,7 +42,6 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
 
         metadata['waveletfreqs'] = waveletfreqs
         metadata['waveletwidth'] = waveletwidth
-        metadata['morletfilename'] = outputfilename
 
     # add the consistent parameters
     metadata['timepoints'] = timepoints
