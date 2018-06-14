@@ -84,7 +84,8 @@ def process_weights(conn, metadatadir, patient=None, allpats=[]):
         # shuffle within patients
         randweights = MainTVBSim().randshuffleweights(conn.weights)
         conn.weights = randweights
-    return conn
+        randpat = None
+    return conn, randpat
 
 def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     ###################### INITIALIZE TVB SIMULATOR ##################
@@ -222,10 +223,12 @@ if __name__ == '__main__':
 
     # define sloader for this patient
     loader = Subject(name=patient, root_pat_dir=rawdatadir, preload=False)
+    shuffledpat = None
     # perhaps shuffle connectivity?
-    if shuffleweights:
-        print("shuffling weights!")
-        conn = process_weights(loader.conn, metadatadir, patient=patient, allpats=all_patients)
+    # if shuffleweights:
+    #     print("shuffling weights!")
+    #     conn, shuffledpat = process_weights(loader.conn, metadatadir, patient=patient, allpats=all_patients)
+
 
     # perform some kind of parameter sweep
     # define the parameter sweeping by changing iext
@@ -249,9 +252,9 @@ if __name__ == '__main__':
         ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps=2)
 
         ######## SET THE MODEL'S EZ AND PZ REGIONS ########
-        modelezinds = ezinds
+        modelezinds = osr_ezinds
         modelpzinds = []
-        modelezregions = ezregs
+        modelezregions = osr_ezregs
         modelpzregions = []
 
         print("Model ez: ", modelezregions, modelezinds)
