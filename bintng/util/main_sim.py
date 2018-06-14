@@ -335,10 +335,11 @@ if __name__ == '__main__':
         phase_comb = itertools.combinations(state_vars.keys(), 2)
         for keys in phase_comb:
             print("Plotting for ", keys)
+            print("ONLY PLOTTING THE EZ REGIONS PHASE SPACE")
             keys = list(keys)
             data_dict = {
-                keys[0]: state_vars[keys[0]],
-                keys[1]: state_vars[keys[1]]
+                keys[0]: state_vars[keys[0]][modelezinds,:],
+                keys[1]: state_vars[keys[1]][modelezinds,:],
             }
             # PLOT THE PHASE PLOTS
             special_idx = None
