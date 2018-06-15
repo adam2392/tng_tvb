@@ -86,8 +86,8 @@ class MainTVBSim(TVBExp, MoveContactExp):
             self.pzind, self.pzregion = self.sample_randregions(1)
 
     def loadintegrator(self, integrator_params):
-        # heunint = integrators.HeunStochastic(**integrator_params)
-        heunint = integrators.HeunDeterministic(**integrator_params)
+        heunint = integrators.HeunStochastic(**integrator_params)
+        # heunint = integrators.HeunDeterministic(**integrator_params)
         self.integrator = heunint
 
     def loadepileptor(self, ezregions, pzregions,

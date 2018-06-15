@@ -31,8 +31,8 @@ read -p "Shuffle weights?: " shuffleweights
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp019}
-shuffleweights=${shuffleweights:-0}
+expname=${expname:-exp025}
+shuffleweights=${shuffleweights:-1}
 echo ${dist}
 echo ${expname}
 
