@@ -103,7 +103,7 @@ class Subject(BaseSubjectLoader):
             mask *= ~ gray_mask
         return mask
 
-    def load_good_chans_inds(self, chanlabels, bad_channels, non_eeg_channels):
+    def load_good_chans_inds(self, chanlabels, bad_channels=[], non_eeg_channels=[]):
         '''
         Function for only getting the "good channel indices" for
         data.
@@ -128,8 +128,10 @@ class Subject(BaseSubjectLoader):
                 _gray_channels_mask = np.array([ch in white_matter_chans for ch in chanlabels], dtype=bool)
 
         # reject bad channels and non-seeg contacts
-        _bad_channel_mask = np.array([ch in bad_channels for ch in chanlabels], dtype=bool)
-        _non_seeg_channels_mask = np.array([ch in non_eeg_channels for ch in chanlabels], dtype=bool)
+        if bad_channels:
+            _bad_channel_mask = np.array([ch in bad_channels for ch in chanlabels], dtype=bool)
+        if non_eeg_channels:
+            _non_seeg_channels_mask = np.array([ch in non_eeg_channels for ch in chanlabels], dtype=bool)
         rawdata_mask *= ~_bad_channel_mask
         rawdata_mask *= ~_non_seeg_channels_mask
         rawdata_mask *= ~_gray_channels_mask

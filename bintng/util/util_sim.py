@@ -67,6 +67,10 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     maintvbexp.loadgainmat(gainfile=loader.gainfile)
     maintvbexp.importsurfdata(surf=loader.surf)
 
+    # use loader to input metadata from rawdata into the loader
+    goodchaninds = loader.load_good_chans_inds(chanlabels=loader.chanxyz_labels)
+    maintvbexp.setgoodchans(goodchaninds)
+
     ######### Model (Epileptor) Parameters ##########
     epileptor_params = {
         'r': 0.00037,#/1.5   # Temporal scaling in the third state variable

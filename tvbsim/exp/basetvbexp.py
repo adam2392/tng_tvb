@@ -11,6 +11,8 @@ from scipy.optimize import fsolve
 import random
 
 class TVBExp(object):
+    goodchaninds = []
+    
     def __init__(self, conn, condspeed=np.inf):
         self.conn = conn
         self.conn.speed = condspeed
@@ -33,6 +35,8 @@ class TVBExp(object):
         randpat = random.choice(patientlist)
         return randpat
 
+    def setgoodchans(self, goodchaninds):
+        self.goodchaninds = goodchaninds
 
     def getepileptorparams(self):
         params = {
