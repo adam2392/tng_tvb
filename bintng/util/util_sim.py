@@ -51,7 +51,7 @@ def process_weights(conn, metadatadir, patient=None, allpats=[]):
             shuffled_connfile = os.path.join(metadatadir, randpat, 'tvb', 'connectivity.dk.zip')
 
         conn = connectivity.Connectivity.from_file(shuffled_connfile)
-    elif patient is None and not allpats:
+    elif not allpats and patient is not None:
         # shuffle within patients
         randweights = MainTVBSim.randshuffleweights(conn.weights)
         conn.weights = randweights

@@ -42,8 +42,8 @@ class TVBExp(object):
             'tt': self.epileptors.tt,
             'x0': self.epileptors.x0,
             'iext': self.epileptors.Iext,
-            'nsig': self.integrator.noise.nsig,
-            'ntau': self.integrator.noise.ntau,
+            # 'nsig': self.integrator.noise.nsig,
+            # 'ntau': self.integrator.noise.ntau,
         }
         return params
 
