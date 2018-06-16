@@ -139,9 +139,9 @@ class BaseSubjectLoader(object):
             self.surfacefile = os.path.join(self.tvbdir, "surface_cort.zip")
 
         # computed gain matrix file
-        self.gainfile = os.path.join(self.elecdir, 'gain-in-square.txt')
+        self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
         if not os.path.exists(self.sensorsfile):
-            self.gainfile = os.path.join(self.elecdir, 'gain-in-square.%s.txt' % self.atlas)
+            self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.%s.txt' % self.atlas)
 
         self.ez_hyp_file = os.path.join(self.tvbdir, 'ez_hypothesis.txt')
         if not os.path.exists(self.ez_hyp_file):
