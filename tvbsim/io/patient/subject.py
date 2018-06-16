@@ -35,7 +35,7 @@ class Subject(BaseSubjectLoader):
         # load in surface
         self._loadsurface()
         # load in contacts
-        if self._exists(self.seegfile):
+        if self._exists(self.sensorsfile):
             self._loadcontacts()
             self._loadseegxyz()
         # map contacts to regions using DWI and T1 Parcellation

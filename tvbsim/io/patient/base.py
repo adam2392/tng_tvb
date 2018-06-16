@@ -165,7 +165,7 @@ class BaseSubjectLoader(object):
         self.logger.debug("\nLoaded in seeg xyz coords!\n")
 
     def _loadcontacts(self):
-        self.contacts = Contacts(self.seegfile)
+        self.contacts = Contacts(self.sensorsfile)
 
     def _loadezhypothesis(self):
         if not self._exists(self.ez_hyp_file):
@@ -216,7 +216,7 @@ class BaseSubjectLoader(object):
 
     def _check_all_files(self):
         print("Checking tvb dir: ", self._exists(self.tvbdir))
-        print("Checking seeg file: ", self._exists(self.seegfile))
+        print("Checking seeg file: ", self._exists(self.sensorsfile))
         print("Checking label volume file: ", self._exists(self.label_volume_file))
         print("Checking connectivity file: ", self._exists(self.connfile))
         print("Checking ez hypothesis file: ", self._exists(self.ez_hyp_file))
