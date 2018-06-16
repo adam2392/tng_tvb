@@ -43,7 +43,7 @@ echo "Parameters read in: $dist $expname $shuffleweights"
 echo "About to run on patients (press enter to continue): $patients" 
 read answer
 
-metadatadir="/home/adamli/data/tngpipeline/old/"
+metadatadir="/home/adamli/data/tngpipeline/"
 outputdatadir="/home/adamli/data/tvbforwardsim/${expname}/" # and with allregions/
 freqoutputdatadir="/home/adamli/data/output/tvbsim/${expname}/"
 echo "This is the data directories: "
