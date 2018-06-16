@@ -63,7 +63,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     conn = connectivity.Connectivity.from_file(loader.connfile)
     maintvbexp = MainTVBSim(conn, condspeed=np.inf)
     # load the necessary data files to run simulation
-    maintvbexp.loadseegxyz(seegfile=loader.seegfile)
+    maintvbexp.loadseegxyz(seegfile=loader.sensorsfile)
     maintvbexp.loadgainmat(gainfile=loader.gainfile)
     maintvbexp.importsurfdata(surf=loader.surf)
 
