@@ -20,17 +20,31 @@ except NameError:
 
 
 class BaseSubjectLoader(object):
-    chanxyzlabels = []
-    chanxyz = []
+    # generally optional data depending on how patient was analyzed
+    # derived from MRI+CT
+    chanxyzlabels = [] 
+    chanxyz = []       
+    # derived from MRI+CT+DWI
     contact_regs = []
-
-    ezinds = []
+    # derived from connectivity
+    conn = None
     weights = np.array([])
     tract_lengths = np.array([])
     region_centres = np.array([])
     region_labels = []
+    # surface object
     surf = None
+    # ez hypothesis by clinicians
+    ezinds = []
 
+    # default atlas for loading in parcellation
+    atlas = 'dk'
+
+    ez_hyp_file = ''
+    connfile = ''
+    surfacefile = ''
+    label_volume_file = ''
+    
     def __init__(self, config=None):
         self.config = config or Config()
         self.logger = initialize_logger(
