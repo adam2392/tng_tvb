@@ -93,7 +93,7 @@ if __name__ == '__main__':
     rawdatadir = os.path.join(metadatadir, patient)
 
     # define sloader for this patient
-    loader = Subject(name=patient, root_pat_dir=rawdatadir, preload=False)
+    loader = Subject(name=patient, root_dir=rawdatadir, preload=False)
     shuffledpat = None
     # perhaps shuffle connectivity?
     if shuffleweights:
