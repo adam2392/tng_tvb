@@ -44,7 +44,7 @@ class BaseSubjectLoader(object):
     connfile = ''
     surfacefile = ''
     label_volume_file = ''
-    
+
     def __init__(self, config=None):
         self.config = config or Config()
         self.logger = initialize_logger(
@@ -104,28 +104,50 @@ class BaseSubjectLoader(object):
         except BaseException:
             self.logger.debug("\nAlready renamed gaininv.mat possibly!\n")
 
-    def _init_files(self):
+    def _init_files(self, setfiledir=True):
         '''
         Initialization function to be called
         '''
-        self.tvbdir = os.path.join(self.root_pat_dir, "tvb")
-        self.dwidir = os.path.join(self.root_pat_dir, "dwi")
-        self.elecdir = os.path.join(self.root_pat_dir, "elec")
-        self.seegfile = os.path.join(self.elecdir , 'seeg.txt')
+        if setfiledir:
+            self.seegdir = os.path.join(self.root_dir, 'seeg', 'fif')
+            if not os.path.exists(self.seegdir):
+                self.seegdir = os.path.join(self.root_dir, 'seeg', 'edf')
+            self.elecdir = os.path.join(self.root_dir, 'elec')
+            self.dwidir = os.path.join(self.root_dir, 'dwi')
+            self.tvbdir = os.path.join(self.root_dir, 'tvb')
+        # assumes elec/tvb/dwi/seeg dirs are set
         self._renamefiles()
-        if not self._exists(self.seegfile):
-            self.seegfile = os.path.join(self.elecdir , 'seeg.xyz')
-        self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.{}.txt'.format(self.atlas))
-        if not self._exists(self.gainfile):
-            self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
+
+        # sensors file with xyz coords
+        self.sensorsfile = os.path.join(self.elecdir , 'seeg.txt')
+        if not self._exists(self.sensorsfile):
+            self.sensorsfile = os.path.join(self.elecdir , 'seeg.xyz')
+        
+        # label volume file for where each contact is
         self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.%s.nii.gz" % self.atlas)
         if not self._exists(self.label_volume_file):
             self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.nii.gz")
-    
+        
+        # connectivity file
+        self.connfile = os.path.join(self.tvbdir, "connectivity.%s.zip" % self.atlas)
+        if not self._exists(self.connfile):
+            self.connfile = os.path.join(self.tvbdir, "connectivity.zip")
+
+        # surface geometry file
+        self.surfacefile = os.path.join(self.tvbdir, "surface_cort.%s.zip" % self.atlas)
+        if not self._exists(self.connfile):
+            self.surfacefile = os.path.join(self.tvbdir, "surface_cort.zip")
+
+        # computed gain matrix file
+        self.gainfile = os.path.join(self.elecdir, 'gain-in-square.txt')
+        if not os.path.exists(self.sensorsfile):
+            self.gainfile = os.path.join(self.elecdir, 'gain-in-square.%s.txt' % self.atlas)
+
+        self.ez_hyp_file = os.path.join(self.tvbdir, 'ez_hypothesis.txt')
+        if not os.path.exists(self.ez_hyp_file):
+            self.ez_hyp_file = os.path.join(self.tvbdir, 'ez_hypothesis.dk.txt')
+
     def _mapcontacts_toregs(self):
-        self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.%s.nii.gz" % self.atlas)
-        if not self._exists(self.label_volume_file):
-            self.label_volume_file = os.path.join(self.dwidir, "label_in_T1.nii.gz")
         if not self._exists(self.label_volume_file):
             return
 
@@ -134,7 +156,10 @@ class BaseSubjectLoader(object):
         self.logger.debug("\nMapped contacts to regions!\n")
 
     def _loadseegxyz(self):
-        seeg_pd = utils.loadseegxyz(self.seegfile)
+        if not self._exists(self.sensorsfile):
+            return
+
+        seeg_pd = utils.loadseegxyz(self.sensorsfile)
         self.chanxyzlabels = np.array(seeg_pd.index.values)
         self.chanxyz = seeg_pd.as_matrix(columns=None)
         self.logger.debug("\nLoaded in seeg xyz coords!\n")
@@ -143,9 +168,6 @@ class BaseSubjectLoader(object):
         self.contacts = Contacts(self.seegfile)
 
     def _loadezhypothesis(self):
-        self.ez_hyp_file = os.path.join(self.tvbdir, "ez_hypothesis.%s.txt" % self.atlas)
-        if not self._exists(self.ez_hyp_file):
-            self.ez_hyp_file = os.path.join(self.tvbdir, "ez_hypothesis.txt")
         if not self._exists(self.ez_hyp_file):
             return
         self.ez_hypothesis = np.genfromtxt(self.ez_hyp_file,
@@ -153,9 +175,6 @@ class BaseSubjectLoader(object):
         self.ezinds = np.where(self.ez_hypothesis == 1)[0]
 
     def _loadconnectivity(self):
-        self.connfile = os.path.join(self.tvbdir, "connectivity.%s.zip" % self.atlas)
-        if not self._exists(self.connfile):
-            self.connfile = os.path.join(self.tvbdir, "connectivity.zip")
         if not self._exists(self.connfile):
             return
 
@@ -166,9 +185,6 @@ class BaseSubjectLoader(object):
         self.tract_lengths = self.conn.tract_lengths
 
     def _loadsurface(self):
-        self.surfacefile = os.path.join(self.tvbdir, "surface_cort.%s.zip" % self.atlas)
-        if not self._exists(self.surfacefile):
-            self.surfacefile = os.path.join(self.tvbdir, "surface_cort.zip")
         if not self._exists(self.surfacefile):
             return
         self.surf = LoadSurface().loadsurfdata(self.tvbdir, use_subcort=False)
