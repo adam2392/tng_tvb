@@ -13,16 +13,16 @@ INTERICTAL_TYPES = ['interictal', 'ii', 'aslp', 'aw']
 
 class Subject(BaseSubjectLoader):
     sim_recordings = []
-    def __init__(self, name, root_pat_dir=None, atlas=None, DEBUG=True, preload=True, config=None):
+    def __init__(self, name, root_dir=None, atlas=None, DEBUG=True, preload=True, config=None):
         super(Subject, self).__init__(config=config)
         self.name = name
 
         self.subject_dir = dataconfig.subject_dir
         self.atlas = dataconfig.atlas
-        self.root_pat_dir = os.path.join(dataconfig.subject_dir, name)
+        self.root_dir = os.path.join(dataconfig.subject_dir, name)
 
-        if root_pat_dir is not None:
-            self.root_pat_dir = root_pat_dir
+        if root_dir is not None:
+            self.root_dir = root_dir
         if atlas is not None:
             self.atlas = atlas
 
@@ -50,7 +50,7 @@ class Subject(BaseSubjectLoader):
             self.read_sim_eeg()
 
     def read_sim_eeg(self):
-        simdatadir = self.root_pat_dir
+        simdatadir = self.root_dir
         json_files = [filename for filename in os.listdir(simdatadir) \
             if filename.endswith('.json') if not filename.startswith('.')]
 
@@ -63,9 +63,9 @@ class Subject(BaseSubjectLoader):
         self.interictal_recordings = []
         self.stimulation_recordings = []
 
-        eeg_dir = os.path.join(self.root_pat_dir, "seeg", "fif")
+        eeg_dir = os.path.join(self.root_dir, "seeg", "fif")
         if not self._exists(eeg_dir):
-            eeg_dir = os.path.join(self.root_pat_dir, "seeg", "edf")
+            eeg_dir = os.path.join(self.root_dir, "seeg", "edf")
         if not self._exists(eeg_dir):
             raise IOError("{} for raw eeg data does not exist. Checked fif and edf!".format(eeg_dir))
 
