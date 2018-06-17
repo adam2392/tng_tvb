@@ -136,7 +136,7 @@ class BaseSubjectLoader(object):
 
         # surface geometry file
         self.surfacefile = os.path.join(self.tvbdir, "surface_cort.%s.zip" % self.atlas)
-        if not self._exists(self.connfile):
+        if not self._exists(self.surfacefile):
             self.surfacefile = os.path.join(self.tvbdir, "surface_cort.zip")
 
         # computed gain matrix file
@@ -150,6 +150,7 @@ class BaseSubjectLoader(object):
 
     def _mapcontacts_toregs(self):
         if not self._exists(self.label_volume_file):
+            self.logger.error("Can't from {} because doesn't exist".format(self.label_volume_file))
             return
 
         self.contact_regs = np.array(
@@ -158,6 +159,7 @@ class BaseSubjectLoader(object):
 
     def _loadseegxyz(self):
         if not self._exists(self.sensorsfile):
+            self.logger.error("Can't from {} because doesn't exist".format(self.sensorsfile))
             return
 
         seeg_pd = utils.loadseegxyz(self.sensorsfile)
@@ -170,6 +172,7 @@ class BaseSubjectLoader(object):
 
     def _loadezhypothesis(self):
         if not self._exists(self.ez_hyp_file):
+            self.logger.error("Can't from {} because doesn't exist".format(self.ez_hyp_file))
             return
         self.ez_hypothesis = np.genfromtxt(self.ez_hyp_file,
                                            dtype=int).astype(bool)
@@ -177,6 +180,7 @@ class BaseSubjectLoader(object):
 
     def _loadconnectivity(self):
         if not self._exists(self.connfile):
+            self.logger.error("Can't from {} because doesn't exist".format(self.connfile))
             return
 
         self.conn = LoadConn().readconnectivity(self.connfile)
@@ -187,6 +191,7 @@ class BaseSubjectLoader(object):
 
     def _loadsurface(self):
         if not self._exists(self.surfacefile):
+            self.logger.error("Can't from {} because doesn't exist".format(self.surfacefile))
             return
         self.surf = LoadSurface().loadsurfdata(self.tvbdir, use_subcort=False)
 
