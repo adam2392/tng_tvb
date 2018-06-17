@@ -108,6 +108,7 @@ class BaseSubjectLoader(object):
         '''
         Initialization function to be called
         '''
+        # lambda dir, file: 
         if setfiledir:
             self.seegdir = os.path.join(self.root_dir, 'seeg', 'fif')
             if not os.path.exists(self.seegdir):
@@ -140,7 +141,7 @@ class BaseSubjectLoader(object):
 
         # computed gain matrix file
         self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
-        if not os.path.exists(self.sensorsfile):
+        if not os.path.exists(self.gainfile):
             self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.%s.txt' % self.atlas)
 
         self.ez_hyp_file = os.path.join(self.tvbdir, 'ez_hypothesis.txt')
