@@ -81,7 +81,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     }
     for key, value in kwargs.iteritems():
         print "%s = %s" % (key, value)
-        if key == 'Iext':
+        if key == 'Iext' or key == 'eps1':
             epileptor_params[key] = value
 
     x0ez=-1.65

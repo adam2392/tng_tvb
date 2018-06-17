@@ -39,6 +39,7 @@ class TVBExp(object):
         self.goodchaninds = goodchaninds
 
     def getepileptorparams(self):
+        # epi_params = [a for a in dir(self.epileptors) if not a.startswith('__') and not callable(getattr(obj,a))]
         params = {
             'r': self.epileptors.r,
             'ks': self.epileptors.Ks,
@@ -46,8 +47,7 @@ class TVBExp(object):
             'tt': self.epileptors.tt,
             'x0': self.epileptors.x0,
             'iext': self.epileptors.Iext,
-            # 'nsig': self.integrator.noise.nsig,
-            # 'ntau': self.integrator.noise.ntau,
+            'eps1': self.epileptors.eps1,
         }
         return params
 

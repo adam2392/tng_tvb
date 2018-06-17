@@ -31,8 +31,8 @@ read -p "Shuffle weights?: " shuffleweights
 
 # set values and their defauls
 dist=${dist:--1}
-expname=${expname:-exp025}
-shuffleweights=${shuffleweights:-1}
+expname=${expname:-exp019}
+shuffleweights=${shuffleweights:-0}
 echo ${dist}
 echo ${expname}
 
@@ -77,7 +77,7 @@ dist=${dist},\
 shuffleweights=${shuffleweights} "
 
 	# build basic sbatch command with all params parametrized
-	sbatchcomm=$(cat $short_config)
+	sbatchcomm=$(cat $long_config)
 	sbatchcomm="$sbatchcomm --job-name=${jobname}"
 
 	# build a scavenger job, gpu job, or other job
