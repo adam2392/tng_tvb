@@ -103,6 +103,7 @@ if __name__ == '__main__':
     # define the parameter sweeping by changing iext
     iext_param_sweep = np.arange(2.5,3.5,0.2)
     eps1_param_sweep = np.arange(-0.4,0.4,0.1)
+    ind = 0
     for i, iext in enumerate(iext_param_sweep):
         for j, eps1 in enumerate(eps1_param_sweep):
             print("Using iext1 value of {}".format(iext))
@@ -185,9 +186,9 @@ if __name__ == '__main__':
                 os.makedirs(freqoutputdir)
             # where to save final computation
             outputfilename = os.path.join(freqoutputdir, 
-                    '{}_{}_{}model.npz'.format(patient, mode, (2*i)))
+                    '{}_{}_{}model.npz'.format(patient, mode, (2*ind)))
             outputmetafilename = os.path.join(freqoutputdir,
-                '{}_{}_{}meta.json'.format(patient, mode, (2*i)))
+                '{}_{}_{}meta.json'.format(patient, mode, (2*ind)))
             run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
             mode = 'morlet'
@@ -197,7 +198,8 @@ if __name__ == '__main__':
                 os.makedirs(freqoutputdir)
             # where to save final computation
             outputfilename = os.path.join(freqoutputdir, 
-                    '{}_{}_{}model.npz'.format(patient, mode, (2*i)+1))
+                    '{}_{}_{}model.npz'.format(patient, mode, (2*ind)+1))
             outputmetafilename = os.path.join(freqoutputdir,
-                '{}_{}_{}meta.json'.format(patient, mode, (2*i)+1))
+                '{}_{}_{}meta.json'.format(patient, mode, (2*ind)+1))
             run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
+            ind +=1
