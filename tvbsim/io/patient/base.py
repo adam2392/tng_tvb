@@ -139,6 +139,10 @@ class BaseSubjectLoader(object):
         if not self._exists(self.surfacefile):
             self.surfacefile = os.path.join(self.tvbdir, "surface_cort.zip")
 
+        self.regionmapfile = os.path.join(self.tvbdir, "region_mapping_cort.%.txt" % self.atlas)
+        if not self._exists(self.regionmapfile):
+            self.regionmapfile = os.path.join(self.tvbdir, "region_mapping_cort.txt")
+
         # computed gain matrix file
         self.gainfile = os.path.join(self.elecdir, 'gain_inv-square.txt')
         if not os.path.exists(self.gainfile):
@@ -147,6 +151,7 @@ class BaseSubjectLoader(object):
         self.ez_hyp_file = os.path.join(self.tvbdir, 'ez_hypothesis.txt')
         if not os.path.exists(self.ez_hyp_file):
             self.ez_hyp_file = os.path.join(self.tvbdir, 'ez_hypothesis.dk.txt')
+
 
     def _mapcontacts_toregs(self):
         if not self._exists(self.label_volume_file):
@@ -190,10 +195,10 @@ class BaseSubjectLoader(object):
         self.tract_lengths = self.conn.tract_lengths
 
     def _loadsurface(self):
-        if not self._exists(self.surfacefile):
-            self.logger.error("Can't from {} because doesn't exist".format(self.surfacefile))
+        if not self._exists(self.surfacefile) or not self._exists(self.regionmapfile):
+            self.logger.error("Can't from {}, {} because doesn't exist".format(self.surfacefile, self.regionmapfile))
             return
-        self.surf = LoadSurface().loadsurfdata(self.tvbdir, use_subcort=False)
+        self.surf = LoadSurface().loadsurfdata(self.surfacefile, self.regionmapfile, use_subcort=False)
 
     def _writejsonfile(self, metadata, metafilename):
         with io.open(metafilename, 'w', encoding='utf8') as outfile:

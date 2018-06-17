@@ -10,17 +10,13 @@ class Surface(object):
         self.regmap = regmap
 
 class LoadSurface():
-    def loadsurfdata(self, directory, use_subcort=False):
+    def loadsurfdata(self, surfacefile, regionmapfile, use_subcort=False):
         '''
         Pass in directory for where the entire metadata for this patient is
         '''
         # Shift to account for 0 - unknown region, not included later
-        reg_map_cort = np.genfromtxt(
-            (os.path.join(
-                directory,
-                "region_mapping_cort.txt")),
-            dtype=int) - 1
-        with zipfile.ZipFile(os.path.join(directory, "surface_cort.zip")) as zip:
+        reg_map_cort = np.genfromtxt(regionmapfile, dtype=int) - 1
+        with zipfile.ZipFile(surfacefile) as zip:
             with zip.open('vertices.txt') as fhandle:
                 verts_cort = np.genfromtxt(fhandle)
             with zip.open('normals.txt') as fhandle:
@@ -40,34 +36,65 @@ class LoadSurface():
             surf = self.convert_to_obj(verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
             return surf
             # return (verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
-        else:
-            reg_map_subc = np.genfromtxt(
-                (os.path.join(
-                    directory,
-                    "region_mapping_subcort.txt")),
-                dtype=int) - 1
-            with zipfile.ZipFile(os.path.join(directory, "surface_subcort.zip")) as zip:
-                with zip.open('vertices.txt') as fhandle:
-                    verts_subc = np.genfromtxt(fhandle)
-                with zip.open('normals.txt') as fhandle:
-                    normals_subc = np.genfromtxt(fhandle)
-                with zip.open('triangles.txt') as fhandle:
-                    triangles_subc = np.genfromtxt(fhandle, dtype=int)
-            vert_areas_subc = self._compute_vertex_areas(
-                verts_subc, triangles_subc)
 
-            verts = np.concatenate((verts_cort, verts_subc))
-            normals = np.concatenate((normals_cort, normals_subc))
-            areas = np.concatenate((vert_areas_cort, vert_areas_subc))
-            regmap = np.concatenate((reg_map_cort, reg_map_subc))
-            self.vertices = verts
-            self.normals = normals
-            self.areas = areas
-            self.regmap = regmap
+    # def loadsurfdata(self, surfacefile, regionmapfile, use_subcort=False):
+    #     '''
+    #     Pass in directory for where the entire metadata for this patient is
+    #     '''
+    #     # Shift to account for 0 - unknown region, not included later
+    #     reg_map_cort = np.genfromtxt(
+    #         (os.path.join(
+    #             directory,
+    #             "region_mapping_cort.txt")),
+    #         dtype=int) - 1
+    #     with zipfile.ZipFile(os.path.join(directory, "surface_cort.zip")) as zip:
+    #         with zip.open('vertices.txt') as fhandle:
+    #             verts_cort = np.genfromtxt(fhandle)
+    #         with zip.open('normals.txt') as fhandle:
+    #             normals_cort = np.genfromtxt(fhandle)
+    #         with zip.open('triangles.txt') as fhandle:
+    #             triangles_cort = np.genfromtxt(fhandle, dtype=int)
+    #     vert_areas_cort = self._compute_vertex_areas(
+    #         verts_cort, triangles_cort)
 
-            surf = self.convert_to_obj(vertices, normals, areas, regmap)
-            return surf
-            # return (verts, normals, areas, regmap)
+    #     if use_subcort == False:
+    #         print('NOT USING SUBCORT')
+    #         self.vertices = verts_cort
+    #         self.normals = normals_cort
+    #         self.areas = vert_areas_cort
+    #         self.regmap = reg_map_cort
+            
+    #         surf = self.convert_to_obj(verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
+    #         return surf
+    #         # return (verts_cort, normals_cort, vert_areas_cort, reg_map_cort)
+    #     else:
+    #         reg_map_subc = np.genfromtxt(
+    #             (os.path.join(
+    #                 directory,
+    #                 "region_mapping_subcort.txt")),
+    #             dtype=int) - 1
+    #         with zipfile.ZipFile(os.path.join(directory, "surface_subcort.zip")) as zip:
+    #             with zip.open('vertices.txt') as fhandle:
+    #                 verts_subc = np.genfromtxt(fhandle)
+    #             with zip.open('normals.txt') as fhandle:
+    #                 normals_subc = np.genfromtxt(fhandle)
+    #             with zip.open('triangles.txt') as fhandle:
+    #                 triangles_subc = np.genfromtxt(fhandle, dtype=int)
+    #         vert_areas_subc = self._compute_vertex_areas(
+    #             verts_subc, triangles_subc)
+
+    #         verts = np.concatenate((verts_cort, verts_subc))
+    #         normals = np.concatenate((normals_cort, normals_subc))
+    #         areas = np.concatenate((vert_areas_cort, vert_areas_subc))
+    #         regmap = np.concatenate((reg_map_cort, reg_map_subc))
+    #         self.vertices = verts
+    #         self.normals = normals
+    #         self.areas = areas
+    #         self.regmap = regmap
+
+    #         surf = self.convert_to_obj(vertices, normals, areas, regmap)
+    #         return surf
+    #         # return (verts, normals, areas, regmap)
 
     def convert_to_obj(self, vertices, normals, areas, regmap):
         surf = Surface(vertices, normals, areas, regmap)
