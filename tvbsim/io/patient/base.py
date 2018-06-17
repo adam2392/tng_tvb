@@ -139,7 +139,7 @@ class BaseSubjectLoader(object):
         if not self._exists(self.surfacefile):
             self.surfacefile = os.path.join(self.tvbdir, "surface_cort.zip")
 
-        self.regionmapfile = os.path.join(self.tvbdir, "region_mapping_cort.%.txt" % self.atlas)
+        self.regionmapfile = os.path.join(self.tvbdir, "region_mapping_cort.%s.txt" % self.atlas)
         if not self._exists(self.regionmapfile):
             self.regionmapfile = os.path.join(self.tvbdir, "region_mapping_cort.txt")
 
