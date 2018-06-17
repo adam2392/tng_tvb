@@ -1,6 +1,5 @@
 import os
 import zipfile
-
 import numpy as np
 
 from tvbsim.io.config import dataconfig as dataconfig

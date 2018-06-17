@@ -220,6 +220,10 @@ class BaseSubjectLoader(object):
         print("Checking label volume file: ", self._exists(self.label_volume_file))
         print("Checking connectivity file: ", self._exists(self.connfile))
         print("Checking ez hypothesis file: ", self._exists(self.ez_hyp_file))
+
+        print("gainfile: ", self.gainfile)
+        print("ezhyp file: ", self.ez_hyp_file)
+        print("label volume file: ", self.label_volume_file)
         # print("Checking surface file: ", self._exists(self.surfacefile))
 
     def clipseizure(self, buffer_sec=60):
