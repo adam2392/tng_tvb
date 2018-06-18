@@ -128,9 +128,9 @@ if __name__ == '__main__':
                 
             ## OUTPUTFILE NAME ##
             filename = os.path.join(outputdatadir,
-                        '{0}_dist{1}_{}_{}.npz'.format(patient, movedist, iext, eps1))
+                        '{}_dist{}_{}_{}.npz'.format(patient, movedist, iext, eps1))
             metafilename = os.path.join(outputdatadir,
-                        '{0}_dist{1}_{2}_{}.json'.format(patient, movedist, iext, eps1))
+                        '{}_dist{}_{}_{}.json'.format(patient, movedist, iext, eps1))
             direc, simfilename = os.path.split(filename)
             
             maintvbexp = initialize_tvb_model(loader, ezregions=modelezregions, 
