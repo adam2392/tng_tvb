@@ -86,7 +86,7 @@ if __name__ == '__main__':
     period = 1./_factor
 
     # set all directories to output data, get meta data, get raw data
-    outputdatadir = os.path.join(outputdatadir, 'clin', patient)
+    outputdatadir = os.path.join(outputdatadir, patient)
     if not os.path.exists(outputdatadir):
         os.makedirs(outputdatadir)
 
