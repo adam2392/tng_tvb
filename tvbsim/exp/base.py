@@ -1,7 +1,3 @@
-import sys
-sys.path.append('../_tvblibrary/')
-sys.path.append('../_tvbdata/')
-sys.path.append('../')
 from tvb.simulator.lab import *
 
 import zipfile
@@ -10,19 +6,17 @@ import pandas as pd
 from scipy.optimize import fsolve
 import random
 
-class TVBExp(object):
-    goodchaninds = []
-    
-    def __init__(self, conn, condspeed=np.inf):
-        self.conn = conn
+from tvbsim.base.constants.config import Config
+from tvbsim.base.utils.log_error import initialize_logger
+from tvbsim.base.utils.data_structures_utils import NumpyEncoder
 
-        try:
-            self.conn.speed = condspeed
-            self.conn.cortical[:] = True
-            self.conn.weights = conn.weights / np.max(conn.weights)
-        except:
-            print("Not setting connectivity params in TVBExp Base Class.")
-        self.init_cond = None
+class BaseTVBExp(object):
+        
+    def __init__(self, config=None):
+        self.config = config or Config()
+        self.logger = initialize_logger(
+                        self.__class__.__name__,
+                        self.config.out.FOLDER_LOGS)
 
     @staticmethod
     def randshuffleweights(weights):
@@ -38,9 +32,46 @@ class TVBExp(object):
         patientlist.remove(patient)
         randpat = random.choice(patientlist)
         return randpat
+        
+    def __get_equilibrium(self, model, init):
+        # the number of variables we need estimates for
+        nvars = len(model.state_variables)
+        cvars = len(model.cvar)
 
-    def setgoodchans(self, goodchaninds):
-        self.goodchaninds = goodchaninds
+        def func(x):
+            x = x[0:nvars]
+            fx = model.dfun(x.reshape((nvars, 1, 1)),
+                            np.zeros((cvars, 1, 1)))
+            return fx.flatten()
+        x = fsolve(func, init)
+        return x
+
+    def _computeinitcond(self, x0, num_regions):
+        epileptor_equil = models.Epileptor()
+        epileptor_equil.x0 = x0
+        init_cond = self.__get_equilibrium(epileptor_equil,
+                                           np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
+        init_cond_reshaped = np.repeat(init_cond, num_regions).reshape(
+            (1, len(init_cond), num_regions, 1))
+        self.init_cond = init_cond_reshaped
+        return init_cond_reshaped
+
+    def sample_randregions(self, num):
+        randinds = np.random.randint(
+            0, len(self.conn.region_labels), size=num).astype(int)
+        regions = self.conn.region_labels[randinds]
+        return randinds, regions
+
+    def _getindexofregion(self, region):
+        '''
+        This is a helper function to determine the indices of the ez and pz region
+        '''
+        assert np.asarray(region).size == 1
+
+        sorter = np.argsort(self.conn.region_labels)
+        indice = sorter[np.searchsorted(
+            self.conn.region_labels, region, sorter=sorter)].astype(int)
+        return indice
 
     def loadseegxyz(self, seegfile):
         '''
@@ -129,42 +160,4 @@ class TVBExp(object):
                 vertex_areas[vertices[i]] += 1. / 3. * triangle_areas[triang]
         return vertex_areas
 
-    def __get_equilibrium(self, model, init):
-        # the number of variables we need estimates for
-        nvars = len(model.state_variables)
-        cvars = len(model.cvar)
-
-        def func(x):
-            x = x[0:nvars]
-            fx = model.dfun(x.reshape((nvars, 1, 1)),
-                            np.zeros((cvars, 1, 1)))
-            return fx.flatten()
-        x = fsolve(func, init)
-        return x
-
-    def _computeinitcond(self, x0, num_regions):
-        epileptor_equil = models.Epileptor()
-        epileptor_equil.x0 = x0
-        init_cond = self.__get_equilibrium(epileptor_equil,
-                                           np.array([0.0, 0.0, 3.0, -1.0, 1.0, 0.0]))
-        init_cond_reshaped = np.repeat(init_cond, num_regions).reshape(
-            (1, len(init_cond), num_regions, 1))
-        self.init_cond = init_cond_reshaped
-        return init_cond_reshaped
-
-    def sample_randregions(self, num):
-        randinds = np.random.randint(
-            0, len(self.conn.region_labels), size=num).astype(int)
-        regions = self.conn.region_labels[randinds]
-        return randinds, regions
-
-    def _getindexofregion(self, region):
-        '''
-        This is a helper function to determine the indices of the ez and pz region
-        '''
-        assert np.asarray(region).size == 1
-
-        sorter = np.argsort(self.conn.region_labels)
-        indice = sorter[np.searchsorted(
-            self.conn.region_labels, region, sorter=sorter)].astype(int)
-        return indice
+    

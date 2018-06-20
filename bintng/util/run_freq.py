@@ -39,8 +39,8 @@ class FreqAnalysis(object):
 
         # since morlet wavelet does not compress in time, we will
         # do it ourselves to save disk space
-        power = _compress_windata(power,samplepoints,samplerate,winsize,stepsize)
-        phase = _compress_windata(phase,samplepoints,samplerate,winsize,stepsize)
+        # power = _compress_windata(power,samplepoints,samplerate,winsize,stepsize)
+        # phase = _compress_windata(phase,samplepoints,samplerate,winsize,stepsize)
         
         print(power.shape)
         print(phase.shape)

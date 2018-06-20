@@ -1,13 +1,12 @@
+import numpy as np
 import sys
 sys.path.append('../_tvblibrary/')
 sys.path.append('../_tvbdata/')
 from tvb.simulator.lab import *
-import numpy as np
-from exp.basetvbexp import TVBExp
-from exp.movecontactexp import MoveContactExp
+from tvbsim.exp.base import BaseTVBExp
 import warnings
 
-class MainTVBSim(TVBExp, MoveContactExp):
+class MainTVBSim(BaseTVBExp):
     x0ez = x0pz = x0norm = None
     ezindices = []
 
@@ -17,12 +16,11 @@ class MainTVBSim(TVBExp, MoveContactExp):
     monitors = None
     integrators = None
     
-    def __init__(self, conn=None, condspeed=np.inf):
-        TVBExp.__init__(self, conn=conn, condspeed=condspeed)
+    def __init__(self, config=None):
+        super(TVBExp, self).__init__(config=config)
 
     def get_metadata(self):
         self.metadata = {
-                'goodchaninds': self.goodchaninds,
                 'regions': self.conn.region_labels,
                 'regions_centers': self.conn.centres,
                 'chanlabels': self.seeg_labels,
@@ -31,7 +29,6 @@ class MainTVBSim(TVBExp, MoveContactExp):
                 'pzregs': self.pzregion,
                 'ezindices': self.ezind,
                 'pzindices': self.pzind,
-                'epiparams': self.getepileptorparams(),
                 'gainmat': self.gainmat,
                 'x0ez': self.x0ez,
                 'x0pz': self.x0pz,
@@ -126,55 +123,6 @@ class MainTVBSim(TVBExp, MoveContactExp):
             epileptors.x0[self.ezind] = x0ez
         if x0pz is not None and pzregions is not None:
             epileptors.x0[self.pzind] = x0pz
-        self.epileptors = epileptors
-
-    def loadepileptor(self, ezregions, pzregions,
-                        x0ez=-2.3, x0pz=-2.05, x0norm=-1.6, epileptor_params=None):
-        '''
-        State variables for the Epileptor model:
-        Repeated here for redundancy:
-        x1 = first
-        y1 = second
-        z = third
-        x2 = fourth
-        y2 = fifth
-        '''
-        if epileptor_params is None:
-            epileptor_params = {
-                    'r': 0.00037,#/1.5   # Temporal scaling in the third state variable
-                    'Ks': -10,                 # Permittivity coupling, fast to slow time scale
-                    'tt': 0.07,                   # time scale of simulation
-                    'tau': 10,                   # Temporal scaling coefficient in fifth st var
-                    'x0': -2.45, # x0c value = -2.05
-                    # 'Iext': iext,
-                }
-            print("In maintvbexp.py using default parameters!")
-        
-        self.setezregion(ezregions)
-        self.setpzregion(pzregions)
-        ####################### 2. Neural Mass Model @ Nodes ##################
-        epileptors = models.Epileptor(variables_of_interest=['z', 'x2-x1', 'x1', 'x2', 'y1', 'y2', 'g'], 
-                                    **epileptor_params)
-
-        # this comes after setting all parameters
-        epileptors.x0 = x0norm * np.ones(len(self.conn.region_labels))
-        if x0ez is not None:
-            try:
-                epileptors.x0[self.ezind] = x0ez
-            except AttributeError:
-                sys.stderr.write(
-                    "EZ index not set yet! Do you want to proceed with simulation?")
-                warnings.warn(
-                    "EZ index not set yet! Do you want to proceed with simulation?")
-        if x0pz is not None:
-            try:
-                epileptors.x0[self.pzind] = x0pz
-            except AttributeError:
-                sys.stderr.write(
-                    "PZ index not set yet! Do you want to proceed with simulation?")
-                warnings.warn(
-                    "pz index not set yet! Do you want to proceed with simulation?")
-
         self.epileptors = epileptors
 
     def loadcoupling(self, type_cpl='diff', a=1.):

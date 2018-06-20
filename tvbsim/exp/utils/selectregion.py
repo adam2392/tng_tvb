@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 
-
 class Regions(object):
     def __init__(self, regs, regs_xyz, epsilon):
         '''
@@ -33,7 +32,7 @@ class Regions(object):
             dists_of_reg = self.distmat[ireg, ind_of_regs]
             for dist in dists_of_reg:
                 if dist < self.epsilon:
-                    outside_set.append(ireg)
+                    outside_set.append(reg)
                     break
         return outside_set
 

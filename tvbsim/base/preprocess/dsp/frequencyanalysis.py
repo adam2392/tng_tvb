@@ -135,7 +135,7 @@ class MultiTaperFFT(BaseFreqModel):
             phasemultitaper[ichan, :, :] = fxphase[:, :, 0]
 
         # make it log based power
-        powermultitaper = np.log10(powermultitaper)
+        powermultitaper = np.log10(np.abs(powermultitaper))
         return powermultitaper, self.freqsfft, self.timepoints, phasemultitaper
 
 

@@ -15,7 +15,7 @@ import itertools
 import main_freq
 
 # to run simulation and post processing and data loading
-from tvbsim.exp.selectregion import Regions
+from tvbsim.exp.utils.selectregion import Regions
 from tvbsim.postprocess.postprocess import PostProcessor
 from tvbsim.postprocess.detectonsetoffset import DetectShift
 from tvbsim.maintvbexp import MainTVBSim

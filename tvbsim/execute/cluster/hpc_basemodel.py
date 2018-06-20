@@ -1,4 +1,3 @@
-import abc  # abstractmethod
 from tvbsim.base.constants.config import Config
 from tvbsim.base.utils.log_error import initialize_logger
 from tvbsim.base.utils.data_structures_utils import NumpyEncoder
@@ -13,7 +12,7 @@ except NameError:
     to_unicode = str
     
 ''' Class wrappers for writing HPC mvar model computations '''
-class BaseHPC(abc.ABCMeta):
+class BaseHPC(object):
     ''' Required attribbutes when running a job array '''
     numtasks = None
     taskid = None 

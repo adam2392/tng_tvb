@@ -5,18 +5,23 @@ import pandas as pd
 import mne
 import json
 
+from tvbsim.io.loaders.base import BaseLoader
 from tvbsim.io.utils import seegrecording
-from tvbsim.io.base import BaseLoader
+
 from tvbsim.base.preprocess.util.noise import LineNoise
 from datetime import date
 
 
 class LoadSimDataset(BaseLoader):
-    root_dir = None
-    rawdatadir = None
-    datafile = None
-    patient = None
-    record_date = None
+    raw = None
+    rawdata = None
+    chanlabels = None
+    goodchan_labels = None
+
+    onset_sec = None
+    onset_ind = None
+    offset_sec = None
+    offset_ind = None
 
     def __init__(self, root_dir, datafile, rawdatadir, patient=None,
                  preload=False, reference='monopolar', config=None):
@@ -27,21 +32,18 @@ class LoadSimDataset(BaseLoader):
         self.reference = reference
         self.patient = patient
 
-        if patient not in rawdatadir:
-            self.rawdatadir = os.path.join(self.rawdatadir, patient)
-
         # set directories for the datasets
         self.seegdir = os.path.join(self.rawdatadir, 'seeg', 'fif')
         self.elecdir = os.path.join(self.rawdatadir, 'elec')
         self.dwidir = os.path.join(self.rawdatadir, 'dwi')
         self.tvbdir = os.path.join(self.rawdatadir, 'tvb')
+        self._init_files(setfiledir=False)
 
         # load in the meta data and create mne raw object
+        self.loadmeta_tvbdata()
         metafile = datafile.split('.npz')[0] + '.json'
         self._loadjsonfile(metafile)
-        self.loadmeta_tvbdata()
-        
-        # handle the actual dataset
+        self._loadmetadata()
         rawdata = self.loadsimdata()
         self.create_info_obj()
         self.create_raw_obj(rawdata)
@@ -50,19 +52,7 @@ class LoadSimDataset(BaseLoader):
         if preload:
             self.load_data()
 
-    def loadmeta_tvbdata(self):
-        self.logger.debug('Reading in metadata!')
-        # rename files from .xyz -> .txt
-        self._renamefiles()
-        self._loadseegxyz()
-        if self.label_volume_file is not None:
-            if os.path.exists(self.label_volume_file):
-                self._mapcontacts_toregs()
-
-        # load in ez hypothesis and connectivity from TVB pipeline
-        self._loadezhypothesis()
-        self._loadconnectivity()
-        
+    def _loadmetadata(self):
         # set line frequency and add to it
         self.samplerate = self.metadata['samplerate']
         self.chanlabels = self.metadata['chanlabels']
@@ -74,6 +64,16 @@ class LoadSimDataset(BaseLoader):
         self.offset_sec = np.divide(self.offset_ind, self.samplerate)
         self.onset_sec = np.divide(self.onset_ind, self.samplerate)
 
+    def loadmeta_tvbdata(self):
+        self.logger.debug('Reading in metadata!')
+        # rename files from .xyz -> .txt
+        self._renamefiles()
+        self._loadseegxyz()
+        self._mapcontacts_toregs()
+
+        # load in ez hypothesis and connectivity from TVB pipeline
+        self._loadezhypothesis()
+        self._loadconnectivity()
         self.logger.debug("Finished reading in metadata!")
 
     def load_data(self):
@@ -90,7 +90,7 @@ class LoadSimDataset(BaseLoader):
         sfreq = self.samplerate
         ch_names = list(self.chanlabels)
         linefreq = self.linefreq
-        lowpass_freq = 0.5
+        lowpass_freq = 0.1
         highpass_freq = 499
         ch_types = ['seeg'] * len(ch_names)
         # It is also possible to use info from another raw object.
@@ -134,6 +134,7 @@ class LoadSimDataset(BaseLoader):
                           bandwidth,
                           numharmonics,
                           self.samplerate)
+
         numsamps = rawdata.shape[1]
 
         self.logger.debug(
@@ -153,22 +154,24 @@ class LoadSimDataset(BaseLoader):
         self.chanlabels = self.raw.info['ch_names']
         # also set to all the channel labels
         self.allchans = self.chanlabels
+        self._processchanlabels()
         # set edge freqs that were used in recording
         # Note: the highpass_freq is the max frequency we should be able to see
         # then.
         self.lowpass_freq = self.raw.info['lowpass']
         self.highpass_freq = self.raw.info['highpass']
         # set recording date
-        try:
-            record_date = date.fromtimestamp(self.raw.info["meas_date"][0])
-            self.record_date = record_date
-            # number of microseconds
-            record_ms_date = self.raw.info["meas_date"][1]
-            self.record_ms_date = record_ms_date
-        except:
-            print("No record date for this dataset")
+        record_date = date.fromtimestamp(self.raw.info["meas_date"][0])
+        self.record_date = record_date
+        # number of microseconds
+        record_ms_date = self.raw.info["meas_date"][1]
+        self.record_ms_date = record_ms_date
         # set line freq
         self.linefreq = self.raw.info['line_freq']
+
+    def _processchanlabels(self):
+        self.chanlabels = [str(x).replace('POL', '').replace(' ', '')
+                           for x in self.chanlabels]
 
     def sync_good_data(self, rawdata=None):
         if rawdata is None:
@@ -303,9 +306,5 @@ class LoadSimDataset(BaseLoader):
             self.logger.info(
                 'chunking not set for %s %s \n' %
                 (self.patient, self.datafile))
-
-        # needs to be gotten from sync_data()
-        # metadata['goodchans'] = dataloader.goodchans
-        # metadata['graychans'] = dataloader.graychans_inds
-
+            
         return metadata

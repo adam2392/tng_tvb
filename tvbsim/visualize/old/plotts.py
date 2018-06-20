@@ -5,7 +5,6 @@ import seaborn as sns
 import warnings
 from .basevisual import BaseVisualModel
 
-
 class VisualTs(BaseVisualModel):
     def __init__(self, figsize=(7, 7), title_font=[], axis_font=[]):
         BaseVisualModel.__init__(self, title_font, axis_font)
