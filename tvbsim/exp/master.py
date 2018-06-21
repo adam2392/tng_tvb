@@ -49,7 +49,11 @@ class MasterExp(object):
 
     def get_metadata(self):
         self.metadata = {
-                'conn_params': self.conn_params,
+                'conn_params': {
+                        'region_labels': self.conn_params['conn'].region_labels,
+                        'cond_speed': self.conn_params['condspeed'],
+                        'weights': self.conn_params['conn'].weights,
+                        },
                 'coupling_params': self.coupling_params,
                 'model_params': self.model_params,
                 'integrator_params': self.integrator_params,

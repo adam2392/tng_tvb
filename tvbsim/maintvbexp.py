@@ -98,8 +98,13 @@ class MainTVBSim(TVBExp, MoveContactExp):
         self.conn.cortical[:] = True
         self.conn.weights = conn.weights / np.max(conn.weights)
 
-    def loadintegrator(self, dt, noise):
-        heunint = integrators.HeunStochastic(dt=dt, noise=noise)
+    def loadintegrator(self, dt, noise_cov, noisetype='additive', ntau=0):
+        if noisetype == 'additive':
+            hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
+        elif noisetype == 'multiplicative':
+            hiss = noise.Multiplicative(nsig=noise_cov)
+            
+        heunint = integrators.HeunStochastic(dt=dt, noise=hiss)
         # heunint = integrators.HeunDeterministic(**integrator_params)
         self.integrator = heunint
 
