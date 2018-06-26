@@ -1,13 +1,15 @@
-import sys
-sys.path.append('../_tvblibrary/')
-sys.path.append('../_tvbdata/')
 import numpy as np
 import scipy
 import math
 import warnings
-
+# from tvbsim.exp.base import BaseTVBExp
 
 class MoveContactExp(object):
+    def __init__(self, conn, seeg_xyz, seeg_labels):
+        self.conn = conn
+        self.seeg_xyz = seeg_xyz
+        self.seeg_labels = seeg_labels
+
     def simplest_gain_matrix(self):
         '''
         This is a function to recompute a new gain matrix based on xyz that moved
@@ -121,7 +123,7 @@ class MoveContactExp(object):
         if isleftside != -1:
             elec_label = seeg_contact.split("'")[0]
             electrodeindices = [i for i, item in enumerate(
-                self.seeg_labels) if elec_label + "'" in item]
+                seeg_labels) if elec_label + "'" in item]
         else:
             for idx, s in enumerate(seeg_contact):
                 if s.isdigit():
@@ -131,29 +133,6 @@ class MoveContactExp(object):
                 contacts) if elec_label == item[0]]
         print('\nelec label is %s' % elec_label)
         return electrodeindices
-
-    def _cart2sph(self, x, y, z):
-        '''
-        Transform Cartesian coordinates to spherical
-
-        Paramters:
-        x           (float) X coordinate
-        y           (float) Y coordinate
-        z           (float) Z coordinate
-
-        :return: radius, elevation, azimuth
-        '''
-        x2_y2 = x**2 + y**2
-        r = math.sqrt(x2_y2 + z**2)                    # r
-        elev = math.atan2(math.sqrt(x2_y2), z)            # Elevation / phi
-        az = math.atan2(y, x)                          # Azimuth / theta
-        return r, elev, az
-
-    def _sph2cart(self, r, elev, az):
-        x = r * math.sin(elev) * math.cos(az)
-        y = r * math.sin(elev) * math.sin(az)
-        z = r * math.cos(elev)
-        return x, y, z
 
     def move_electrode(self, seegind, newloc):
         seeg_contact = self.seeg_labels[seegind]
@@ -169,19 +148,20 @@ class MoveContactExp(object):
         distancetomove = [x_dist, y_dist, z_dist]
         self.seeg_xyz[electrodeindices] = self.seeg_xyz[electrodeindices] + distancetomove
 
-    def findclosestcontact(self, regionind):
+    def findclosestcontact(self, conn, regionind):
         '''
         This function finds the closest contact to an ezregion
         '''
         # get the region's xyz coords we want to get
         regionxyz = self.conn.centres[regionind]
+
         # create a mask of the indices we already moved
         # elec_indices = np.arange(0, self.seeg_xyz.shape[0])
         # movedmask = [element for i, element in enumerate(elec_indices) \
         #                       if i not in elecmovedindices]
         # create a spatial KD tree -> find closest SEEG contact to region in Euclidean
         # tree = scipy.spatial.KDTree(self.seeg_xyz[movedmask, :])
-        tree = scipy.spatial.KDTree(self.seeg_xyz)
+        tree = scipy.spatial.KDTree(seeg_xyz)
         near_seeg = tree.query(regionxyz)
 
         # get the distance and the index at the min
@@ -209,9 +189,6 @@ class MoveContactExp(object):
         seeg_contact = self.seeg_labels[seegind]
         # get all the indices for this electrode
         electrodeindices = self.getallcontacts(seeg_contact=seeg_contact)
-        print(self.seeg_labels[electrodeindices])
-        print(self.seeg_labels)
-        # assert len(electrodeindices) > 2
 
         # get the euclidean distance that will be moved for this electrode
         x_dist = regionxyz[0] - closest_seegxyz[0]
@@ -240,3 +217,26 @@ class MoveContactExp(object):
         if distance != -1:
             assert np.linalg.norm(distancetomove) - origdistance <= distance
         return new_seeg_xyz, electrodeindices
+
+    def _cart2sph(self, x, y, z):
+        '''
+        Transform Cartesian coordinates to spherical
+
+        Paramters:
+        x           (float) X coordinate
+        y           (float) Y coordinate
+        z           (float) Z coordinate
+
+        :return: radius, elevation, azimuth
+        '''
+        x2_y2 = x**2 + y**2
+        r = math.sqrt(x2_y2 + z**2)                    # r
+        elev = math.atan2(math.sqrt(x2_y2), z)            # Elevation / phi
+        az = math.atan2(y, x)                          # Azimuth / theta
+        return r, elev, az
+
+    def _sph2cart(self, r, elev, az):
+        x = r * math.sin(elev) * math.cos(az)
+        y = r * math.sin(elev) * math.sin(az)
+        z = r * math.cos(elev)
+        return x, y, z

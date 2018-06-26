@@ -3,11 +3,11 @@ sys.path.append('../_tvblibrary/')
 sys.path.append('../_tvbdata/')
 from tvb.simulator.lab import *
 import numpy as np
-from exp.basetvbexp import TVBExp
+from exp.base import BaseTVBExp
 from exp.movecontactexp import MoveContactExp
 import warnings
 
-class MainTVBSim(TVBExp, MoveContactExp):
+class MainTVBSim(BaseTVBExp, MoveContactExp):
     x0ez = x0pz = x0norm = None
     ezindices = []
 
@@ -17,8 +17,16 @@ class MainTVBSim(TVBExp, MoveContactExp):
     monitors = None
     integrators = None
     
-    def __init__(self, conn=None, condspeed=np.inf):
-        TVBExp.__init__(self, conn=conn, condspeed=condspeed)
+    def __init__(self, conn=None, condspeed=np.inf, config=None):
+        BaseTVBExp.__init__(self, config=config)
+        self.conn = conn
+        try:
+            self.conn.speed = condspeed
+            self.conn.cortical[:] = True
+            self.conn.weights = conn.weights / np.max(conn.weights)
+        except:
+            print("Not setting connectivity params in TVBExp Base Class.")
+        self.init_cond = None
 
     def get_metadata(self):
         self.metadata = {
@@ -103,7 +111,7 @@ class MainTVBSim(TVBExp, MoveContactExp):
             hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
         elif noisetype == 'multiplicative':
             hiss = noise.Multiplicative(nsig=noise_cov)
-            
+
         heunint = integrators.HeunStochastic(dt=dt, noise=hiss)
         # heunint = integrators.HeunDeterministic(**integrator_params)
         self.integrator = heunint

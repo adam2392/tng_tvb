@@ -64,13 +64,23 @@ class LoadSimDataset(BaseLoader):
         self._loadconnectivity()
         
         # set line frequency and add to it
-        self.samplerate = self.metadata['samplerate']
+        try:
+            self.samplerate = self.metadata['samplerate']
+        except:
+            print("hardcoding samplerate")
+            self.samplerate = 1000
+            
         self.chanlabels = self.metadata['chanlabels']
         # self.locations = self.metadata['seeg_xyz']
 
         # else grab it from the json object
-        self.onset_ind = self.metadata['onsettimes']
-        self.offset_ind = self.metadata['offsettimes']
+        try:
+            self.onset_ind = self.metadata['onsettimes']
+            self.offset_ind = self.metadata['offsettimes']
+        except:
+            self.onset_ind = self.metadata['onsetind']
+            self.offset_ind = self.metadata['offsetind']
+            
         self.offset_sec = np.divide(self.offset_ind, self.samplerate)
         self.onset_sec = np.divide(self.onset_ind, self.samplerate)
 

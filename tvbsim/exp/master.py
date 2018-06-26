@@ -5,8 +5,8 @@ import os
 
 from tvb.simulator.lab import *
 import tvbsim
-from tvbsim.exp.basetvbexp import TVBExp
-from tvbsim.maintvbexp import MainTVBSim
+from tvbsim.exp.maintvbexp import MainTVBSim
+from tvbsim.exp.movecontactexp import MoveContactExp
 from tvbsim.exp.utils.selectregion import Regions
 
 class MasterExp(object):
@@ -24,6 +24,21 @@ class MasterExp(object):
         self.monitor_params = monitor_params
 
         self.tvbexp = MainTVBSim()
+
+    def movechans(self):
+        '''
+        Move channels and then recompute gain matrix
+
+        '''
+
+        # move contacts if we wnat to
+        for ind in self.tvbexp.ezind:
+            new_seeg_xyz, elecindicesmoved = MoveContactExp(self.conn_params['conn'], 
+                                                    self.tvbexp.seeg_xyz, 
+                                                    self.tvbexp.seeg_labels).move_electrodetoreg(ind, movedist)
+            print(elecindicesmoved)
+            print(maintvbexp.seeg_labels[elecindicesmoved])
+
     def setupsim(self):
         # set up connectivity
         self.tvbexp.loadconn(**self.conn_params)
@@ -59,6 +74,9 @@ class MasterExp(object):
                 'integrator_params': self.integrator_params,
                 'monitor_params': self.monitor_params,
         }
+
+        # merge metadata with the basic structural data
+        self.metadata = dict(self.metadata, **self.tvbexp.get_metadata())
         return self.metadata
     
     def shuffleweights(self):

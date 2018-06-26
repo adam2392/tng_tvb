@@ -50,7 +50,7 @@ all_patients = ['id001_bt',
     'id009_ba', 'id010_cmn', 'id011_gr',
     'id013_lk', 'id014_vc', 'id015_gjl',
     'id016_lm', 'id017_mk', 'id018_lo', 'id020_lma',
-    'id021', 'id022', 'id023']
+    'id021_jc', 'id022_te', 'id023_br']
 
 # all_patients = ['id001_ac',
 #     'id002_cj',

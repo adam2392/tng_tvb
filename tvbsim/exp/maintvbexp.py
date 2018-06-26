@@ -1,15 +1,14 @@
 import numpy as np
-import sys
-sys.path.append('../_tvblibrary/')
-sys.path.append('../_tvbdata/')
 from tvb.simulator.lab import *
-from tvbsim.exp.base import BaseTVBExp
+from tvbsim.exp.base import BaseTVBExp, \
+                    CouplingOptions, NoiseOptions
 import warnings
 
 class MainTVBSim(BaseTVBExp):
     x0ez = x0pz = x0norm = None
     ezindices = []
 
+    # all TVB necessary parameters
     coupl = None
     epileptors = None
     conn = None
@@ -17,87 +16,27 @@ class MainTVBSim(BaseTVBExp):
     integrators = None
     
     def __init__(self, config=None):
-        super(TVBExp, self).__init__(config=config)
-
-    def get_metadata(self):
-        self.metadata = {
-                'regions': self.conn.region_labels,
-                'regions_centers': self.conn.centres,
-                'chanlabels': self.seeg_labels,
-                'chanxyz': self.seeg_xyz,
-                'ezregs': self.ezregion,
-                'pzregs': self.pzregion,
-                'ezindices': self.ezind,
-                'pzindices': self.pzind,
-                'gainmat': self.gainmat,
-                'x0ez': self.x0ez,
-                'x0pz': self.x0pz,
-                'x0norm': self.x0norm,
-        }
-        return self.metadata
-
-    def setezregion(self, ezregions, rand=False):
-        if np.asarray(ezregions).size == 1:
-            ezregions = np.array(ezregions)[0]
-            ezind = np.array([self._getindexofregion(ezregions)])
-            ezregion = np.array(ezregions)
-
-        elif np.asarray(ezregions).size > 1:
-            ezinds = []
-            ezregs = []
-            for ezreg in ezregions:
-                ezregs.append(ezreg)
-                ezinds.append(self._getindexofregion(ezreg))
-
-            ezind = np.array(ezinds)
-            ezregion = np.array(ezregs)
-        else:
-            ezind = []
-            ezregion = None
-
-        # if np.asarray(ezind).size == 1:
-        #     ezind = [ezind]
-        self.ezind = ezind
-        self.ezregion = ezregion
-        if rand == True:
-            self.ezind, self.ezregion = self.sample_randregions(1)
-
-    def setpzregion(self, pzregions, rand=False):
-        if np.asarray(pzregions).size == 1:
-            pzregions = np.array(pzregions)[0]
-            pzind = np.array([self._getindexofregion(pzregions)])
-            pzregion = np.array(pzregions)
-
-        elif np.asarray(pzregions).size > 1:
-            pzinds = []
-            pzregs = []
-            for pzreg in pzregions:
-                pzregs.append(pzreg)
-                pzinds.append(self._getindexofregion(pzreg))
-
-            pzind = np.array(pzinds)
-            pzregion = np.array(pzregs)
-        else:
-            pzind = []
-            pzregion = None
-
-        # if np.asarray(pzind).size == 1:
-        #     pzind = [pzind]
-        self.pzind = pzind
-        self.pzregion = pzregion
-
-        if rand == True:
-            self.pzind, self.pzregion = self.sample_randregions(1)
-
+        super(MainTVBSim, self).__init__(config=config)
+    
     def loadconn(self, conn, condspeed):
         self.conn = conn
         self.conn.speed = condspeed
         self.conn.cortical[:] = True
         self.conn.weights = conn.weights / np.max(conn.weights)
 
-    def loadintegrator(self, dt, noise):
-        heunint = integrators.HeunStochastic(dt=dt, noise=noise)
-        # heunint = integrators.HeunDeterministic(**integrator_params)
+    def loadintegrator(self, dt, noise_cov, noisetype='additive', ntau=0):
+        if noisetype == NoiseOptions.DETERMINISTIC.value:
+            heunint = integrators.HeunDeterministic(dt=dt)
+        
+        elif noisetype == NoiseOptions.ADDITIVE.value:
+            hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
+            heunint = integrators.HeunStochastic(dt=dt, noise=hiss)
+        
+        elif noisetype == NoiseOptions.MULTIPLICATIVE.value:
+            hiss = noise.Multiplicative(nsig=noise_cov)
+            heunint = integrators.HeunStochastic(dt=dt, noise=hiss)
+        else:
+            self.logger.error("Noise type is incorrect!")
         self.integrator = heunint
 
     def loadmodel(self, ezregions, pzregions, x0ez, x0pz, x0norm, 
@@ -125,21 +64,24 @@ class MainTVBSim(BaseTVBExp):
             epileptors.x0[self.pzind] = x0pz
         self.epileptors = epileptors
 
-    def loadcoupling(self, type_cpl='diff', a=1.):
+    def loadcoupling(self, type_cpl=CouplingOptions.DIFF.value, a=1.):
+        if type_cpl not in CouplingOptions.Options.value:
+            self.logger.error("Not part of coupling types allowed.")
+
         ################## 4. Difference Coupling Between Nodes ###############
-        if type_cpl == 'diff':
+        if type_cpl == CouplingOptions.DIFF.value:
             coupl = coupling.Difference(a=a)
-        elif type_cpl == 'linear':
+        elif type_cpl == CouplingOptions.LINEAR.value:
             coupl = coupling.Linear(a=a, b=b)
-        elif type_cpl == 'sigmoidal':
+        elif type_cpl == CouplingOptions.SIGMOIDAL.value:
             coupl = coupling.Sigmoidal(a=a)
-        elif type_cpl == 'hyperbolictangent':
+        elif type_cpl == CouplingOptions.HYPERBOLICTANGENT.value:
             coupl = coupling.HyperbolicTangent(a=a)
         else:
             self.logger.error("Coupling type can only be diff, linear, sigmoidal, or HyperbolicTangent!")
         self.coupl = coupl
 
-    def loadmonitors(self, chanxyz, gainmat, period=1., moved=False, initcond=None):
+    def loadmonitors(self, chanlabels, chanxyz, gainmat, period=1., moved=False, initcond=None):
         if initcond is not None:
             self.initcond = initcond
 
@@ -156,7 +98,27 @@ class MainTVBSim(BaseTVBExp):
         sim_monitors[1].sensors.locations = chanxyz
         sim_monitors[1].gain = gainmat
 
+        self.gainmat = gainmat
+        self.chanxyz = chanxyz
+        self.chanlabels = chanlabels
         self.monitors = sim_monitors
+
+    def get_metadata(self):
+        self.metadata = {
+                'regions': self.conn.region_labels,
+                'regions_centers': self.conn.centres,
+                'chanlabels': self.chanlabels,
+                'chanxyz': self.chanxyz,
+                'ezregs': self.ezregion,
+                'pzregs': self.pzregion,
+                'ezindices': self.ezind,
+                'pzindices': self.pzind,
+                'gainmat': self.gainmat,
+                'x0ez': self.x0ez,
+                'x0pz': self.x0pz,
+                'x0norm': self.x0norm,
+        }
+        return self.metadata
 
     def setupsim(self):
         # initialize simulator object
