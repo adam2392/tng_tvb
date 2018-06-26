@@ -15,7 +15,7 @@ import itertools
 import main_freq
 from util_sim import save_processed_data, process_weights, \
             initialize_tvb_model, showdebug, select_ez_outside, \
-            select_ez_inside, run_freq_analysis
+            select_ez_inside
 
 # to run simulation and post processing and data loading
 from tvbsim.exp.selectregion import Regions
@@ -183,29 +183,29 @@ if __name__ == '__main__':
         datafile = filename
         rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
 
-        mode = 'fft'
-        # create checker for num wins
-        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
-        if not os.path.exists(freqoutputdir):
-            os.makedirs(freqoutputdir)
-        # where to save final computation
-        outputfilename = os.path.join(freqoutputdir, 
-                '{}_{}_{}model.npz'.format(patient, mode, (2*i)))
-        outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, (2*i)))
-        run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
+        # mode = 'fft'
+        # # create checker for num wins
+        # freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
+        # if not os.path.exists(freqoutputdir):
+        #     os.makedirs(freqoutputdir)
+        # # where to save final computation
+        # outputfilename = os.path.join(freqoutputdir, 
+        #         '{}_{}_{}model.npz'.format(patient, mode, (2*i)))
+        # outputmetafilename = os.path.join(freqoutputdir,
+        #     '{}_{}_{}meta.json'.format(patient, mode, (2*i)))
+        # run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
-        mode = 'morlet'
-        # create checker for num wins
-        freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
-        if not os.path.exists(freqoutputdir):
-            os.makedirs(freqoutputdir)
-        # where to save final computation
-        outputfilename = os.path.join(freqoutputdir, 
-                '{}_{}_{}model.npz'.format(patient, mode, (2*i)+1))
-        outputmetafilename = os.path.join(freqoutputdir,
-            '{}_{}_{}meta.json'.format(patient, mode, (2*i)+1))
-        run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
+        # mode = 'morlet'
+        # # create checker for num wins
+        # freqoutputdir = os.path.join(freqoutputdatadir, 'freq', mode, patient)
+        # if not os.path.exists(freqoutputdir):
+        #     os.makedirs(freqoutputdir)
+        # # where to save final computation
+        # outputfilename = os.path.join(freqoutputdir, 
+        #         '{}_{}_{}model.npz'.format(patient, mode, (2*i)+1))
+        # outputmetafilename = os.path.join(freqoutputdir,
+        #     '{}_{}_{}meta.json'.format(patient, mode, (2*i)+1))
+        # run_freq_analysis(rawdata, metadata, mode, outputfilename, outputmetafilename)
 
         '''                 PLOTTING OF DATA                        '''
         # DEFINE FIGURE DIR FOR THIS SIM
