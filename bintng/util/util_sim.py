@@ -105,7 +105,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
         'noisetype': 'additive',
         'ntau': ntau
     }
-    maintvbexp.loadintegrator(integrator_params)
+    maintvbexp.loadintegrator(**integrator_params)
 
     # load couping
     coupling_params = {
