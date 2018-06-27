@@ -33,7 +33,7 @@ class MainTVBSim(BaseTVBExp, MoveContactExp):
                 'goodchaninds': self.goodchaninds,
                 'regions': self.conn.region_labels,
                 'regions_centers': self.conn.centres,
-                'condspeed': self.condspeed,
+                'condspeed': self.conn.speed,
                 'chanlabels': self.seeg_labels,
                 'chanxyz': self.seeg_xyz,
                 'ezregs': self.ezregion,
