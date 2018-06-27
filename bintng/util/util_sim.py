@@ -99,16 +99,17 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     noise_cov = np.array([0.001, 0.001, 0.,\
                               0.0001, 0.0001, 0.])
     # define cov noise for the stochastic heun integrator
-    hiss = noise.Additive(nsig=noise_cov, ntau=ntau)
-    # hiss = noise.Multiplicative(nsig=noise_cov)
     integrator_params = {
         'dt': 0.05,
-        'noise': hiss,
+        'noise_cov': noise_cov,
+        'noisetype': 'additive',
+        'ntau': ntau
     }
     maintvbexp.loadintegrator(integrator_params)
 
     # load couping
     coupling_params = {
+        'type_cpl': 'diff',
         'a': 1.,
     }
     maintvbexp.loadcoupling(**coupling_params)
@@ -116,6 +117,8 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     # load monitors
     initcond = None
     monitor_params = {
+        'chanxyz': maintvbexp.seeg_xyz,
+        'gainmat': maintvbexp.gainmat,
         'period': period,
         'moved': False,
         'initcond': initcond
