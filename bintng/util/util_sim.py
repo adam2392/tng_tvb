@@ -68,8 +68,8 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
     maintvbexp.importsurfdata(surf=loader.surf)
 
     # use loader to input metadata from rawdata into the loader
-    goodchaninds = loader.load_good_chans_inds(chanlabels=loader.chanxyzlabels)
-    maintvbexp.setgoodchans(goodchaninds)
+    # goodchaninds = loader.load_good_chans_inds(chanlabels=loader.chanxyzlabels)
+    # maintvbexp.setgoodchans(goodchaninds)
 
     ######### Model (Epileptor) Parameters ##########
     epileptor_params = {
