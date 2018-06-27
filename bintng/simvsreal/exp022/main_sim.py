@@ -178,10 +178,10 @@ if __name__ == '__main__':
         loader._writejsonfile(metadata, metafilename)
 
         # load in the data to run frequency analysis
-        reference = 'monopolar'
-        patdatadir = outputdatadir
-        datafile = filename
-        rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
+        # reference = 'monopolar'
+        # patdatadir = outputdatadir
+        # datafile = filename
+        # rawdata, metadata = main_freq.load_raw_data(patdatadir, datafile, metadatadir, patient, reference)
 
         # mode = 'fft'
         # # create checker for num wins

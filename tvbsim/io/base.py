@@ -6,6 +6,8 @@ from tvbsim.base.constants.config import Config
 from tvbsim.base.utils.log_error import initialize_logger
 from tvbsim.io.utils import utils, seegrecording
 from tvbsim.io.readers.read_connectivity import LoadConn
+from tvbsim.base.utils.data_structures_utils import NumpyEncoder
+
 import io
 try:
     to_unicode = unicode

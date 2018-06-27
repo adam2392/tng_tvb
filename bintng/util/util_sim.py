@@ -29,6 +29,7 @@ from collections import OrderedDict
 
 def save_processed_data(filename, times, epits, seegts, zts, state_vars):
     print('finished simulating!')
+    print(filename)
     print(epits.shape)
     print(seegts.shape)
     print(times.shape)
