@@ -117,9 +117,9 @@ class Subject(BaseLoader):
         return mask
 
     def load_good_chans_inds(self, chanlabels, 
-            bad_channels, 
-            non_eeg_channels,
-            contact_regs):
+            bad_channels=[], 
+            non_eeg_channels=[],
+            contact_regs=[]):
         '''
         Function for only getting the "good channel indices" for
         data.
