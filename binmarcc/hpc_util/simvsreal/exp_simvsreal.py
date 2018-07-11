@@ -42,7 +42,7 @@ parser.add_argument('--shuffleweights', default=1, type=int,
                     help="How to move channels.")
 parser.add_argument('--typeshuffling', default='within', 
                     help="How to move shuffle patients (within for within patients, and null for null model).")
-parser.add_argument('--numsims', default=1, type=int 
+parser.add_argument('--numsims', default=1, type=int,
                     help="How many times should we run a simulation?")
 parser.add_argument('--ezselectiontype', default='clin',  
                     help="How should we select the ez regions? (clin, outside, null)")
