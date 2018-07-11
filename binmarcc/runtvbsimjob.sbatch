@@ -13,7 +13,6 @@
 # on MARCC using GNU parallel
 #---------------------------------------------------------------------
 
-ml python/2.7
 ml anaconda-python/2.7
 ml singularity 
 source activate tvb
@@ -41,7 +40,7 @@ singularity pull --name tvb.simg shub://adam2392/deeplearning_hubs:tvb
 # python ./paramsweep/${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
 # 	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
 # 	--movedist ${dist} --shuffleweights ${shuffleweights} 
-singularity exec python ./hpc_util/simvsreal/exp_simvsreal.py ${patient} --metadatadir ${metadatadir} \
+singularity -d -vvv exec python ./hpc_util/simvsreal/exp_simvsreal.py ${patient} --metadatadir ${metadatadir} \
 								--outputdatadir ${outputdatadir} \
 								--freqoutputdatadir ${freqoutputdatadir} \
 								--movedist ${dist} \

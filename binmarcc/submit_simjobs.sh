@@ -99,7 +99,7 @@ typeshuffling=${typeshuffling},\
 ezselectiontype=${ezselectiontype} "
 
 	# build basic sbatch command with all params parametrized
-	sbatchcomm=$(cat $long_config)
+	sbatchcomm=$(cat $short_config)
 	sbatchcomm="$sbatchcomm --job-name=${jobname} --partition=${partition}"
 
 	# build a scavenger job, gpu job, or other job
