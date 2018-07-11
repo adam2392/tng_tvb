@@ -7,8 +7,6 @@
 #
 ##############################################################
 module unload git
-ml python
-ml parallel
 ml anaconda-python/2.7
 source activate tvb
 
