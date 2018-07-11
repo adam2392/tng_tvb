@@ -104,8 +104,8 @@ ezselectiontype=${ezselectiontype} "
 
 	# build a scavenger job, gpu job, or other job
 	echo "Sbatch should run now"
-	echo $sbatcomm $exvars ./runtvbsimjob.sbatch 
-	${sbatcomm} $exvars ./runtvbsimjob.sbatch
+	echo $sbatchcomm $exvars ./runtvbsimjob.sbatch 
+	${sbatchcomm} $exvars ./runtvbsimjob.sbatch
 
 	read -p "Continuing in 0.5 Seconds...." -t 0.5
 	echo "Continuing ...."
