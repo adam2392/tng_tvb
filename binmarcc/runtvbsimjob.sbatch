@@ -15,6 +15,7 @@
 
 ml python/2.7
 ml anaconda-python/2.7
+ml singularity 
 source activate tvb
 
 # Debug output to make sure we are in the correct file
@@ -33,11 +34,14 @@ echo "Type of shuffling is: ${typeshuffling}"
 echo "Number of simulations to generate is: ${numsims}"
 echo "Type of ez selection is: ${ezselectiontype}"
 
+# redefine SINGULARITY_HOME to mount current working directory to base $HOME
+export SINGULARITY_HOME=$PWD:/home/$USER
+singularity pull --name tvb.simg shub://adam2392/deeplearning_hubs:tvb
+
 # python ./paramsweep/${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
 # 	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
 # 	--movedist ${dist} --shuffleweights ${shuffleweights} 
-
-python ./hpc_util/simvsreal/exp_simvsreal.py ${patient} --metadatadir ${metadatadir} \
+singularity exec python ./hpc_util/simvsreal/exp_simvsreal.py ${patient} --metadatadir ${metadatadir} \
 								--outputdatadir ${outputdatadir} \
 								--freqoutputdatadir ${freqoutputdatadir} \
 								--movedist ${dist} \

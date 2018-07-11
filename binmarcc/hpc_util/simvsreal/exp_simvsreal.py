@@ -47,7 +47,6 @@ parser.add_argument('--numsims', default=1, type=int,
 parser.add_argument('--ezselectiontype', default='clin',  
                     help="How should we select the ez regions? (clin, outside, null)")
 
-
 # all_patients = ['id001_bt',
 #     'id002_sd',
 #     'id003_mg', 'id004_bj', 'id005_ft',

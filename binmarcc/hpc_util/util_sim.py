@@ -85,7 +85,7 @@ def initialize_tvb_model(loader, ezregions, pzregions, period, **kwargs):
             epileptor_params[key] = value
 
     x0norm = -2.45
-    x0ez=-1.7
+    x0ez=-1.75
     x0pz=-2.0 # x0pz = None
     if ezregions is None:
         x0ez = None
