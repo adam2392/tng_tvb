@@ -142,7 +142,7 @@ class MainTVBSim(BaseTVBExp, MoveContactExp):
         self.epileptors = epileptors
 
     def loadepileptor(self, ezregions, pzregions,
-                        x0ez=-2.3, x0pz=-2.05, x0norm=-1.6, epileptor_params=None):
+                        x0ez=-1.6, x0pz=-2.05, x0norm=-2.45, epileptor_params=None):
         '''
         State variables for the Epileptor model:
         Repeated here for redundancy:

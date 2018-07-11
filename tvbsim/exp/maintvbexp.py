@@ -62,6 +62,8 @@ class MainTVBSim(BaseTVBExp):
             epileptors.x0[self.ezind] = x0ez
         if x0pz is not None and pzregions is not None:
             epileptors.x0[self.pzind] = x0pz
+
+        self.epileptor_params = epileptor_params
         self.epileptors = epileptors
 
     def loadcoupling(self, type_cpl=CouplingOptions.DIFF.value, a=1.):
@@ -117,6 +119,8 @@ class MainTVBSim(BaseTVBExp):
                 'x0ez': self.x0ez,
                 'x0pz': self.x0pz,
                 'x0norm': self.x0norm,
+                'epileptor_params': self.epileptor_params,
+                # 'coupl': self.coupl.
         }
         return self.metadata
 

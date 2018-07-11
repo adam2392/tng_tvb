@@ -27,6 +27,12 @@ class FreqAnalysis(BaseFreqModel):
         self.freqs = freqs 
         self.n_cycles = 7
 
+    def run(self, rawdata):
+        ################################ 2. Run FFT Model ###########################
+        power, freqs = self.tfr(rawdata, psdtype='stft')
+
+        return power, freqs
+
     def _findtimewins(self, times):
         indices = []
         for time in ensure_list(times):

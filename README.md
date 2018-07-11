@@ -13,6 +13,10 @@ You will need to have installed tvb library, tvb data, and peakdetection.
     Download files from here for peakdetection
     https://gist.github.com/sixtenbe/1178136
 
+To get setup using TVB, it is probably best to use Anaconda.
+
+TBD
+
 ## Installing
 To install this, just simply clone from github repo along with the prerequisite files.
 

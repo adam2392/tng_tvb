@@ -76,6 +76,7 @@ class LoadSurface():
 
             surf = self.convert_to_obj(verts, normals, areas, regmap)
             return surf
+            
     def convert_to_obj(self, vertices, normals, areas, regmap):
         surf = Surface(vertices, normals, areas, regmap)
         return surf

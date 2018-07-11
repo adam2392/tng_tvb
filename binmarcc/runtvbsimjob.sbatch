@@ -27,7 +27,23 @@ echo "Outputdatadir is: ${outputdatadir}"
 echo "Freqoutputdatadir is: ${freqoutputdatadir}"
 echo "Distance to move is: ${dist}"
 echo "Should we shuffle weights?: ${shuffleweights}"
+echo "Exp name is: ${expname}"
 
-python runclustersim.py ${patient} ${numez} ${numpz} ${metadatadir} ${outputdatadir} ${numprocs}
+echo "Type of shuffling is: ${typeshuffling}"
+echo "Number of simulations to generate is: ${numsims}"
+echo "Type of ez selection is: ${ezselectiontype}"
+
+# python ./paramsweep/${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
+# 	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
+# 	--movedist ${dist} --shuffleweights ${shuffleweights} 
+
+python ./hpc_util/simvsreal/exp_simvsreal.py ${patient} --metadatadir ${metadatadir} \
+								--outputdatadir ${outputdatadir} \
+								--freqoutputdatadir ${freqoutputdatadir} \
+								--movedist ${dist} \
+								--shuffleweights ${shuffleweights} \
+								--typeshuffling ${typeshuffling} \
+								--numsims ${numsims} \
+								--ezselectiontype ${ezselectiontype}
 
 exit

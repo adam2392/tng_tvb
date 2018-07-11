@@ -3,16 +3,17 @@ import argparse
 import numpy as np 
 
 # import frequency analysis runners
-from run_freq import FreqAnalysis
+from tvbsim.base.preprocess.mne.main import FreqAnalysis
 from tvbsim.io.loadsimdataset import LoadSimDataset
 
-FREQ_MODES = ['fft', 'morlet']
+FREQ_MODES = ['stft', 'morlet']
 DATA_TYPE = ['sim']
 
 def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
     if not mode in FREQ_MODES:
         raise Exception("mode should be either 'fft', or 'morlet'. Not {}".format(mode))
 
+    numtimepoints = rawdata.shape[1]
     print(metadata.keys())
     if mode == 'stft':
         # FFT Parameters
@@ -34,10 +35,10 @@ def run_freq(metadata, rawdata, mode, outputfilename, outputmetafilename):
         metadata['freqs'] = freqs
     # add the consistent parameters
     metadata['timepoints'] = timepoints
-    
+ 
     # save the data
     print("saving freq data at ", outputfilename)
-    FreqAnalysis.save_data(outputfilename, outputmetafilename, power, phase, metadata)
+    FreqAnalysis.save_data(outputfilename, outputmetafilename, power, metadata)
     print("successfully saved!")
     
 def load_raw_data(patdatadir, datafile, metadatadir, patient, reference):
