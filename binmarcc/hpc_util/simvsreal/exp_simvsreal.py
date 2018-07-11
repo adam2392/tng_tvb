@@ -3,6 +3,7 @@ sys.path.append('../_tvblibrary/')
 sys.path.append('../_tvbdata/')
 sys.path.append('../')
 sys.path.append('./hpc_util/')
+sys.path.append('./hpc_util/util/')
 
 from tvb.simulator.lab import *
 import os

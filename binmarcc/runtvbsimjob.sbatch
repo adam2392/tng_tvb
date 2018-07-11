@@ -40,7 +40,7 @@ singularity pull --name tvb.simg shub://adam2392/deeplearning_hubs:tvb
 # python ./paramsweep/${expname}/main_sim.py ${patient} --metadatadir ${metadatadir} \
 # 	--outputdatadir ${outputdatadir} --freqoutputdatadir ${freqoutputdatadir} \
 # 	--movedist ${dist} --shuffleweights ${shuffleweights} 
-singularity -d -vvv exec tvb.simg python ./hpc_util/simvsreal/exp_simvsreal.py ${patient} --metadatadir ${metadatadir} \
+singularity -d exec tvb.simg python ./hpc_util/simvsreal/exp_simvsreal.py ${patient} --metadatadir ${metadatadir} \
 								--outputdatadir ${outputdatadir} \
 								--freqoutputdatadir ${freqoutputdatadir} \
 								--movedist ${dist} \
