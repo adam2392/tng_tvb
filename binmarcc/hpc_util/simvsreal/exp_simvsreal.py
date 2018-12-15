@@ -129,15 +129,17 @@ if __name__ == '__main__':
         ######## SET THE MODEL'S EZ AND PZ REGIONS ########
         # get the ez/pz indices we want to use
         if ezselectiontype == 'clin':
-            modelezinds = clinezinds
+            numsamps = 2 # should be around 1-3?
+            ezregs, ezinds = select_ez_outside(loader.conn, clinezregions, numsamps)
+            modelezinds = ezinds
             modelpzinds = []
-            modelezregions = clinezregions
+            modelezregions = ezregs
             modelpzregions = []
         elif ezselectiontype == 'other':
             # if we are sampling regions outside our EZ
             numsamps = 2 # should be around 1-3?
             ######## SELECT EZ REGIONS INSIDE THE CLIN DEFINITIONS
-            ezregs, ezinds = select_ez_inside(loader.conn, clinezregions, numsamps)
+            ezregs, ezinds = select_ez_outside(loader.conn, clinezregions, numsamps)
             modelezinds = ezinds
             modelpzinds = []
             modelezregions = ezregs

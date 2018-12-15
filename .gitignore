@@ -1,11 +1,4 @@
 # Ignored folders added by me
-_tvbdata/
-_tvblibrary/
-tvb-data/
-tvb-library/
-metadata/
-output/
-demo_scripts/
 .venv/
 venv2/
 # Byte-compiled / optimized / DLL files
